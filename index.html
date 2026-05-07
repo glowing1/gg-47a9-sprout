@@ -1407,7 +1407,245 @@ function checkFruitWin() {
     }
 }
 
-function checkFruitLose()
+function checkFruitLose() {
+    if (fruitMissed >= 3) {
+        stopFruitSlice();
+        moodEl.textContent = "“Oops! Too many fruits fell.”";
+    }
+}
+
+function stopFruitSlice() {
+    if (fruitInterval) {
+        clearInterval(fruitInterval);
+        fruitInterval = null;
+    }
+}
+
+/* ---------- FLAPPY FLIGHT MINI-GAME ---------- */
+let flappyInterval = null;
+let flappyBirdY = 80;
+let flappyVel = 0;
+let flappyGravity = 0.6;
+let flappyPipes = [];
+let flappyPassed = 0;
+
+function initFlappy() {
+    flappyBirdY = 80;
+    flappyVel = 0;
+    flappyPipes = [];
+    flappyPassed = 0;
+    flappyPassedEl.textContent = flappyPassed;
+    flappyAreaEl.querySelectorAll(".pipe").forEach(p => p.remove());
+    updateFlappyBird();
+
+    if (flappyInterval) clearInterval(flappyInterval);
+    flappyInterval = setInterval(() => {
+        flappyStep();
+    }, 40);
+}
+
+function updateFlappyBird() {
+    flappyBirdEl.style.top = flappyBirdY + "px";
+}
+
+function spawnPipe() {
+    const gapHeight = 70;
+    const minTop = 20;
+    const maxTop = 200 - gapHeight - 20;
+    const gapTop = randomInt(minTop, maxTop);
+
+    const pipe = document.createElement("div");
+    pipe.className = "pipe";
+    pipe.style.position = "absolute";
+    pipe.style.right = "-40px";
+    pipe.style.top = "0";
+    pipe.style.width = "40px";
+    pipe.style.height = "200px";
+    pipe.style.pointerEvents = "none";
+
+    const topPart = document.createElement("div");
+    topPart.style.position = "absolute";
+    topPart.style.left = "0";
+    topPart.style.top = "0";
+    topPart.style.width = "100%";
+    topPart.style.height = gapTop + "px";
+    topPart.style.background = "rgba(255,255,255,0.15)";
+
+    const bottomPart = document.createElement("div");
+    bottomPart.style.position = "absolute";
+    bottomPart.style.left = "0";
+    bottomPart.style.top = (gapTop + gapHeight) + "px";
+    bottomPart.style.width = "100%";
+    bottomPart.style.height = (200 - gapTop - gapHeight) + "px";
+    bottomPart.style.background = "rgba(255,255,255,0.15)";
+
+    pipe.appendChild(topPart);
+    pipe.appendChild(bottomPart);
+    flappyAreaEl.appendChild(pipe);
+
+    flappyPipes.push({ el: pipe, x: flappyAreaEl.clientWidth, gapTop, gapHeight, passed:false });
+}
+
+function flappyStep() {
+    flappyVel += flappyGravity;
+    flappyBirdY += flappyVel;
+    if (flappyBirdY < 0) flappyBirdY = 0;
+    if (flappyBirdY > 176) {
+        flappyBirdY = 176;
+        flappyGameOver(false);
+        return;
+    }
+    updateFlappyBird();
+
+    if (Math.random() < 0.04) {
+        spawnPipe();
+    }
+
+    const birdX = 20 + 12;
+    const birdYCenter = flappyBirdY + 12;
+
+    flappyPipes.forEach(p => {
+        p.x -= 3;
+        p.el.style.right = (flappyAreaEl.clientWidth - p.x) + "px";
+
+        const pipeLeft = p.x;
+        const pipeRight = p.x + 40;
+
+        if (!p.passed && pipeRight < birdX) {
+            p.passed = true;
+            flappyPassed++;
+            flappyPassedEl.textContent = flappyPassed;
+            if (flappyPassed >= 8) {
+                flappyGameOver(true);
+            }
+        }
+
+        if (birdX > pipeLeft && birdX < pipeRight) {
+            if (birdYCenter < p.gapTop || birdYCenter > p.gapTop + p.gapHeight) {
+                flappyGameOver(false);
+            }
+        }
+    });
+
+    flappyPipes = flappyPipes.filter(p => p.x > -40);
+}
+
+function flappyGameOver(win) {
+    stopFlappy();
+    if (win) {
+        state.water += 1;
+        state.glow += 1;
+        if (currentWorldKey === "full") addXP(3);
+        moodEl.textContent = "“Nice flying! +1 water.”";
+        render();
+        closeMinigameOverlay();
+    } else {
+        moodEl.textContent = "“You crashed! Try again.”";
+    }
+}
+
+function stopFlappy() {
+    if (flappyInterval) {
+        clearInterval(flappyInterval);
+        flappyInterval = null;
+    }
+}
+
+flappyAreaEl.addEventListener("click", () => {
+    flappyVel = -5;
+});
+
+/* ---------- MINI-GAME TABS ---------- */
+function switchToBlockBlast() {
+    hideAllMiniGames();
+    tabBlockBlast.classList.add("active");
+    bbContainer.style.display = "block";
+    initBlockBlast();
+}
+function switchToQuickMath() {
+    hideAllMiniGames();
+    tabQuickMath.classList.add("active");
+    qmContainer.style.display = "block";
+    initQuickMath();
+}
+function switchToFruitSlice() {
+    hideAllMiniGames();
+    tabFruitSlice.classList.add("active");
+    fruitSliceContainer.style.display = "block";
+    initFruitSlice();
+}
+function switchToFlappy() {
+    hideAllMiniGames();
+    tabFlappy.classList.add("active");
+    flappyContainer.style.display = "block";
+    initFlappy();
+}
+
+tabBlockBlast.addEventListener("click", switchToBlockBlast);
+tabQuickMath.addEventListener("click", switchToQuickMath);
+tabFruitSlice.addEventListener("click", switchToFruitSlice);
+tabFlappy.addEventListener("click", switchToFlappy);
+
+/* ---------- EVENTS ---------- */
+btnStart.addEventListener("click", () => {
+    showScreen("screenWorldSelect");
+});
+
+worldButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        setWorld(btn.dataset.world);
+    });
+});
+
+btnWorldContinue.addEventListener("click", () => {
+    showScreen("screenGarden");
+    randomMood();
+    render();
+});
+
+btnWaterGames.addEventListener("click", openMinigameOverlay);
+btnCheckSun.addEventListener("click", checkSunFromTimeAway);
+
+minigameClose.addEventListener("click", closeMinigameOverlay);
+
+/* ---------- VISIBILITY / TIME AWAY ---------- */
+window.addEventListener("beforeunload", () => {
+    localStorage.setItem("gg_lastVisit", String(Date.now()));
+});
+
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+        localStorage.setItem("gg_lastVisit", String(Date.now()));
+    }
+});
+
+/* ---------- INIT ---------- */
+function initTime() {
+    const saved = localStorage.getItem("gg_lastVisit");
+    if (saved) {
+        state.lastVisit = parseInt(saved, 10) || Date.now();
+    } else {
+        state.lastVisit = Date.now();
+        localStorage.setItem("gg_lastVisit", String(state.lastVisit));
+    }
+}
+
+function init() {
+    initGarden();
+    initTime();
+    updateStreak();
+    loadQuests();
+    setWorld("magical");
+    resetParticles();
+    render();
+}
+
+init();
+</script>
+
+</body>
+</html>
+
 
 
 
