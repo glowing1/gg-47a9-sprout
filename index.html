@@ -1,16 +1,30 @@
+Here’s your **full, single‑file, multi‑world GlowGarden** with animations, worlds, moods, daily rewards, XP, volume slider, and per‑world Base64 sounds (medium set, default 50%).
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>GlowGarden</title>
+<title>GlowGarden Worlds</title>
 
 <style>
+    :root {
+        --bg-main: radial-gradient(circle at top, #ffe6ff, #1b1230);
+        --card-bg: rgba(20, 12, 40, 0.9);
+        --accent: #ffb3ff;
+        --particle-color: rgba(255, 255, 255, 0.6);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
     body {
         margin: 0;
         padding: 0;
-        background: radial-gradient(circle at top, #ffe6ff, #1b1230);
-        font-family: system-ui, sans-serif;
+        background: var(--bg-main);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: #ffeeff;
         display: flex;
         flex-direction: column;
@@ -18,136 +32,674 @@
         justify-content: flex-start;
         min-height: 100vh;
         text-align: center;
-        padding-top: 20px;
+        padding: 20px 10px 30px;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    #particles {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    .particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--particle-color);
+        opacity: 0.7;
+        animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+        from { transform: translateY(100vh) translateX(0); opacity: 0; }
+        20% { opacity: 0.8; }
+        80% { opacity: 0.8; }
+        to { transform: translateY(-10vh) translateX(10px); opacity: 0; }
     }
 
     #container {
-        background: rgba(20, 12, 40, 0.9);
-        padding: 20px;
+        position: relative;
+        z-index: 1;
+        background: var(--card-bg);
+        padding: 18px 16px 20px;
         border-radius: 20px;
-        width: 90%;
-        max-width: 350px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        width: 100%;
+        max-width: 380px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+        border: 1px solid rgba(255,255,255,0.08);
     }
 
     h1 {
-        margin-top: 0;
-        font-size: 32px;
+        margin: 0 0 6px;
+        font-size: 26px;
+        letter-spacing: 0.04em;
+    }
+
+    #subtitle {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-bottom: 12px;
+    }
+
+    #worldSelect {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+        justify-content: center;
+    }
+
+    .world-btn {
+        flex: 1 1 45%;
+        min-width: 120px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.06);
+        color: #ffeefe;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    .world-btn span.emoji {
+        font-size: 16px;
+    }
+
+    .world-btn.active {
+        background: rgba(255,255,255,0.16);
+        box-shadow: 0 0 12px rgba(255,255,255,0.25);
+        border-color: var(--accent);
+    }
+
+    .world-btn:active {
+        transform: scale(0.97);
+    }
+
+    #worldLabel {
+        font-size: 13px;
+        opacity: 0.85;
+        margin-bottom: 4px;
     }
 
     #plant {
         font-size: 60px;
-        margin: 15px 0;
+        margin: 10px 0 4px;
+        transition: transform 0.18s ease, filter 0.18s ease;
+    }
+
+    #plant.grow {
+        transform: translateY(-4px) scale(1.08);
+        filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+    }
+
+    #plant.sparkle {
+        animation: sparkle 0.6s ease-out;
+    }
+
+    @keyframes sparkle {
+        0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+        40% { transform: scale(1.12); filter: drop-shadow(0 0 14px rgba(255,255,255,0.9)); }
+        100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
     }
 
     #stats {
-        margin: 10px 0 20px 0;
-        font-size: 18px;
-        line-height: 1.6;
+        margin: 4px 0 6px;
+        font-size: 14px;
+        line-height: 1.5;
+        opacity: 0.95;
+    }
+
+    #xpBarWrapper {
+        margin: 4px auto 8px;
+        width: 80%;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.08);
+        overflow: hidden;
+        display: none;
+    }
+
+    #xpBar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ffdd88, #ff7bd5);
+        transition: width 0.2s ease;
+    }
+
+    #mood {
+        font-size: 13px;
+        opacity: 0.9;
+        min-height: 18px;
+        margin-bottom: 8px;
+    }
+
+    #volumeRow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 11px;
+        margin-bottom: 10px;
+        opacity: 0.85;
+    }
+
+    #volumeSlider {
+        width: 55%;
     }
 
     .btn-row {
         display: flex;
         gap: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
-    button {
+    button.action {
         flex: 1;
-        padding: 10px 14px;
-        border-radius: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
         border: none;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         cursor: pointer;
         color: #1b1230;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+        transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+    }
+
+    button.action:active {
+        transform: translateY(1px) scale(0.97);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        filter: brightness(0.95);
     }
 
     #btnWater { background: #99d6ff; }
     #btnSun { background: #ffe066; }
+    #btnReward { background: #c6ffb3; font-size: 15px; }
     #btnReset {
         background: #ffb3c6;
         width: 100%;
-        margin-top: 10px;
+        margin-top: 6px;
+        font-size: 15px;
+    }
+
+    #footerNote {
+        margin-top: 8px;
+        font-size: 11px;
+        opacity: 0.7;
     }
 </style>
 </head>
 
 <body>
+<div id="particles"></div>
+
 <div id="container">
     <h1>GlowGarden</h1>
+    <div id="subtitle">Choose your world and grow your glowing plant.</div>
+
+    <div id="worldLabel">World:</div>
+    <div id="worldSelect">
+        <button class="world-btn active" data-world="magical">
+            <span class="emoji">🌸</span><span>Magical</span>
+        </button>
+        <button class="world-btn" data-world="cute">
+            <span class="emoji">🐾</span><span>Cute Pet</span>
+        </button>
+        <button class="world-btn" data-world="cosmic">
+            <span class="emoji">🌌</span><span>Cosmic</span>
+        </button>
+        <button class="world-btn" data-world="full">
+            <span class="emoji">🎮</span><span>Full Game</span>
+        </button>
+    </div>
 
     <div id="plant">🌱</div>
 
     <div id="stats">
         Glow: <span id="glow">0</span>/10<br>
-        Water: <span id="water">0</span><br>
-        Sun: <span id="sun">0</span>
+        Water: <span id="water">0</span> · Sun: <span id="sun">0</span><br>
+        Level: <span id="level">1</span> · Streak: <span id="streak">0</span> days
+    </div>
+
+    <div id="xpBarWrapper">
+        <div id="xpBar"></div>
+    </div>
+
+    <div id="mood">“Hello, new gardener.”</div>
+
+    <div id="volumeRow">
+        <span>🔊</span>
+        <span>Volume</span>
+        <input id="volumeSlider" type="range" min="0" max="100" value="50" />
+        <span id="volumeValue">50%</span>
     </div>
 
     <div class="btn-row">
-        <button id="btnWater">💧</button>
-        <button id="btnSun">☀️</button>
+        <button id="btnWater" class="action">💧 Water</button>
+        <button id="btnSun" class="action">☀️ Sun</button>
     </div>
 
-    <button id="btnReset">Reset</button>
+    <div class="btn-row">
+        <button id="btnReward" class="action">🎁 Daily reward</button>
+    </div>
+
+    <button id="btnReset">Reset garden</button>
+
+    <div id="footerNote">Tip: Switch worlds anytime to change the vibe.</div>
 </div>
 
 <script>
-const MAX = 10;
+/* ---------- WORLD DEFINITIONS ---------- */
+const worlds = {
+    magical: {
+        name: "Magical Fantasy",
+        bg: "radial-gradient(circle at top, #ffe6ff, #2b1040)",
+        cardBg: "rgba(30, 10, 60, 0.9)",
+        accent: "#ffb3ff",
+        particleColor: "rgba(255, 255, 255, 0.7)",
+        evolutions: ["🌱","🌿","🌳","🌸","🌺","🪷","🌟"],
+        moods: [
+            "“I feel sparkly today.”",
+            "“More sunshine, more magic!”",
+            "“Your glow makes me bloom.”",
+            "“I can almost touch the stars.”"
+        ]
+    },
+    cute: {
+        name: "Cute Pet Plant",
+        bg: "radial-gradient(circle at top, #ffe9d6, #40203a)",
+        cardBg: "rgba(50, 20, 50, 0.9)",
+        accent: "#ffcfdf",
+        particleColor: "rgba(255, 223, 186, 0.8)",
+        evolutions: ["🌱","🌿","🌵","🌼","🌺","🪴","💖"],
+        moods: [
+            "“Hehe, that tickles!”",
+            "“I’m thirsty… but still cute.”",
+            "“Yay, sunshine cuddles!”",
+            "“I’m growing just for you.”"
+        ]
+    },
+    cosmic: {
+        name: "Cosmic Garden",
+        bg: "radial-gradient(circle at top, #d0e6ff, #050816)",
+        cardBg: "rgba(8, 10, 40, 0.9)",
+        accent: "#7bd5ff",
+        particleColor: "rgba(180, 220, 255, 0.8)",
+        evolutions: ["🌱","✨","🌙","⭐","🌌","🪐","🌠"],
+        moods: [
+            "“I’m drinking starlight.”",
+            "“Gravity feels soft today.”",
+            "“Your care bends the cosmos.”",
+            "“I could orbit you forever.”"
+        ]
+    },
+    full: {
+        name: "Full Game Mode",
+        bg: "radial-gradient(circle at top, #ffe6ff, #101820)",
+        cardBg: "rgba(15, 15, 35, 0.95)",
+        accent: "#ffdd88",
+        particleColor: "rgba(255, 255, 200, 0.8)",
+        evolutions: ["🌱","🌿","🌳","🌸","🌺","🪷","👑"],
+        moods: [
+            "“XP gained. Growth unlocked.”",
+            "“Keep going, this run is strong.”",
+            "“Daily streaks make me powerful.”",
+            "“You’re min-maxing my happiness.”"
+        ]
+    }
+};
+
+/* ---------- STATE ---------- */
+let currentWorldKey = "magical";
 
 let state = {
     glow: 0,
     water: 0,
-    sun: 0
+    sun: 0,
+    level: 1,
+    xp: 0,
+    xpToNext: 10,
+    streak: 0,
+    lastRewardDay: null
 };
 
+let volume = 0.5; // default 50%
+
+/* ---------- DOM ELEMENTS ---------- */
 const glowEl = document.getElementById("glow");
 const waterEl = document.getElementById("water");
 const sunEl = document.getElementById("sun");
 const plantEl = document.getElementById("plant");
+const levelEl = document.getElementById("level");
+const streakEl = document.getElementById("streak");
+const moodEl = document.getElementById("mood");
+const xpBarWrapper = document.getElementById("xpBarWrapper");
+const xpBar = document.getElementById("xpBar");
 
-function updatePlant() {
-    let g = state.glow;
+const btnWater = document.getElementById("btnWater");
+const btnSun = document.getElementById("btnSun");
+const btnReward = document.getElementById("btnReward");
+const btnReset = document.getElementById("btnReset");
 
-    if (g <= 2) plantEl.textContent = "🌱";
-    else if (g <= 4) plantEl.textContent = "🌿";
-    else if (g <= 6) plantEl.textContent = "🌳";
-    else if (g <= 8) plantEl.textContent = "🌸";
-    else plantEl.textContent = "🌺";
+const worldButtons = document.querySelectorAll(".world-btn");
+
+const volumeSlider = document.getElementById("volumeSlider");
+const volumeValue = document.getElementById("volumeValue");
+
+const particlesContainer = document.getElementById("particles");
+
+/* ---------- SIMPLE BASE64 SOUND LIBRARY ----------
+   These are tiny placeholder tones; they’re valid data URIs and will play,
+   but kept small so your file isn’t huge.
+   Each world has: water, sun, mood, evolve, levelup.
+-------------------------------------------------- */
+const soundData = {
+    magical: {
+        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
+    },
+    cute: {
+        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
+    },
+    cosmic: {
+        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
+    },
+    full: {
+        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
+        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
+    }
+};
+
+/* Preload audio elements */
+const soundPlayers = {};
+for (const worldKey in soundData) {
+    soundPlayers[worldKey] = {};
+    const worldSounds = soundData[worldKey];
+    for (const action in worldSounds) {
+        const audio = new Audio(worldSounds[action]);
+        audio.preload = "auto";
+        soundPlayers[worldKey][action] = audio;
+    }
+}
+
+function setVolume(v) {
+    volume = v;
+    for (const worldKey in soundPlayers) {
+        for (const action in soundPlayers[worldKey]) {
+            soundPlayers[worldKey][action].volume = volume;
+        }
+    }
+}
+
+function playSound(action) {
+    const worldSounds = soundPlayers[currentWorldKey];
+    if (!worldSounds) return;
+    const audio = worldSounds[action];
+    if (!audio) return;
+    try {
+        audio.currentTime = 0;
+        audio.play();
+    } catch (e) {
+        // ignore play errors (mobile autoplay restrictions etc.)
+    }
+}
+
+/* ---------- WORLD + UI LOGIC ---------- */
+function setWorld(worldKey) {
+    currentWorldKey = worldKey;
+    const w = worlds[worldKey];
+
+    document.documentElement.style.setProperty("--bg-main", w.bg);
+    document.documentElement.style.setProperty("--card-bg", w.cardBg);
+    document.documentElement.style.setProperty("--accent", w.accent);
+    document.documentElement.style.setProperty("--particle-color", w.particleColor);
+
+    worldButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.world === worldKey);
+    });
+
+    xpBarWrapper.style.display = (worldKey === "full") ? "block" : "none";
+
+    setMood(`“Welcome to ${w.name}.”`);
+    render();
+    resetParticles();
+    playSound("mood");
+}
+
+function getEvolutionEmoji() {
+    const w = worlds[currentWorldKey];
+    const steps = w.evolutions.length;
+    const maxGlow = 10;
+    const index = Math.min(
+        steps - 1,
+        Math.floor((state.glow / maxGlow) * (steps - 1))
+    );
+    return w.evolutions[index];
+}
+
+function setMood(text) {
+    moodEl.textContent = text;
+}
+
+function randomMood() {
+    const w = worlds[currentWorldKey];
+    const arr = w.moods;
+    const msg = arr[Math.floor(Math.random() * arr.length)];
+    setMood(msg);
+    playSound("mood");
+}
+
+function addXP(amount) {
+    if (currentWorldKey !== "full") return;
+    state.xp += amount;
+    while (state.xp >= state.xpToNext) {
+        state.xp -= state.xpToNext;
+        state.level++;
+        state.xpToNext = Math.floor(state.xpToNext * 1.4);
+        setMood("“Level up! I feel unstoppable.”");
+        playSound("level");
+    }
+}
+
+function updatePlantVisual() {
+    plantEl.textContent = getEvolutionEmoji();
 }
 
 function render() {
     glowEl.textContent = state.glow;
     waterEl.textContent = state.water;
     sunEl.textContent = state.sun;
-    updatePlant();
+    levelEl.textContent = state.level;
+    streakEl.textContent = state.streak;
+    updatePlantVisual();
+
+    if (currentWorldKey === "full") {
+        const pct = Math.max(0, Math.min(100, (state.xp / state.xpToNext) * 100));
+        xpBar.style.width = pct + "%";
+    }
 }
 
-document.getElementById("btnWater").onclick = () => {
-    if (state.glow < MAX) {
+function animatePlant() {
+    plantEl.classList.remove("grow","sparkle");
+    void plantEl.offsetWidth;
+    plantEl.classList.add("grow","sparkle");
+    setTimeout(() => {
+        plantEl.classList.remove("grow","sparkle");
+    }, 600);
+}
+
+function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+}
+
+function claimDailyReward() {
+    const today = todayKey();
+    if (state.lastRewardDay === today) {
+        setMood("“You already claimed today’s reward.”");
+        return;
+    }
+
+    if (state.lastRewardDay) {
+        const prev = new Date(state.lastRewardDay);
+        const now = new Date();
+        const diff = Math.floor((now - prev) / (1000*60*60*24));
+        if (diff === 1) {
+            state.streak++;
+        } else if (diff > 1) {
+            state.streak = 1;
+        }
+    } else {
+        state.streak = 1;
+    }
+
+    state.lastRewardDay = today;
+
+    let rewardGlow = 2 + Math.min(state.streak, 5);
+    state.glow = Math.min(10, state.glow + rewardGlow);
+
+    if (currentWorldKey === "full") {
+        addXP(3 + state.streak);
+    }
+
+    animatePlant();
+    randomMood();
+    playSound("level");
+    render();
+}
+
+/* ---------- BUTTON HANDLERS ---------- */
+btnWater.onclick = () => {
+    if (state.glow < 10) {
         state.glow++;
         state.water++;
+        if (currentWorldKey === "full") addXP(2);
+        animatePlant();
+        randomMood();
+        playSound("water");
         render();
+    } else {
+        setMood("“I’m fully glowing right now.”");
     }
 };
 
-document.getElementById("btnSun").onclick = () => {
-    if (state.glow < MAX) {
+btnSun.onclick = () => {
+    if (state.glow < 10) {
         state.glow++;
         state.sun++;
+        if (currentWorldKey === "full") addXP(2);
+        animatePlant();
+        randomMood();
+        playSound("sun");
         render();
+    } else {
+        setMood("“Any more and I’ll explode with light.”");
     }
 };
 
-document.getElementById("btnReset").onclick = () => {
-    state = { glow: 0, water: 0, sun: 0 };
+btnReward.onclick = () => {
+    claimDailyReward();
+};
+
+btnReset.onclick = () => {
+    state = {
+        glow: 0,
+        water: 0,
+        sun: 0,
+        level: 1,
+        xp: 0,
+        xpToNext: 10,
+        streak: 0,
+        lastRewardDay: null
+    };
+    setMood("“Fresh start. Let’s grow again.”");
+    playSound("mood");
     render();
 };
 
+worldButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        setWorld(btn.dataset.world);
+    });
+});
+
+/* ---------- PARTICLES ---------- */
+function resetParticles() {
+    particlesContainer.innerHTML = "";
+    const count = 30;
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        const size = 3 + Math.random() * 5;
+        p.style.width = size + "px";
+        p.style.height = size + "px";
+        p.style.left = Math.random() * 100 + "vw";
+        const duration = 8 + Math.random() * 10;
+        const delay = -Math.random() * duration;
+        p.style.animationDuration = duration + "s";
+        p.style.animationDelay = delay + "s";
+        particlesContainer.appendChild(p);
+    }
+}
+
+/* ---------- VOLUME SLIDER + STORAGE ---------- */
+const VOLUME_KEY = "glowgarden_volume";
+
+function loadVolume() {
+    const saved = localStorage.getItem(VOLUME_KEY);
+    let v = 0.5;
+    if (saved !== null) {
+        const num = parseFloat(saved);
+        if (!isNaN(num)) v = Math.min(1, Math.max(0, num));
+    }
+    volumeSlider.value = Math.round(v * 100);
+    volumeValue.textContent = Math.round(v * 100) + "%";
+    setVolume(v);
+}
+
+volumeSlider.addEventListener("input", () => {
+    const v = parseInt(volumeSlider.value, 10) / 100;
+    setVolume(v);
+    volumeValue.textContent = Math.round(v * 100) + "%";
+    localStorage.setItem(VOLUME_KEY, v.toString());
+});
+
+/* ---------- INIT ---------- */
+setWorld("magical");
 render();
+resetParticles();
+loadVolume();
 </script>
 
 </body>
 </html>
-
+```
