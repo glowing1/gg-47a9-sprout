@@ -64,4 +64,90 @@
     }
 
     #btnWater { background: #99d6ff; }
-    #btnSun { background
+    #btnSun { background: #ffe066; }
+    #btnReset {
+        background: #ffb3c6;
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+<div id="container">
+    <h1>GlowGarden</h1>
+
+    <div id="plant">🌱</div>
+
+    <div id="stats">
+        Glow: <span id="glow">0</span>/10<br>
+        Water: <span id="water">0</span><br>
+        Sun: <span id="sun">0</span>
+    </div>
+
+    <div class="btn-row">
+        <button id="btnWater">💧</button>
+        <button id="btnSun">☀️</button>
+    </div>
+
+    <button id="btnReset">Reset</button>
+</div>
+
+<script>
+const MAX = 10;
+
+let state = {
+    glow: 0,
+    water: 0,
+    sun: 0
+};
+
+const glowEl = document.getElementById("glow");
+const waterEl = document.getElementById("water");
+const sunEl = document.getElementById("sun");
+const plantEl = document.getElementById("plant");
+
+function updatePlant() {
+    let g = state.glow;
+
+    if (g <= 2) plantEl.textContent = "🌱";
+    else if (g <= 4) plantEl.textContent = "🌿";
+    else if (g <= 6) plantEl.textContent = "🌳";
+    else if (g <= 8) plantEl.textContent = "🌸";
+    else plantEl.textContent = "🌺";
+}
+
+function render() {
+    glowEl.textContent = state.glow;
+    waterEl.textContent = state.water;
+    sunEl.textContent = state.sun;
+    updatePlant();
+}
+
+document.getElementById("btnWater").onclick = () => {
+    if (state.glow < MAX) {
+        state.glow++;
+        state.water++;
+        render();
+    }
+};
+
+document.getElementById("btnSun").onclick = () => {
+    if (state.glow < MAX) {
+        state.glow++;
+        state.sun++;
+        render();
+    }
+};
+
+document.getElementById("btnReset").onclick = () => {
+    state = { glow: 0, water: 0, sun: 0 };
+    render();
+};
+
+render();
+</script>
+
+</body>
+</html>
+
