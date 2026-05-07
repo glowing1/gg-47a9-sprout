@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,9 +13,7 @@
         --particle-color: rgba(255, 255, 255, 0.6);
     }
 
-    * {
-        box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
         margin: 0;
@@ -25,12 +22,10 @@
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: #ffeeff;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         min-height: 100vh;
         text-align: center;
-        padding: 20px 10px 30px;
         overflow-x: hidden;
         position: relative;
     }
@@ -67,28 +62,55 @@
         padding: 18px 16px 20px;
         border-radius: 20px;
         width: 100%;
-        max-width: 380px;
+        max-width: 420px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.45);
         border: 1px solid rgba(255,255,255,0.08);
     }
 
     h1 {
-        margin: 0 0 6px;
-        font-size: 26px;
+        margin: 0 0 8px;
+        font-size: 28px;
         letter-spacing: 0.04em;
     }
 
-    #subtitle {
+    .subtitle {
         font-size: 13px;
         opacity: 0.8;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
+    }
+
+    .screen {
+        display: none;
+    }
+
+    .screen.active {
+        display: block;
+    }
+
+    .big-btn {
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: none;
+        background: #ffb3ff;
+        color: #1b1230;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+        margin-top: 10px;
+        width: 70%;
+    }
+
+    .big-btn:active {
+        transform: translateY(1px) scale(0.98);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.5);
     }
 
     #worldSelect {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-bottom: 14px;
+        margin-top: 10px;
         justify-content: center;
     }
 
@@ -110,8 +132,10 @@
         transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
     }
 
-    .world-btn span.emoji {
-        font-size: 16px;
+    .world-btn span.emoji { font-size: 16px; }
+
+    .world-btn:active {
+        transform: scale(0.97);
     }
 
     .world-btn.active {
@@ -120,42 +144,29 @@
         border-color: var(--accent);
     }
 
-    .world-btn:active {
-        transform: scale(0.97);
-    }
-
-    #worldLabel {
+    #currentWorldLabel {
         font-size: 13px;
         opacity: 0.85;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
 
-    #plant {
-        font-size: 60px;
-        margin: 10px 0 4px;
-        transition: transform 0.18s ease, filter 0.18s ease;
-    }
-
-    #plant.grow {
-        transform: translateY(-4px) scale(1.08);
-        filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
-    }
-
-    #plant.sparkle {
-        animation: sparkle 0.6s ease-out;
-    }
-
-    @keyframes sparkle {
-        0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
-        40% { transform: scale(1.12); filter: drop-shadow(0 0 14px rgba(255,255,255,0.9)); }
-        100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+    #plantSummary {
+        font-size: 20px;
+        margin-bottom: 6px;
     }
 
     #stats {
-        margin: 4px 0 6px;
-        font-size: 14px;
+        margin: 4px 0 8px;
+        font-size: 13px;
         line-height: 1.5;
         opacity: 0.95;
+    }
+
+    #mood {
+        font-size: 13px;
+        opacity: 0.9;
+        min-height: 18px;
+        margin-bottom: 8px;
     }
 
     #xpBarWrapper {
@@ -175,70 +186,191 @@
         transition: width 0.2s ease;
     }
 
-    #mood {
-        font-size: 13px;
-        opacity: 0.9;
-        min-height: 18px;
-        margin-bottom: 8px;
-    }
-
-    #volumeRow {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    #gardenGrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 6px;
-        font-size: 11px;
-        margin-bottom: 10px;
-        opacity: 0.85;
+        margin: 10px 0;
     }
 
-    #volumeSlider {
-        width: 55%;
+    .plot {
+        background: rgba(0,0,0,0.25);
+        border-radius: 10px;
+        padding: 10px 0;
+        font-size: 22px;
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.1);
+        min-height: 40px;
     }
 
-    .btn-row {
+    .plot.empty {
+        opacity: 0.6;
+        font-size: 14px;
+    }
+
+    .sectionTitle {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.8;
+        margin-top: 6px;
+        margin-bottom: 4px;
+    }
+
+    .row {
         display: flex;
-        gap: 10px;
-        margin-bottom: 10px;
+        gap: 6px;
+        margin-bottom: 6px;
     }
 
-    button.action {
+    .small-btn {
         flex: 1;
-        padding: 10px 12px;
-        border-radius: 12px;
+        padding: 6px 8px;
+        border-radius: 10px;
         border: none;
-        font-size: 16px;
+        font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         color: #1b1230;
+        background: #ffe066;
+    }
+
+    .small-btn:active {
+        transform: translateY(1px) scale(0.98);
+    }
+
+    #questsList {
+        font-size: 11px;
+        text-align: left;
+        max-height: 90px;
+        overflow-y: auto;
+        margin-bottom: 4px;
+    }
+
+    .quest {
+        background: rgba(0,0,0,0.25);
+        border-radius: 8px;
+        padding: 4px 6px;
+        margin-bottom: 4px;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        gap: 6px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-        transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+        gap: 4px;
     }
 
-    button.action:active {
-        transform: translateY(1px) scale(0.97);
-        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-        filter: brightness(0.95);
+    .quest span {
+        font-size: 11px;
     }
 
-    #btnWater { background: #99d6ff; }
-    #btnSun { background: #ffe066; }
-    #btnReward { background: #c6ffb3; font-size: 15px; }
-    #btnReset {
+    .quest button {
+        font-size: 10px;
+        padding: 3px 6px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        background: #c6ffb3;
+        color: #1b1230;
+        font-weight: 600;
+    }
+
+    .quest.completed {
+        opacity: 0.6;
+    }
+
+    #upgradesList {
+        font-size: 11px;
+        text-align: left;
+        max-height: 90px;
+        overflow-y: auto;
+    }
+
+    .upgrade {
+        background: rgba(0,0,0,0.25);
+        border-radius: 8px;
+        padding: 4px 6px;
+        margin-bottom: 4px;
+    }
+
+    .upgrade button {
+        margin-top: 3px;
+        font-size: 10px;
+        padding: 3px 6px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
         background: #ffb3c6;
-        width: 100%;
-        margin-top: 6px;
-        font-size: 15px;
+        color: #1b1230;
+        font-weight: 600;
+    }
+
+    .upgrade button:disabled {
+        opacity: 0.4;
+        cursor: default;
     }
 
     #footerNote {
-        margin-top: 8px;
-        font-size: 11px;
+        margin-top: 6px;
+        font-size: 10px;
         opacity: 0.7;
+    }
+
+    /* Mini-game overlay */
+    #minigameOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+
+    #minigameBox {
+        background: #241533;
+        border-radius: 16px;
+        padding: 16px;
+        width: 90%;
+        max-width: 320px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    #minigameTitle {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    #minigameText {
+        font-size: 12px;
+        margin-bottom: 8px;
+        opacity: 0.9;
+    }
+
+    #minigameProgress {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    #minigameButton {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: none;
+        background: #99d6ff;
+        color: #1b1230;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 6px;
+    }
+
+    #minigameClose {
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: none;
+        background: rgba(255,255,255,0.1);
+        color: #ffeefe;
+        font-size: 11px;
+        cursor: pointer;
     }
 </style>
 </head>
@@ -247,58 +379,88 @@
 <div id="particles"></div>
 
 <div id="container">
-    <h1>GlowGarden</h1>
-    <div id="subtitle">Choose your world and grow your glowing plant.</div>
-
-    <div id="worldLabel">World:</div>
-    <div id="worldSelect">
-        <button class="world-btn active" data-world="magical">
-            <span class="emoji">🌸</span><span>Magical</span>
-        </button>
-        <button class="world-btn" data-world="cute">
-            <span class="emoji">🐾</span><span>Cute Pet</span>
-        </button>
-        <button class="world-btn" data-world="cosmic">
-            <span class="emoji">🌌</span><span>Cosmic</span>
-        </button>
-        <button class="world-btn" data-world="full">
-            <span class="emoji">🎮</span><span>Full Game</span>
-        </button>
+    <!-- START SCREEN -->
+    <div id="screenStart" class="screen active">
+        <h1>GlowGarden</h1>
+        <div class="subtitle">A cozy little universe where your garden grows with your life.</div>
+        <p style="font-size:13px; opacity:0.9;">
+            Take breaks, do homework, go outside.<br>
+            Your garden grows when you do.
+        </p>
+        <button id="btnStart" class="big-btn">Start</button>
     </div>
 
-    <div id="plant">🌱</div>
-
-    <div id="stats">
-        Glow: <span id="glow">0</span>/10<br>
-        Water: <span id="water">0</span> · Sun: <span id="sun">0</span><br>
-        Level: <span id="level">1</span> · Streak: <span id="streak">0</span> days
+    <!-- WORLD SELECT SCREEN -->
+    <div id="screenWorldSelect" class="screen">
+        <h1>Choose your world</h1>
+        <div class="subtitle">Each world has its own mood, plants, and challenges.</div>
+        <div id="worldSelect">
+            <button class="world-btn" data-world="magical">
+                <span class="emoji">🌸</span><span>Magical</span>
+            </button>
+            <button class="world-btn" data-world="cute">
+                <span class="emoji">🐾</span><span>Cute Pet</span>
+            </button>
+            <button class="world-btn" data-world="cosmic">
+                <span class="emoji">🌌</span><span>Cosmic</span>
+            </button>
+            <button class="world-btn" data-world="full">
+                <span class="emoji">🎮</span><span>Full Game</span>
+            </button>
+        </div>
+        <button id="btnWorldContinue" class="big-btn" style="margin-top:16px;">Go to my garden</button>
     </div>
 
-    <div id="xpBarWrapper">
-        <div id="xpBar"></div>
+    <!-- GARDEN SCREEN -->
+    <div id="screenGarden" class="screen">
+        <h1>GlowGarden</h1>
+        <div id="currentWorldLabel">World: <span id="currentWorldName">Magical</span></div>
+        <div id="plantSummary">Garden: <span id="gardenSummaryEmoji">🌱</span></div>
+
+        <div id="stats">
+            Glow: <span id="glow">0</span><br>
+            Water: <span id="water">0</span> · Sun: <span id="sun">0</span> · Seeds: <span id="seeds">0</span><br>
+            Level: <span id="level">1</span> · Streak: <span id="streak">0</span> days
+        </div>
+
+        <div id="xpBarWrapper">
+            <div id="xpBar"></div>
+        </div>
+
+        <div id="mood">“Welcome to your garden.”</div>
+
+        <div class="sectionTitle">Garden</div>
+        <div id="gardenGrid"></div>
+
+        <div class="sectionTitle">Actions</div>
+        <div class="row">
+            <button id="btnWaterGame" class="small-btn">💧 Water mini‑game</button>
+            <button id="btnCheckSun" class="small-btn">☀️ Check sun from time away</button>
+        </div>
+
+        <div class="sectionTitle">Daily quests (for seeds)</div>
+        <div id="questsList"></div>
+
+        <div class="sectionTitle">Upgrades</div>
+        <div id="upgradesList"></div>
+
+        <div id="footerNote">
+            Tip: Close this tab, do homework or go outside, then come back to collect sun.
+        </div>
     </div>
+</div>
 
-    <div id="mood">“Hello, new gardener.”</div>
-
-    <div id="volumeRow">
-        <span>🔊</span>
-        <span>Volume</span>
-        <input id="volumeSlider" type="range" min="0" max="100" value="50" />
-        <span id="volumeValue">50%</span>
+<!-- Mini-game overlay -->
+<div id="minigameOverlay">
+    <div id="minigameBox">
+        <div id="minigameTitle">Water mini‑game</div>
+        <div id="minigameText">
+            Tap the droplet 10 times to collect water for your garden.
+        </div>
+        <div id="minigameProgress">Taps: <span id="minigameCount">0</span>/10</div>
+        <button id="minigameButton">💧 Splash!</button>
+        <button id="minigameClose">Cancel</button>
     </div>
-
-    <div class="btn-row">
-        <button id="btnWater" class="action">💧 Water</button>
-        <button id="btnSun" class="action">☀️ Sun</button>
-    </div>
-
-    <div class="btn-row">
-        <button id="btnReward" class="action">🎁 Daily reward</button>
-    </div>
-
-    <button id="btnReset">Reset garden</button>
-
-    <div id="footerNote">Tip: Switch worlds anytime to change the vibe.</div>
 </div>
 
 <script>
@@ -310,27 +472,29 @@ const worlds = {
         cardBg: "rgba(30, 10, 60, 0.9)",
         accent: "#ffb3ff",
         particleColor: "rgba(255, 255, 255, 0.7)",
-        evolutions: ["🌱","🌿","🌳","🌸","🌺","🪷","🌟"],
+        gardenEmoji: "🌸",
         moods: [
             "“I feel sparkly today.”",
             "“More sunshine, more magic!”",
             "“Your glow makes me bloom.”",
             "“I can almost touch the stars.”"
-        ]
+        ],
+        upgradeRequirement: "Reach 20 glow and 5 water in Magical world."
     },
     cute: {
-        name: "Cute Pet Plant",
+        name: "Cute Pet Garden",
         bg: "radial-gradient(circle at top, #ffe9d6, #40203a)",
         cardBg: "rgba(50, 20, 50, 0.9)",
         accent: "#ffcfdf",
         particleColor: "rgba(255, 223, 186, 0.8)",
-        evolutions: ["🌱","🌿","🌵","🌼","🌺","🪴","💖"],
+        gardenEmoji: "💖",
         moods: [
             "“Hehe, that tickles!”",
             "“I’m thirsty… but still cute.”",
             "“Yay, sunshine cuddles!”",
             "“I’m growing just for you.”"
-        ]
+        ],
+        upgradeRequirement: "Reach 15 glow and plant 3 cute plants."
     },
     cosmic: {
         name: "Cosmic Garden",
@@ -338,13 +502,14 @@ const worlds = {
         cardBg: "rgba(8, 10, 40, 0.9)",
         accent: "#7bd5ff",
         particleColor: "rgba(180, 220, 255, 0.8)",
-        evolutions: ["🌱","✨","🌙","⭐","🌌","🪐","🌠"],
+        gardenEmoji: "🌌",
         moods: [
             "“I’m drinking starlight.”",
             "“Gravity feels soft today.”",
             "“Your care bends the cosmos.”",
             "“I could orbit you forever.”"
-        ]
+        ],
+        upgradeRequirement: "Reach 10 sun and 3 days streak in Cosmic world."
     },
     full: {
         name: "Full Game Mode",
@@ -352,13 +517,14 @@ const worlds = {
         cardBg: "rgba(15, 15, 35, 0.95)",
         accent: "#ffdd88",
         particleColor: "rgba(255, 255, 200, 0.8)",
-        evolutions: ["🌱","🌿","🌳","🌸","🌺","🪷","👑"],
+        gardenEmoji: "👑",
         moods: [
             "“XP gained. Growth unlocked.”",
             "“Keep going, this run is strong.”",
             "“Daily streaks make me powerful.”",
             "“You’re min-maxing my happiness.”"
-        ]
+        ],
+        upgradeRequirement: "Reach level 3 and 30 glow in Full Game mode."
     }
 };
 
@@ -369,151 +535,73 @@ let state = {
     glow: 0,
     water: 0,
     sun: 0,
+    seeds: 0,
     level: 1,
     xp: 0,
     xpToNext: 10,
     streak: 0,
-    lastRewardDay: null
+    lastRewardDay: null,
+    lastVisit: null,
+    garden: [], // array of plots
+    upgradesUnlocked: {}
 };
 
-let volume = 0.5; // default 50%
+const GARDEN_SIZE = 9; // 3x3
 
-/* ---------- DOM ELEMENTS ---------- */
+/* ---------- DOM ---------- */
+const screenStart = document.getElementById("screenStart");
+const screenWorldSelect = document.getElementById("screenWorldSelect");
+const screenGarden = document.getElementById("screenGarden");
+
+const btnStart = document.getElementById("btnStart");
+const btnWorldContinue = document.getElementById("btnWorldContinue");
+const worldButtons = document.querySelectorAll(".world-btn");
+
+const currentWorldNameEl = document.getElementById("currentWorldName");
+const gardenSummaryEmojiEl = document.getElementById("gardenSummaryEmoji");
+
 const glowEl = document.getElementById("glow");
 const waterEl = document.getElementById("water");
 const sunEl = document.getElementById("sun");
-const plantEl = document.getElementById("plant");
+const seedsEl = document.getElementById("seeds");
 const levelEl = document.getElementById("level");
 const streakEl = document.getElementById("streak");
 const moodEl = document.getElementById("mood");
 const xpBarWrapper = document.getElementById("xpBarWrapper");
 const xpBar = document.getElementById("xpBar");
 
-const btnWater = document.getElementById("btnWater");
-const btnSun = document.getElementById("btnSun");
-const btnReward = document.getElementById("btnReward");
-const btnReset = document.getElementById("btnReset");
+const gardenGrid = document.getElementById("gardenGrid");
+const questsList = document.getElementById("questsList");
+const upgradesList = document.getElementById("upgradesList");
 
-const worldButtons = document.querySelectorAll(".world-btn");
-
-const volumeSlider = document.getElementById("volumeSlider");
-const volumeValue = document.getElementById("volumeValue");
+const btnWaterGame = document.getElementById("btnWaterGame");
+const btnCheckSun = document.getElementById("btnCheckSun");
 
 const particlesContainer = document.getElementById("particles");
 
-/* ---------- SIMPLE BASE64 SOUND LIBRARY ----------
-   These are tiny placeholder tones; they’re valid data URIs and will play,
-   but kept small so your file isn’t huge.
-   Each world has: water, sun, mood, evolve, levelup.
--------------------------------------------------- */
-const soundData = {
-    magical: {
-        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
-    },
-    cute: {
-        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
-    },
-    cosmic: {
-        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
-    },
-    full: {
-        water:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        sun:    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        mood:   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        evolve: "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=",
-        level:  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
-    }
-};
+/* Mini-game DOM */
+const minigameOverlay = document.getElementById("minigameOverlay");
+const minigameCountEl = document.getElementById("minigameCount");
+const minigameButton = document.getElementById("minigameButton");
+const minigameClose = document.getElementById("minigameClose");
+let minigameCount = 0;
 
-/* Preload audio elements */
-const soundPlayers = {};
-for (const worldKey in soundData) {
-    soundPlayers[worldKey] = {};
-    const worldSounds = soundData[worldKey];
-    for (const action in worldSounds) {
-        const audio = new Audio(worldSounds[action]);
-        audio.preload = "auto";
-        soundPlayers[worldKey][action] = audio;
-    }
+/* ---------- HELPERS ---------- */
+function showScreen(id) {
+    [screenStart, screenWorldSelect, screenGarden].forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
 }
 
-function setVolume(v) {
-    volume = v;
-    for (const worldKey in soundPlayers) {
-        for (const action in soundPlayers[worldKey]) {
-            soundPlayers[worldKey][action].volume = volume;
-        }
-    }
-}
-
-function playSound(action) {
-    const worldSounds = soundPlayers[currentWorldKey];
-    if (!worldSounds) return;
-    const audio = worldSounds[action];
-    if (!audio) return;
-    try {
-        audio.currentTime = 0;
-        audio.play();
-    } catch (e) {
-        // ignore play errors (mobile autoplay restrictions etc.)
-    }
-}
-
-/* ---------- WORLD + UI LOGIC ---------- */
-function setWorld(worldKey) {
-    currentWorldKey = worldKey;
-    const w = worlds[worldKey];
-
-    document.documentElement.style.setProperty("--bg-main", w.bg);
-    document.documentElement.style.setProperty("--card-bg", w.cardBg);
-    document.documentElement.style.setProperty("--accent", w.accent);
-    document.documentElement.style.setProperty("--particle-color", w.particleColor);
-
-    worldButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.world === worldKey);
-    });
-
-    xpBarWrapper.style.display = (worldKey === "full") ? "block" : "none";
-
-    setMood(`“Welcome to ${w.name}.”`);
-    render();
-    resetParticles();
-    playSound("mood");
-}
-
-function getEvolutionEmoji() {
-    const w = worlds[currentWorldKey];
-    const steps = w.evolutions.length;
-    const maxGlow = 10;
-    const index = Math.min(
-        steps - 1,
-        Math.floor((state.glow / maxGlow) * (steps - 1))
-    );
-    return w.evolutions[index];
-}
-
-function setMood(text) {
-    moodEl.textContent = text;
+function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
 }
 
 function randomMood() {
     const w = worlds[currentWorldKey];
     const arr = w.moods;
     const msg = arr[Math.floor(Math.random() * arr.length)];
-    setMood(msg);
-    playSound("mood");
+    moodEl.textContent = msg;
 }
 
 function addXP(amount) {
@@ -523,132 +611,241 @@ function addXP(amount) {
         state.xp -= state.xpToNext;
         state.level++;
         state.xpToNext = Math.floor(state.xpToNext * 1.4);
-        setMood("“Level up! I feel unstoppable.”");
-        playSound("level");
+        moodEl.textContent = "“Level up! I feel unstoppable.”";
     }
 }
 
-function updatePlantVisual() {
-    plantEl.textContent = getEvolutionEmoji();
+function updateGardenSummary() {
+    const planted = state.garden.filter(p => p.stage > 0).length;
+    if (planted === 0) {
+        gardenSummaryEmojiEl.textContent = "🌱";
+    } else if (planted < 4) {
+        gardenSummaryEmojiEl.textContent = "🌿";
+    } else if (planted < 7) {
+        gardenSummaryEmojiEl.textContent = worlds[currentWorldKey].gardenEmoji;
+    } else {
+        gardenSummaryEmojiEl.textContent = "🌺";
+    }
 }
 
+function renderGarden() {
+    gardenGrid.innerHTML = "";
+    state.garden.forEach((plot, index) => {
+        const div = document.createElement("div");
+        div.className = "plot";
+        if (plot.stage === 0) {
+            div.classList.add("empty");
+            div.textContent = "+";
+        } else {
+            div.textContent = plot.emoji;
+        }
+        div.addEventListener("click", () => onPlotClick(index));
+        gardenGrid.appendChild(div);
+    });
+}
+
+function onPlotClick(index) {
+    const plot = state.garden[index];
+    if (plot.stage === 0) {
+        if (state.seeds <= 0) {
+            moodEl.textContent = "“You need seeds. Try completing a quest.”";
+            return;
+        }
+        state.seeds--;
+        plot.stage = 1;
+        plot.world = currentWorldKey;
+        plot.emoji = "🌱";
+        randomMood();
+    } else if (plot.stage < 4) {
+        // growth depends on water + sun
+        if (state.water + state.sun <= 0) {
+            moodEl.textContent = "“I need more water or sun to grow.”";
+            return;
+        }
+        plot.stage++;
+        if (plot.stage === 2) plot.emoji = "🌿";
+        else if (plot.stage === 3) plot.emoji = "🌼";
+        else plot.emoji = worlds[currentWorldKey].gardenEmoji;
+        state.glow += 1;
+        if (currentWorldKey === "full") addXP(2);
+        randomMood();
+    } else {
+        moodEl.textContent = "“This plant is fully grown!”";
+    }
+    render();
+}
+
+/* ---------- QUESTS ---------- */
+const baseQuests = [
+    { id: "break", text: "Take a 5 minute break away from screens.", reward: 1 },
+    { id: "water", text: "Drink a glass of water.", reward: 1 },
+    { id: "homework", text: "Do homework or focused work for 10 minutes.", reward: 2 }
+];
+
+function loadQuests() {
+    const today = todayKey();
+    const saved = localStorage.getItem("gg_quests_" + today);
+    let completedIds = [];
+    if (saved) {
+        try { completedIds = JSON.parse(saved); } catch {}
+    }
+    questsList.innerHTML = "";
+    baseQuests.forEach(q => {
+        const div = document.createElement("div");
+        div.className = "quest";
+        if (completedIds.includes(q.id)) div.classList.add("completed");
+
+        const span = document.createElement("span");
+        span.textContent = q.text + " (+" + q.reward + " seed" + (q.reward>1?"s":"") + ")";
+        div.appendChild(span);
+
+        const btn = document.createElement("button");
+        btn.textContent = completedIds.includes(q.id) ? "Done" : "Claim";
+        btn.disabled = completedIds.includes(q.id);
+        btn.addEventListener("click", () => {
+            if (!completedIds.includes(q.id)) {
+                completedIds.push(q.id);
+                localStorage.setItem("gg_quests_" + today, JSON.stringify(completedIds));
+                state.seeds += q.reward;
+                moodEl.textContent = "“Nice work. Here are some seeds.”";
+                render();
+                loadQuests();
+            }
+        });
+        div.appendChild(btn);
+
+        questsList.appendChild(div);
+    });
+}
+
+/* ---------- UPGRADES ---------- */
+function renderUpgrades() {
+    upgradesList.innerHTML = "";
+
+    const w = worlds[currentWorldKey];
+
+    const upgrade = document.createElement("div");
+    upgrade.className = "upgrade";
+
+    const title = document.createElement("div");
+    title.textContent = "Bigger garden patch";
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "2px";
+    upgrade.appendChild(title);
+
+    const desc = document.createElement("div");
+    desc.textContent = w.upgradeRequirement + " Costs: 10 glow.";
+    desc.style.fontSize = "10px";
+    desc.style.opacity = "0.9";
+    upgrade.appendChild(desc);
+
+    const btn = document.createElement("button");
+    btn.textContent = state.upgradesUnlocked[currentWorldKey] ? "Unlocked" : "Unlock";
+    btn.disabled = !!state.upgradesUnlocked[currentWorldKey];
+
+    btn.addEventListener("click", () => {
+        if (state.glow < 10) {
+            moodEl.textContent = "“You need at least 10 glow for this upgrade.”";
+            return;
+        }
+        // simple world-specific checks
+        if (currentWorldKey === "magical" && !(state.glow >= 20 && state.water >= 5)) {
+            moodEl.textContent = "“Grow more in Magical world first.”";
+            return;
+        }
+        if (currentWorldKey === "cute") {
+            const cutePlants = state.garden.filter(p => p.world === "cute" && p.stage > 0).length;
+            if (cutePlants < 3) {
+                moodEl.textContent = "“Plant at least 3 cute plants first.”";
+                return;
+            }
+        }
+        if (currentWorldKey === "cosmic" && !(state.sun >= 10 && state.streak >= 3)) {
+            moodEl.textContent = "“You need more sun and a longer streak in Cosmic world.”";
+            return;
+        }
+        if (currentWorldKey === "full" && !(state.level >= 3 && state.glow >= 30)) {
+            moodEl.textContent = "“Level up more in Full Game mode first.”";
+            return;
+        }
+
+        state.glow -= 10;
+        state.upgradesUnlocked[currentWorldKey] = true;
+        moodEl.textContent = "“Your garden just expanded!”";
+        // simple effect: add 3 more plots if not already
+        if (state.garden.length < 12) {
+            for (let i = 0; i < 3; i++) {
+                state.garden.push({ stage: 0, emoji: "", world: null });
+            }
+        }
+        render();
+    });
+
+    upgrade.appendChild(btn);
+    upgradesList.appendChild(upgrade);
+}
+
+/* ---------- SUN FROM TIME AWAY ---------- */
+function checkSunFromTimeAway() {
+    const now = Date.now();
+    const last = state.lastVisit || now;
+    const diffMs = now - last;
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes <= 0) {
+        moodEl.textContent = "“You just checked in. Try again later.”";
+        return;
+    }
+    const gainedSun = Math.min(10, Math.floor(minutes / 2)); // 1 sun per 2 minutes, max 10
+    if (gainedSun <= 0) {
+        moodEl.textContent = "“Not enough time away yet.”";
+        return;
+    }
+    state.sun += gainedSun;
+    state.glow += Math.floor(gainedSun / 2);
+    moodEl.textContent = `“You were away for ${minutes} minutes. I soaked up ${gainedSun} sun.”`;
+    state.lastVisit = now;
+    localStorage.setItem("gg_lastVisit", String(now));
+    render();
+}
+
+/* ---------- STREAK / DAILY ---------- */
+function updateStreak() {
+    const today = todayKey();
+    const lastDay = localStorage.getItem("gg_lastDay");
+    if (!lastDay) {
+        state.streak = 1;
+    } else {
+        const [y,m,d] = lastDay.split("-").map(Number);
+        const prev = new Date(y, m-1, d);
+        const now = new Date();
+        const diff = Math.floor((now - prev) / (1000*60*60*24));
+        if (diff === 1) state.streak++;
+        else if (diff > 1) state.streak = 1;
+    }
+    localStorage.setItem("gg_lastDay", today);
+}
+
+/* ---------- RENDER ---------- */
 function render() {
     glowEl.textContent = state.glow;
     waterEl.textContent = state.water;
     sunEl.textContent = state.sun;
+    seedsEl.textContent = state.seeds;
     levelEl.textContent = state.level;
     streakEl.textContent = state.streak;
-    updatePlantVisual();
 
     if (currentWorldKey === "full") {
+        xpBarWrapper.style.display = "block";
         const pct = Math.max(0, Math.min(100, (state.xp / state.xpToNext) * 100));
         xpBar.style.width = pct + "%";
-    }
-}
-
-function animatePlant() {
-    plantEl.classList.remove("grow","sparkle");
-    void plantEl.offsetWidth;
-    plantEl.classList.add("grow","sparkle");
-    setTimeout(() => {
-        plantEl.classList.remove("grow","sparkle");
-    }, 600);
-}
-
-function todayKey() {
-    const d = new Date();
-    return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
-}
-
-function claimDailyReward() {
-    const today = todayKey();
-    if (state.lastRewardDay === today) {
-        setMood("“You already claimed today’s reward.”");
-        return;
-    }
-
-    if (state.lastRewardDay) {
-        const prev = new Date(state.lastRewardDay);
-        const now = new Date();
-        const diff = Math.floor((now - prev) / (1000*60*60*24));
-        if (diff === 1) {
-            state.streak++;
-        } else if (diff > 1) {
-            state.streak = 1;
-        }
     } else {
-        state.streak = 1;
+        xpBarWrapper.style.display = "none";
     }
 
-    state.lastRewardDay = today;
-
-    let rewardGlow = 2 + Math.min(state.streak, 5);
-    state.glow = Math.min(10, state.glow + rewardGlow);
-
-    if (currentWorldKey === "full") {
-        addXP(3 + state.streak);
-    }
-
-    animatePlant();
-    randomMood();
-    playSound("level");
-    render();
+    updateGardenSummary();
+    renderGarden();
+    renderUpgrades();
 }
-
-/* ---------- BUTTON HANDLERS ---------- */
-btnWater.onclick = () => {
-    if (state.glow < 10) {
-        state.glow++;
-        state.water++;
-        if (currentWorldKey === "full") addXP(2);
-        animatePlant();
-        randomMood();
-        playSound("water");
-        render();
-    } else {
-        setMood("“I’m fully glowing right now.”");
-    }
-};
-
-btnSun.onclick = () => {
-    if (state.glow < 10) {
-        state.glow++;
-        state.sun++;
-        if (currentWorldKey === "full") addXP(2);
-        animatePlant();
-        randomMood();
-        playSound("sun");
-        render();
-    } else {
-        setMood("“Any more and I’ll explode with light.”");
-    }
-};
-
-btnReward.onclick = () => {
-    claimDailyReward();
-};
-
-btnReset.onclick = () => {
-    state = {
-        glow: 0,
-        water: 0,
-        sun: 0,
-        level: 1,
-        xp: 0,
-        xpToNext: 10,
-        streak: 0,
-        lastRewardDay: null
-    };
-    setMood("“Fresh start. Let’s grow again.”");
-    playSound("mood");
-    render();
-};
-
-worldButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        setWorld(btn.dataset.world);
-    });
-});
 
 /* ---------- PARTICLES ---------- */
 function resetParticles() {
@@ -669,35 +866,116 @@ function resetParticles() {
     }
 }
 
-/* ---------- VOLUME SLIDER + STORAGE ---------- */
-const VOLUME_KEY = "glowgarden_volume";
+/* ---------- WORLD SWITCH ---------- */
+function setWorld(worldKey) {
+    currentWorldKey = worldKey;
+    const w = worlds[worldKey];
 
-function loadVolume() {
-    const saved = localStorage.getItem(VOLUME_KEY);
-    let v = 0.5;
-    if (saved !== null) {
-        const num = parseFloat(saved);
-        if (!isNaN(num)) v = Math.min(1, Math.max(0, num));
-    }
-    volumeSlider.value = Math.round(v * 100);
-    volumeValue.textContent = Math.round(v * 100) + "%";
-    setVolume(v);
+    document.documentElement.style.setProperty("--bg-main", w.bg);
+    document.documentElement.style.setProperty("--card-bg", w.cardBg);
+    document.documentElement.style.setProperty("--accent", w.accent);
+    document.documentElement.style.setProperty("--particle-color", w.particleColor);
+
+    worldButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.world === worldKey);
+    });
+
+    currentWorldNameEl.textContent = w.name;
+    randomMood();
+    resetParticles();
+    render();
 }
 
-volumeSlider.addEventListener("input", () => {
-    const v = parseInt(volumeSlider.value, 10) / 100;
-    setVolume(v);
-    volumeValue.textContent = Math.round(v * 100) + "%";
-    localStorage.setItem(VOLUME_KEY, v.toString());
+/* ---------- MINI-GAME (WATER) ---------- */
+function openMinigame() {
+    minigameCount = 0;
+    minigameCountEl.textContent = "0";
+    minigameOverlay.style.display = "flex";
+}
+
+function closeMinigame() {
+    minigameOverlay.style.display = "none";
+}
+
+minigameButton.addEventListener("click", () => {
+    minigameCount++;
+    minigameCountEl.textContent = String(minigameCount);
+    if (minigameCount >= 10) {
+        const gainedWater = 3;
+        state.water += gainedWater;
+        state.glow += 1;
+        if (currentWorldKey === "full") addXP(3);
+        moodEl.textContent = `“Nice splashing! You gained ${gainedWater} water.”`;
+        closeMinigame();
+        render();
+    }
+});
+
+minigameClose.addEventListener("click", closeMinigame);
+
+/* ---------- EVENTS ---------- */
+btnStart.addEventListener("click", () => {
+    showScreen("screenWorldSelect");
+});
+
+worldButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        setWorld(btn.dataset.world);
+    });
+});
+
+btnWorldContinue.addEventListener("click", () => {
+    showScreen("screenGarden");
+    randomMood();
+    render();
+});
+
+btnWaterGame.addEventListener("click", openMinigame);
+btnCheckSun.addEventListener("click", checkSunFromTimeAway);
+
+/* ---------- VISIBILITY / TIME AWAY ---------- */
+window.addEventListener("beforeunload", () => {
+    localStorage.setItem("gg_lastVisit", String(Date.now()));
+});
+
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+        localStorage.setItem("gg_lastVisit", String(Date.now()));
+    }
 });
 
 /* ---------- INIT ---------- */
-setWorld("magical");
-render();
-resetParticles();
-loadVolume();
+function initGarden() {
+    state.garden = [];
+    for (let i = 0; i < GARDEN_SIZE; i++) {
+        state.garden.push({ stage: 0, emoji: "", world: null });
+    }
+}
+
+function initTime() {
+    const saved = localStorage.getItem("gg_lastVisit");
+    if (saved) {
+        state.lastVisit = parseInt(saved, 10) || Date.now();
+    } else {
+        state.lastVisit = Date.now();
+        localStorage.setItem("gg_lastVisit", String(state.lastVisit));
+    }
+}
+
+function init() {
+    initGarden();
+    initTime();
+    updateStreak();
+    loadQuests();
+    setWorld("magical");
+    resetParticles();
+    render();
+}
+
+init();
 </script>
 
 </body>
 </html>
-```
+
+
