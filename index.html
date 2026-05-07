@@ -62,7 +62,7 @@
         padding: 18px 16px 20px;
         border-radius: 20px;
         width: 100%;
-        max-width: 420px;
+        max-width: 430px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.45);
         border: 1px solid rgba(255,255,255,0.08);
     }
@@ -79,13 +79,8 @@
         margin-bottom: 14px;
     }
 
-    .screen {
-        display: none;
-    }
-
-    .screen.active {
-        display: block;
-    }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
     .big-btn {
         padding: 10px 16px;
@@ -100,7 +95,6 @@
         margin-top: 10px;
         width: 70%;
     }
-
     .big-btn:active {
         transform: translateY(1px) scale(0.98);
         box-shadow: 0 3px 10px rgba(0,0,0,0.5);
@@ -131,13 +125,8 @@
         gap: 6px;
         transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
     }
-
     .world-btn span.emoji { font-size: 16px; }
-
-    .world-btn:active {
-        transform: scale(0.97);
-    }
-
+    .world-btn:active { transform: scale(0.97); }
     .world-btn.active {
         background: rgba(255,255,255,0.16);
         box-shadow: 0 0 12px rgba(255,255,255,0.25);
@@ -147,7 +136,7 @@
     #currentWorldLabel {
         font-size: 13px;
         opacity: 0.85;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
 
     #plantSummary {
@@ -178,7 +167,6 @@
         overflow: hidden;
         display: none;
     }
-
     #xpBar {
         height: 100%;
         width: 0%;
@@ -186,11 +174,20 @@
         transition: width 0.2s ease;
     }
 
+    .sectionTitle {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.8;
+        margin-top: 6px;
+        margin-bottom: 4px;
+    }
+
     #gardenGrid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 6px;
-        margin: 10px 0;
+        margin: 8px 0 10px;
     }
 
     .plot {
@@ -202,19 +199,9 @@
         border: 1px solid rgba(255,255,255,0.1);
         min-height: 40px;
     }
-
     .plot.empty {
         opacity: 0.6;
         font-size: 14px;
-    }
-
-    .sectionTitle {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        opacity: 0.8;
-        margin-top: 6px;
-        margin-bottom: 4px;
     }
 
     .row {
@@ -234,7 +221,6 @@
         color: #1b1230;
         background: #ffe066;
     }
-
     .small-btn:active {
         transform: translateY(1px) scale(0.98);
     }
@@ -257,11 +243,7 @@
         align-items: center;
         gap: 4px;
     }
-
-    .quest span {
-        font-size: 11px;
-    }
-
+    .quest span { font-size: 11px; }
     .quest button {
         font-size: 10px;
         padding: 3px 6px;
@@ -272,10 +254,7 @@
         color: #1b1230;
         font-weight: 600;
     }
-
-    .quest.completed {
-        opacity: 0.6;
-    }
+    .quest.completed { opacity: 0.6; }
 
     #upgradesList {
         font-size: 11px;
@@ -290,7 +269,6 @@
         padding: 4px 6px;
         margin-bottom: 4px;
     }
-
     .upgrade button {
         margin-top: 3px;
         font-size: 10px;
@@ -302,7 +280,6 @@
         color: #1b1230;
         font-weight: 600;
     }
-
     .upgrade button:disabled {
         opacity: 0.4;
         cursor: default;
@@ -328,39 +305,55 @@
     #minigameBox {
         background: #241533;
         border-radius: 16px;
-        padding: 16px;
+        padding: 14px;
         width: 90%;
-        max-width: 320px;
+        max-width: 360px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    #minigameTitle {
-        font-size: 16px;
-        margin-bottom: 6px;
-    }
-
-    #minigameText {
-        font-size: 12px;
-        margin-bottom: 8px;
-        opacity: 0.9;
-    }
-
-    #minigameProgress {
         font-size: 13px;
+    }
+
+    #minigameHeader {
+        font-size: 15px;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    #minigameModeSelect {
+        margin: 6px 0 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .mini-tab {
+        flex: 1 1 45%;
+        padding: 4px 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.05);
+        color: #ffeefe;
+        font-size: 11px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .mini-tab.active {
+        background: rgba(255,255,255,0.2);
+        border-color: #ffb3ff;
+    }
+
+    #minigameContent {
+        background: rgba(0,0,0,0.25);
+        border-radius: 10px;
+        padding: 8px;
         margin-bottom: 8px;
     }
 
-    #minigameButton {
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: none;
-        background: #99d6ff;
-        color: #1b1230;
-        font-weight: 700;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 6px;
+    #minigameFooter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
     }
 
     #minigameClose {
@@ -372,6 +365,91 @@
         font-size: 11px;
         cursor: pointer;
     }
+
+    /* Block Blast */
+    #bbGrid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+        margin-bottom: 6px;
+    }
+    .bb-cell {
+        width: 26px;
+        height: 26px;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .bb-cell.filled {
+        background: rgba(255,255,255,0.2);
+    }
+
+    #bbPieces {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        margin-top: 4px;
+    }
+    .bb-piece {
+        border-radius: 6px;
+        padding: 4px;
+        background: rgba(255,255,255,0.08);
+        cursor: pointer;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .bb-piece-row {
+        display: flex;
+        gap: 2px;
+    }
+    .bb-piece-cell {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.4);
+    }
+    .bb-piece.selected {
+        outline: 2px solid #ffdd88;
+    }
+    #bbInfo {
+        font-size: 11px;
+        margin-top: 4px;
+        text-align: left;
+    }
+
+    /* Quick Math */
+    #qmQuestion {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+    #qmInput {
+        width: 60px;
+        padding: 4px;
+        border-radius: 6px;
+        border: none;
+        text-align: center;
+        font-size: 14px;
+    }
+    #qmSubmit {
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: none;
+        background: #99d6ff;
+        color: #1b1230;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 4px;
+    }
+    #qmStatus {
+        font-size: 11px;
+        margin-top: 4px;
+    }
 </style>
 </head>
 
@@ -382,10 +460,10 @@
     <!-- START SCREEN -->
     <div id="screenStart" class="screen active">
         <h1>GlowGarden</h1>
-        <div class="subtitle">A cozy little universe where your garden grows with your life.</div>
+        <div class="subtitle">A cozy universe where your garden grows when you do.</div>
         <p style="font-size:13px; opacity:0.9;">
             Take breaks, do homework, go outside.<br>
-            Your garden grows when you do.
+            Your garden grows with your life.
         </p>
         <button id="btnStart" class="big-btn">Start</button>
     </div>
@@ -434,8 +512,8 @@
 
         <div class="sectionTitle">Actions</div>
         <div class="row">
-            <button id="btnWaterGame" class="small-btn">💧 Water mini‑game</button>
-            <button id="btnCheckSun" class="small-btn">☀️ Check sun from time away</button>
+            <button id="btnWaterGames" class="small-btn">💧 Water mini‑games</button>
+            <button id="btnCheckSun" class="small-btn">☀️ Collect sun (time away)</button>
         </div>
 
         <div class="sectionTitle">Daily quests (for seeds)</div>
@@ -453,13 +531,95 @@
 <!-- Mini-game overlay -->
 <div id="minigameOverlay">
     <div id="minigameBox">
-        <div id="minigameTitle">Water mini‑game</div>
-        <div id="minigameText">
-            Tap the droplet 10 times to collect water for your garden.
+        <div id="minigameHeader">Water mini‑games</div>
+        <div id="minigameModeSelect">
+            <button id="tabBlockBlast" class="mini-tab active">🧱 Block Blast</button>
+            <button id="tabQuickMath" class="mini-tab">📚 Quick Math</button>
+            <button id="tabFruitSlice" class="mini-tab">🍉 Fruit Slice</button>
+            <button id="tabFlappy" class="mini-tab">🐦 Flappy Flight</button>
         </div>
-        <div id="minigameProgress">Taps: <span id="minigameCount">0</span>/10</div>
-        <button id="minigameButton">💧 Splash!</button>
-        <button id="minigameClose">Cancel</button>
+        <div id="minigameContent">
+            <!-- Block Blast content -->
+            <div id="bbContainer">
+                <div style="font-size:12px; margin-bottom:4px; text-align:left;">
+                    Place world‑themed blocks on the board. Clear full rows or columns to score.
+                    Reach 5 clears to earn <b>+1 water</b>.
+                </div>
+                <div id="bbGrid"></div>
+                <div id="bbPieces"></div>
+                <div id="bbInfo"></div>
+            </div>
+
+            <!-- Quick Math content -->
+            <div id="qmContainer" style="display:none;">
+                <div style="font-size:12px; margin-bottom:4px; text-align:left;">
+                    Answer 5 Year‑7 style math questions. Get at least 4 correct to earn <b>+1 water</b>.
+                </div>
+                <div id="qmQuestion"></div>
+                <div>
+                    <input id="qmInput" type="number" />
+                    <button id="qmSubmit">Answer</button>
+                </div>
+                <div id="qmStatus"></div>
+            </div>
+
+            <!-- Fruit Slice content -->
+            <div id="fruitSliceContainer" style="display:none;">
+                <div style="font-size:12px; margin-bottom:4px; text-align:left;">
+                    Slice 10 fruits before 3 fall off the screen to earn <b>+1 water</b>.
+                </div>
+                <div id="fruitArea" style="
+                    position:relative;
+                    width:100%;
+                    height:200px;
+                    background:rgba(255,255,255,0.05);
+                    border-radius:10px;
+                    overflow:hidden;
+                    margin-bottom:6px;
+                "></div>
+                <div id="fruitInfo" style="font-size:11px; text-align:left;">
+                    Sliced: <span id="fruitSliced">0</span>/10 · Missed: <span id="fruitMissed">0</span>/3
+                </div>
+            </div>
+
+            <!-- Flappy Flight content -->
+            <div id="flappyContainer" style="display:none;">
+                <div style="font-size:12px; margin-bottom:4px; text-align:left;">
+                    Tap to keep your bird flying through gaps. Pass 8 pipes to earn <b>+1 water</b>.
+                </div>
+                <div id="flappyArea" style="
+                    position:relative;
+                    width:100%;
+                    height:200px;
+                    background:rgba(255,255,255,0.05);
+                    border-radius:10px;
+                    overflow:hidden;
+                    margin-bottom:6px;
+                    cursor:pointer;
+                ">
+                    <div id="flappyBird" style="
+                        position:absolute;
+                        left:20px;
+                        top:80px;
+                        width:24px;
+                        height:24px;
+                        border-radius:50%;
+                        background:#ffdd88;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:16px;
+                    ">🐦</div>
+                </div>
+                <div id="flappyInfo" style="font-size:11px; text-align:left;">
+                    Pipes passed: <span id="flappyPassed">0</span>/8
+                </div>
+            </div>
+        </div>
+        <div id="minigameFooter">
+            <span style="font-size:11px; opacity:0.9;">Win a game → +1 water</span>
+            <button id="minigameClose">Close</button>
+        </div>
     </div>
 </div>
 
@@ -479,6 +639,7 @@ const worlds = {
             "“Your glow makes me bloom.”",
             "“I can almost touch the stars.”"
         ],
+        bbEmoji: "✨",
         upgradeRequirement: "Reach 20 glow and 5 water in Magical world."
     },
     cute: {
@@ -494,6 +655,7 @@ const worlds = {
             "“Yay, sunshine cuddles!”",
             "“I’m growing just for you.”"
         ],
+        bbEmoji: "🧸",
         upgradeRequirement: "Reach 15 glow and plant 3 cute plants."
     },
     cosmic: {
@@ -509,6 +671,7 @@ const worlds = {
             "“Your care bends the cosmos.”",
             "“I could orbit you forever.”"
         ],
+        bbEmoji: "🔷",
         upgradeRequirement: "Reach 10 sun and 3 days streak in Cosmic world."
     },
     full: {
@@ -524,6 +687,7 @@ const worlds = {
             "“Daily streaks make me powerful.”",
             "“You’re min-maxing my happiness.”"
         ],
+        bbEmoji: "🧱",
         upgradeRequirement: "Reach level 3 and 30 glow in Full Game mode."
     }
 };
@@ -540,13 +704,12 @@ let state = {
     xp: 0,
     xpToNext: 10,
     streak: 0,
-    lastRewardDay: null,
     lastVisit: null,
-    garden: [], // array of plots
+    garden: [],
     upgradesUnlocked: {}
 };
 
-const GARDEN_SIZE = 9; // 3x3
+const GARDEN_BASE_SIZE = 9;
 
 /* ---------- DOM ---------- */
 const screenStart = document.getElementById("screenStart");
@@ -574,17 +737,43 @@ const gardenGrid = document.getElementById("gardenGrid");
 const questsList = document.getElementById("questsList");
 const upgradesList = document.getElementById("upgradesList");
 
-const btnWaterGame = document.getElementById("btnWaterGame");
+const btnWaterGames = document.getElementById("btnWaterGames");
 const btnCheckSun = document.getElementById("btnCheckSun");
 
 const particlesContainer = document.getElementById("particles");
 
 /* Mini-game DOM */
 const minigameOverlay = document.getElementById("minigameOverlay");
-const minigameCountEl = document.getElementById("minigameCount");
-const minigameButton = document.getElementById("minigameButton");
 const minigameClose = document.getElementById("minigameClose");
-let minigameCount = 0;
+const tabBlockBlast = document.getElementById("tabBlockBlast");
+const tabQuickMath = document.getElementById("tabQuickMath");
+const tabFruitSlice = document.getElementById("tabFruitSlice");
+const tabFlappy = document.getElementById("tabFlappy");
+const bbContainer = document.getElementById("bbContainer");
+const qmContainer = document.getElementById("qmContainer");
+const fruitSliceContainer = document.getElementById("fruitSliceContainer");
+const flappyContainer = document.getElementById("flappyContainer");
+
+/* Block Blast DOM */
+const bbGridEl = document.getElementById("bbGrid");
+const bbPiecesEl = document.getElementById("bbPieces");
+const bbInfoEl = document.getElementById("bbInfo");
+
+/* Quick Math DOM */
+const qmQuestionEl = document.getElementById("qmQuestion");
+const qmInputEl = document.getElementById("qmInput");
+const qmSubmitBtn = document.getElementById("qmSubmit");
+const qmStatusEl = document.getElementById("qmStatus");
+
+/* Fruit Slice DOM */
+const fruitAreaEl = document.getElementById("fruitArea");
+const fruitSlicedEl = document.getElementById("fruitSliced");
+const fruitMissedEl = document.getElementById("fruitMissed");
+
+/* Flappy DOM */
+const flappyAreaEl = document.getElementById("flappyArea");
+const flappyBirdEl = document.getElementById("flappyBird");
+const flappyPassedEl = document.getElementById("flappyPassed");
 
 /* ---------- HELPERS ---------- */
 function showScreen(id) {
@@ -628,6 +817,14 @@ function updateGardenSummary() {
     }
 }
 
+/* ---------- GARDEN ---------- */
+function initGarden() {
+    state.garden = [];
+    for (let i = 0; i < GARDEN_BASE_SIZE; i++) {
+        state.garden.push({ stage: 0, emoji: "", world: null });
+    }
+}
+
 function renderGarden() {
     gardenGrid.innerHTML = "";
     state.garden.forEach((plot, index) => {
@@ -657,7 +854,6 @@ function onPlotClick(index) {
         plot.emoji = "🌱";
         randomMood();
     } else if (plot.stage < 4) {
-        // growth depends on water + sun
         if (state.water + state.sun <= 0) {
             moodEl.textContent = "“I need more water or sun to grow.”";
             return;
@@ -748,7 +944,6 @@ function renderUpgrades() {
             moodEl.textContent = "“You need at least 10 glow for this upgrade.”";
             return;
         }
-        // simple world-specific checks
         if (currentWorldKey === "magical" && !(state.glow >= 20 && state.water >= 5)) {
             moodEl.textContent = "“Grow more in Magical world first.”";
             return;
@@ -772,7 +967,6 @@ function renderUpgrades() {
         state.glow -= 10;
         state.upgradesUnlocked[currentWorldKey] = true;
         moodEl.textContent = "“Your garden just expanded!”";
-        // simple effect: add 3 more plots if not already
         if (state.garden.length < 12) {
             for (let i = 0; i < 3; i++) {
                 state.garden.push({ stage: 0, emoji: "", world: null });
@@ -795,7 +989,7 @@ function checkSunFromTimeAway() {
         moodEl.textContent = "“You just checked in. Try again later.”";
         return;
     }
-    const gainedSun = Math.min(10, Math.floor(minutes / 2)); // 1 sun per 2 minutes, max 10
+    const gainedSun = Math.min(10, Math.floor(minutes / 2));
     if (gainedSun <= 0) {
         moodEl.textContent = "“Not enough time away yet.”";
         return;
@@ -886,96 +1080,338 @@ function setWorld(worldKey) {
     render();
 }
 
-/* ---------- MINI-GAME (WATER) ---------- */
-function openMinigame() {
-    minigameCount = 0;
-    minigameCountEl.textContent = "0";
+/* ---------- MINI-GAME MENU ---------- */
+function openMinigameOverlay() {
     minigameOverlay.style.display = "flex";
+    switchToBlockBlast();
 }
-
-function closeMinigame() {
+function closeMinigameOverlay() {
     minigameOverlay.style.display = "none";
+    stopFruitSlice();
+    stopFlappy();
 }
 
-minigameButton.addEventListener("click", () => {
-    minigameCount++;
-    minigameCountEl.textContent = String(minigameCount);
-    if (minigameCount >= 10) {
-        const gainedWater = 3;
-        state.water += gainedWater;
+function hideAllMiniGames() {
+    bbContainer.style.display = "none";
+    qmContainer.style.display = "none";
+    fruitSliceContainer.style.display = "none";
+    flappyContainer.style.display = "none";
+    tabBlockBlast.classList.remove("active");
+    tabQuickMath.classList.remove("active");
+    tabFruitSlice.classList.remove("active");
+    tabFlappy.classList.remove("active");
+}
+
+/* ---------- BLOCK BLAST (WORLD-THEMED) ---------- */
+const BB_SIZE = 5;
+let bbGrid = [];
+let bbPieces = [];
+let bbSelectedIndex = null;
+let bbClears = 0;
+
+function initBlockBlast() {
+    bbGrid = [];
+    for (let r = 0; r < BB_SIZE; r++) {
+        const row = [];
+        for (let c = 0; c < BB_SIZE; c++) row.push(0);
+        bbGrid.push(row);
+    }
+    bbClears = 0;
+    generatePieces();
+    renderBlockBlast();
+}
+
+function generatePieces() {
+    const shapes = [
+        [[1]],
+        [[1,1]],
+        [[1],[1]],
+        [[1,1],[1,1]]
+    ];
+    bbPieces = [];
+    for (let i = 0; i < 3; i++) {
+        const shape = shapes[Math.floor(Math.random()*shapes.length)];
+        bbPieces.push({ shape, used:false });
+    }
+}
+
+function renderBlockBlast() {
+    const emoji = worlds[currentWorldKey].bbEmoji;
+    bbGridEl.innerHTML = "";
+    for (let r = 0; r < BB_SIZE; r++) {
+        for (let c = 0; c < BB_SIZE; c++) {
+            const cell = document.createElement("div");
+            cell.className = "bb-cell";
+            if (bbGrid[r][c] === 1) {
+                cell.classList.add("filled");
+                cell.textContent = emoji;
+            }
+            cell.addEventListener("click", () => onBBCellClick(r,c));
+            bbGridEl.appendChild(cell);
+        }
+    }
+
+    bbPiecesEl.innerHTML = "";
+    bbPieces.forEach((p, idx) => {
+        const div = document.createElement("div");
+        div.className = "bb-piece";
+        if (bbSelectedIndex === idx) div.classList.add("selected");
+        if (p.used) {
+            div.style.opacity = "0.3";
+        }
+        p.shape.forEach(row => {
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "bb-piece-row";
+            row.forEach(v => {
+                const cell = document.createElement("div");
+                cell.className = "bb-piece-cell";
+                if (!v) cell.style.opacity = "0.1";
+                rowDiv.appendChild(cell);
+            });
+            div.appendChild(rowDiv);
+        });
+        div.addEventListener("click", () => {
+            if (p.used) return;
+            bbSelectedIndex = idx;
+            renderBlockBlast();
+        });
+        bbPiecesEl.appendChild(div);
+    });
+
+    bbInfoEl.textContent = `Clears: ${bbClears}/5 · Place pieces to clear full rows or columns.`;
+}
+
+function canPlacePiece(piece, row, col) {
+    const shape = piece.shape;
+    for (let r = 0; r < shape.length; r++) {
+        for (let c = 0; c < shape[0].length; c++) {
+            if (!shape[r][c]) continue;
+            const rr = row + r;
+            const cc = col + c;
+            if (rr < 0 || rr >= BB_SIZE || cc < 0 || cc >= BB_SIZE) return false;
+            if (bbGrid[rr][cc] === 1) return false;
+        }
+    }
+    return true;
+}
+
+function placePiece(piece, row, col) {
+    const shape = piece.shape;
+    for (let r = 0; r < shape.length; r++) {
+        for (let c = 0; c < shape[0].length; c++) {
+            if (!shape[r][c]) continue;
+            const rr = row + r;
+            const cc = col + c;
+            bbGrid[rr][cc] = 1;
+        }
+    }
+}
+
+function clearLines() {
+    let cleared = 0;
+    for (let r = 0; r < BB_SIZE; r++) {
+        if (bbGrid[r].every(v => v === 1)) {
+            for (let c = 0; c < BB_SIZE; c++) bbGrid[r][c] = 0;
+            cleared++;
+        }
+    }
+    for (let c = 0; c < BB_SIZE; c++) {
+        let full = true;
+        for (let r = 0; r < BB_SIZE; r++) {
+            if (bbGrid[r][c] === 0) { full = false; break; }
+        }
+        if (full) {
+            for (let r = 0; r < BB_SIZE; r++) bbGrid[r][c] = 0;
+            cleared++;
+        }
+    }
+    return cleared;
+}
+
+function onBBCellClick(row, col) {
+    if (bbSelectedIndex === null) return;
+    const piece = bbPieces[bbSelectedIndex];
+    if (piece.used) return;
+    if (!canPlacePiece(piece, row, col)) {
+        bbInfoEl.textContent = "No space there. Try another spot.";
+        return;
+    }
+    placePiece(piece, row, col);
+    piece.used = true;
+    bbSelectedIndex = null;
+    const cleared = clearLines();
+    if (cleared > 0) {
+        bbClears += cleared;
+        bbInfoEl.textContent = `Nice! You cleared ${cleared} line(s).`;
+    }
+    if (bbPieces.every(p => p.used)) {
+        generatePieces();
+    }
+    renderBlockBlast();
+    if (bbClears >= 5) {
+        state.water += 1;
         state.glow += 1;
         if (currentWorldKey === "full") addXP(3);
-        moodEl.textContent = `“Nice splashing! You gained ${gainedWater} water.”`;
-        closeMinigame();
+        moodEl.textContent = "“Block Blast victory! You earned +1 water.”";
         render();
-    }
-});
-
-minigameClose.addEventListener("click", closeMinigame);
-
-/* ---------- EVENTS ---------- */
-btnStart.addEventListener("click", () => {
-    showScreen("screenWorldSelect");
-});
-
-worldButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        setWorld(btn.dataset.world);
-    });
-});
-
-btnWorldContinue.addEventListener("click", () => {
-    showScreen("screenGarden");
-    randomMood();
-    render();
-});
-
-btnWaterGame.addEventListener("click", openMinigame);
-btnCheckSun.addEventListener("click", checkSunFromTimeAway);
-
-/* ---------- VISIBILITY / TIME AWAY ---------- */
-window.addEventListener("beforeunload", () => {
-    localStorage.setItem("gg_lastVisit", String(Date.now()));
-});
-
-document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") {
-        localStorage.setItem("gg_lastVisit", String(Date.now()));
-    }
-});
-
-/* ---------- INIT ---------- */
-function initGarden() {
-    state.garden = [];
-    for (let i = 0; i < GARDEN_SIZE; i++) {
-        state.garden.push({ stage: 0, emoji: "", world: null });
+        closeMinigameOverlay();
     }
 }
 
-function initTime() {
-    const saved = localStorage.getItem("gg_lastVisit");
-    if (saved) {
-        state.lastVisit = parseInt(saved, 10) || Date.now();
+/* ---------- QUICK MATH (YEAR 7) ---------- */
+let qmQuestions = [];
+let qmIndex = 0;
+let qmCorrect = 0;
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generateMathQuestion() {
+    const type = Math.random() < 0.6 ? "addsub" : "mul";
+    if (type === "addsub") {
+        const a = randomInt(5, 30);
+        const b = randomInt(3, 20);
+        if (Math.random() < 0.5) {
+            return { text: `${a} + ${b}`, answer: a + b };
+        } else {
+            const bigger = Math.max(a,b);
+            const smaller = Math.min(a,b);
+            return { text: `${bigger} − ${smaller}`, answer: bigger - smaller };
+        }
     } else {
-        state.lastVisit = Date.now();
-        localStorage.setItem("gg_lastVisit", String(state.lastVisit));
+        const a = randomInt(2, 12);
+        const b = randomInt(2, 9);
+        return { text: `${a} × ${b}`, answer: a * b };
     }
 }
 
-function init() {
-    initGarden();
-    initTime();
-    updateStreak();
-    loadQuests();
-    setWorld("magical");
-    resetParticles();
-    render();
+function initQuickMath() {
+    qmQuestions = [];
+    for (let i = 0; i < 5; i++) {
+        qmQuestions.push(generateMathQuestion());
+    }
+    qmIndex = 0;
+    qmCorrect = 0;
+    qmStatusEl.textContent = "Answer 5 questions. Need at least 4 correct.";
+    showCurrentMathQuestion();
 }
 
-init();
-</script>
+function showCurrentMathQuestion() {
+    if (qmIndex >= qmQuestions.length) {
+        finishQuickMath();
+        return;
+    }
+    const q = qmQuestions[qmIndex];
+    qmQuestionEl.textContent = `Q${qmIndex+1}: ${q.text} = ?`;
+    qmInputEl.value = "";
+    qmInputEl.focus();
+}
 
-</body>
-</html>
+function finishQuickMath() {
+    if (qmCorrect >= 4) {
+        state.water += 1;
+        state.glow += 1;
+        if (currentWorldKey === "full") addXP(3);
+        qmStatusEl.textContent = `You got ${qmCorrect}/5 correct. +1 water!`;
+        moodEl.textContent = "“Smart gardening! You earned +1 water.”";
+        render();
+        setTimeout(() => {
+            closeMinigameOverlay();
+        }, 800);
+    } else {
+        qmStatusEl.textContent = `You got ${qmCorrect}/5 correct. No water this time.`;
+    }
+}
+
+qmSubmitBtn.addEventListener("click", () => {
+    if (qmIndex >= qmQuestions.length) return;
+    const q = qmQuestions[qmIndex];
+    const val = parseInt(qmInputEl.value, 10);
+    if (isNaN(val)) {
+        qmStatusEl.textContent = "Type an answer first.";
+        return;
+    }
+    if (val === q.answer) {
+        qmCorrect++;
+        qmStatusEl.textContent = "Correct!";
+    } else {
+        qmStatusEl.textContent = `Not quite. The answer was ${q.answer}.`;
+    }
+    qmIndex++;
+    setTimeout(() => {
+        showCurrentMathQuestion();
+    }, 400);
+});
+
+/* ---------- FRUIT SLICE MINI-GAME ---------- */
+let fruitInterval = null;
+let fruitSliced = 0;
+let fruitMissed = 0;
+
+function initFruitSlice() {
+    fruitSliced = 0;
+    fruitMissed = 0;
+    fruitSlicedEl.textContent = fruitSliced;
+    fruitMissedEl.textContent = fruitMissed;
+    fruitAreaEl.innerHTML = "";
+    if (fruitInterval) clearInterval(fruitInterval);
+    fruitInterval = setInterval(() => {
+        spawnFruit();
+    }, 800);
+}
+
+function spawnFruit() {
+    const fruit = document.createElement("div");
+    fruit.textContent = "🍉";
+    fruit.style.position = "absolute";
+    fruit.style.left = Math.random() * 80 + "%";
+    fruit.style.top = "-40px";
+    fruit.style.fontSize = "28px";
+    fruit.style.cursor = "pointer";
+    fruit.style.transition = "top 1.2s linear";
+
+    fruit.addEventListener("click", () => {
+        fruit.remove();
+        fruitSliced++;
+        fruitSlicedEl.textContent = fruitSliced;
+        checkFruitWin();
+    });
+
+    fruitAreaEl.appendChild(fruit);
+
+    setTimeout(() => {
+        if (document.body.contains(fruit)) {
+            fruit.style.top = "220px";
+            setTimeout(() => {
+                if (document.body.contains(fruit)) {
+                    fruit.remove();
+                    fruitMissed++;
+                    fruitMissedEl.textContent = fruitMissed;
+                    checkFruitLose();
+                }
+            }, 1200);
+        }
+    }, 50);
+}
+
+function checkFruitWin() {
+    if (fruitSliced >= 10) {
+        stopFruitSlice();
+        state.water += 1;
+        state.glow += 1;
+        if (currentWorldKey === "full") addXP(3);
+        moodEl.textContent = "“Fruit Slice victory! +1 water.”";
+        render();
+        closeMinigameOverlay();
+    }
+}
+
+function checkFruitLose()
+
+
+
+  
+        
 
 
