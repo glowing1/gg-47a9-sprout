@@ -1,1049 +1,1537 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>GlowGarden v3</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>GlowGarden v3 — Offline Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
+  <style>
     :root {
-        --bg-main: radial-gradient(circle at top, #ffe6ff, #1b1230);
-        --card-bg: rgba(20, 12, 40, 0.9);
-        --accent: #ffb3ff;
+      --bg-main: #050814;
+      --text-main: #fdfcff;
+      --accent: #ffb3ff;
+      --card-bg: rgba(10, 12, 30, 0.9);
+      --border-soft: rgba(255, 255, 255, 0.12);
+
+      /* Tile sizes per world */
+      --tile-size-cute: 120px;
+      --tile-size-magical: 160px;
+      --tile-size-cosmic: 160px;
+      --tile-size-full: 80px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-        margin: 0;
-        background: var(--bg-main);
-        font-family: system-ui, sans-serif;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1b1f3b 0, #050814 55%, #02030a 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
     }
 
-    #game {
-        width: 430px;
-        max-width: 95vw;
-        background: var(--card-bg);
-        padding: 18px;
-        border-radius: 20px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        text-align: center;
+    #app {
+      width: 100%;
+      max-width: 1100px;
+      margin: 16px;
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(10, 12, 30, 0.96), rgba(5, 7, 20, 0.98));
+      box-shadow:
+        0 0 40px rgba(0, 0, 0, 0.7),
+        0 0 80px rgba(120, 80, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    h1 {
-        margin: 0 0 6px;
-        font-size: 26px;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-soft);
     }
 
-    .subtitle {
-        font-size: 13px;
-        opacity: 0.8;
-        margin-bottom: 10px;
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title-block h1 {
+      font-size: 1.4rem;
+      letter-spacing: 0.04em;
+    }
+
+    .title-block span {
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
 
     .stats {
-        margin: 8px 0;
-        font-size: 13px;
-        line-height: 1.4;
+      display: flex;
+      gap: 8px;
+      font-size: 0.8rem;
+      opacity: 0.9;
     }
 
-    .row {
-        display: flex;
-        gap: 6px;
-        margin: 6px 0;
+    .stat-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 55%);
     }
 
-    button {
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: none;
-        background: var(--accent);
-        color: #1b1230;
-        font-weight: 600;
-        cursor: pointer;
-        font-size: 12px;
-        flex: 1;
-    }
+    /* World selector */
 
-    button.small {
-        padding: 6px 8px;
-        font-size: 11px;
-    }
-
-    button:active {
-        transform: translateY(1px) scale(0.98);
-    }
-
-    /* World select */
-    #worldRow {
-        display: flex;
-        gap: 6px;
-        margin-bottom: 8px;
+    .world-selector {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
     }
 
     .world-btn {
-        flex: 1;
-        padding: 6px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: rgba(255,255,255,0.06);
-        color: #ffeefe;
-        font-size: 11px;
-        cursor: pointer;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(10, 12, 30, 0.9);
+      color: var(--text-main);
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .world-btn span {
+      font-size: 0.9rem;
     }
 
     .world-btn.active {
-        background: rgba(255,255,255,0.2);
-        border-color: var(--accent);
+      background: radial-gradient(circle at top left, #ffb3ff 0, #7b5cff 40%, #1b1f3b 100%);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 12px rgba(123, 92, 255, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .world-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Layout */
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.2fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel h2 {
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* Garden area */
+
+    .garden-wrapper {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: radial-gradient(circle at top, #15182c 0, #050814 60%, #02030a 100%);
+      min-height: 260px;
+    }
+
+    /* World backgrounds */
+
+    .garden-wrapper.cute-bg {
+      background:
+        radial-gradient(circle at top left, rgba(255, 200, 255, 0.45), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(180, 240, 255, 0.45), transparent 55%),
+        linear-gradient(145deg, #ffefff 0, #ffe9ff 20%, #e0f5ff 60%, #fdfbff 100%);
+    }
+
+    .garden-wrapper.magical-bg {
+      background:
+        radial-gradient(circle at top, rgba(140, 120, 255, 0.7), transparent 60%),
+        radial-gradient(circle at bottom, rgba(255, 180, 255, 0.5), transparent 60%),
+        linear-gradient(160deg, #0b0420 0, #1b0b3a 40%, #2b0f4f 100%);
+    }
+
+    .garden-wrapper.cosmic-bg {
+      background:
+        radial-gradient(circle at top, rgba(120, 160, 255, 0.7), transparent 60%),
+        radial-gradient(circle at bottom, rgba(80, 20, 140, 0.7), transparent 60%),
+        linear-gradient(160deg, #020314 0, #050826 40%, #090b3a 100%);
+    }
+
+    .garden-wrapper.full-bg {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #0b1f0b,
+          #0b1f0b 2px,
+          #071707 2px,
+          #071707 4px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          #0b1f0b,
+          #0b1f0b 2px,
+          #071707 2px,
+          #071707 4px
+        );
     }
 
     /* Garden grid */
-    #garden {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin: 10px 0;
+
+    .garden-grid {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      gap: 6px;
+      justify-content: center;
+      align-content: center;
     }
 
-    .plot {
-        width: 100%;
-        height: 140px;
-        border-radius: 12px;
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
+    /* Tile size classes (JS will toggle these on the wrapper) */
+
+    .garden-wrapper.size-cute .garden-grid {
+      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-cute), 1fr));
     }
 
-    .plot.empty {
-        opacity: 0.7;
+    .garden-wrapper.size-magical .garden-grid {
+      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-magical), 1fr));
     }
 
-    .plant {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 100px;
-        height: 100px;
-        transform: translateX(-50%);
-        background-size: cover;
-        animation: grow 0.6s ease forwards;
+    .garden-wrapper.size-cosmic .garden-grid {
+      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-cosmic), 1fr));
     }
 
-    @keyframes grow {
-        from { transform: translateX(-50%) scale(0.2); opacity: 0; }
-        to   { transform: translateX(-50%) scale(1); opacity: 1; }
+    .garden-wrapper.size-full .garden-grid {
+      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-full), 1fr));
     }
 
-    /* Task box */
-    #taskBox {
-        background: rgba(255,255,255,0.08);
-        padding: 8px;
-        border-radius: 10px;
-        margin-top: 8px;
-        font-size: 12px;
-        text-align: left;
+    .garden-tile {
+      position: relative;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.35));
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s, background 0.12s;
     }
 
-    #taskBox b {
-        font-size: 12px;
+    .garden-tile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.4);
     }
 
-    /* Upgrades */
-    #upgrades {
-        margin-top: 8px;
-        background: rgba(0,0,0,0.25);
-        padding: 8px;
-        border-radius: 10px;
-        font-size: 12px;
-        text-align: left;
+    .plant-sprite {
+      max-width: 100%;
+      max-height: 100%;
+      image-rendering: auto;
+      pointer-events: none;
     }
 
-    #upgrades h3 {
-        margin: 0 0 4px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        opacity: 0.8;
+    /* Crisp pixel art for Full world */
+    .garden-wrapper.full-bg .plant-sprite {
+      image-rendering: pixelated;
     }
 
-    /* Mini‑game overlay */
-    #overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 10;
+    /* Smooth scaling for others */
+    .garden-wrapper.cute-bg .plant-sprite,
+    .garden-wrapper.magical-bg .plant-sprite,
+    .garden-wrapper.cosmic-bg .plant-sprite {
+      image-rendering: auto;
     }
 
-    #miniGame {
-        background: #241533;
-        padding: 16px;
-        border-radius: 16px;
-        width: 360px;
-        max-width: 95vw;
-        text-align: center;
-        box-shadow: 0 0 20px rgba(0,0,0,0.6);
-        font-size: 12px;
+    /* Animation keyframes */
+
+    @keyframes cuteGrowBounce {
+      0% { transform: scale(0.6) translateY(6px); opacity: 0; }
+      60% { transform: scale(1.08) translateY(-2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
     }
 
-    #miniTabs {
-        display: flex;
-        gap: 4px;
-        margin-bottom: 8px;
+    @keyframes magicalGlowPulse {
+      0% { transform: translateY(0); filter: drop-shadow(0 0 4px rgba(200, 160, 255, 0.7)); }
+      50% { transform: translateY(-3px); filter: drop-shadow(0 0 12px rgba(255, 210, 255, 0.95)); }
+      100% { transform: translateY(0); filter: drop-shadow(0 0 4px rgba(200, 160, 255, 0.7)); }
     }
 
-    .mini-tab {
-        flex: 1;
-        padding: 4px 6px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: rgba(255,255,255,0.06);
-        color: #ffeefe;
-        cursor: pointer;
-        font-size: 11px;
+    @keyframes cosmicSwirl {
+      0% { transform: scale(0.98) rotate(0deg); opacity: 0.9; }
+      50% { transform: scale(1.03) rotate(3deg); opacity: 1; }
+      100% { transform: scale(0.98) rotate(0deg); opacity: 0.9; }
     }
 
-    .mini-tab.active {
-        background: rgba(255,255,255,0.2);
-        border-color: var(--accent);
+    @keyframes pixelPop {
+      0% { transform: scale(0.4); opacity: 0; }
+      70% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    .mini-panel {
-        display: none;
+    /* Animation utility classes (JS will add/remove these) */
+
+    .anim-cute-grow {
+      animation: cuteGrowBounce 0.5s ease-out;
     }
 
-    .mini-panel.active {
-        display: block;
+    .anim-magical-grow {
+      animation: cuteGrowBounce 1.2s ease-out;
     }
 
-    canvas {
-        background: rgba(255,255,255,0.1);
-        border-radius: 10px;
-        margin-bottom: 8px;
+    .anim-cosmic-grow {
+      animation: cuteGrowBounce 1s ease-out;
     }
 
-    #msg {
-        font-size: 12px;
-        opacity: 0.85;
-        min-height: 16px;
-        margin-top: 4px;
+    .anim-full-grow {
+      animation: pixelPop 0.3s steps(4, end);
     }
 
-    /* Block Blast */
-    #bbGrid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 2px;
-        margin: 6px 0;
-    }
-    .bb-cell {
-        width: 26px;
-        height: 26px;
-        border-radius: 4px;
-        background: rgba(255,255,255,0.05);
-        cursor: pointer;
-    }
-    .bb-cell.filled {
-        background: rgba(255,255,255,0.8);
+    .anim-magical-idle {
+      animation: magicalGlowPulse 1.2s ease-in-out infinite;
     }
 
-    /* Word Garden */
-    #wgWord {
-        font-size: 16px;
-        margin: 6px 0;
-        letter-spacing: 0.15em;
-    }
-    #wgInput {
-        width: 70%;
-        padding: 4px;
-        border-radius: 8px;
-        border: none;
-        text-align: center;
-        margin-bottom: 4px;
+    .anim-cosmic-idle {
+      animation: cosmicSwirl 1s ease-in-out infinite;
     }
 
-    /* Memory Match */
-    #mmGrid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 4px;
-        margin-top: 6px;
+    /* Right panel (tasks, upgrades, mini-games) */
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
     }
-    .mm-card {
-        height: 40px;
-        border-radius: 6px;
-        background: rgba(255,255,255,0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 20px;
+
+    .section-header span {
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
-    .mm-card.revealed {
-        background: rgba(255,255,255,0.8);
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
     }
-</style>
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 18, 40, 0.9);
+      opacity: 0.9;
+    }
+
+    .mini-game-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .mini-game-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.6));
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .mini-game-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 10px rgba(123, 92, 255, 0.6);
+    }
+
+    .mini-game-btn span.label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-game-btn span.meta {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+
+    /* Mini-game overlay */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(10, 8, 30, 0.96), rgba(0, 0, 0, 0.98));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .overlay-inner {
+      width: min(100% - 24px, 900px);
+      height: min(100% - 24px, 620px);
+      border-radius: 16px;
+      background: linear-gradient(145deg, #050814, #0b0f24);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 0 40px rgba(0, 0, 0, 0.8),
+        0 0 80px rgba(120, 80, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .overlay-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .overlay-header h3 {
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .overlay-close {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(10, 12, 30, 0.9);
+      color: var(--text-main);
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+
+    .overlay-close:hover {
+      background: radial-gradient(circle at top left, #ffb3ff 0, #7b5cff 40%, #1b1f3b 100%);
+      box-shadow: 0 0 10px rgba(123, 92, 255, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .overlay-body {
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    /* Placeholder mini-game canvas/area */
+    .mini-game-area {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+  </style>
 </head>
-
 <body>
-<div id="game">
-    <h1>GlowGarden</h1>
-    <div class="subtitle">Grow your animated garden by living your life.</div>
+  <div id="app">
+    <header>
+      <div class="title-block">
+        <h1>GlowGarden v3 — Offline</h1>
+        <span>Grow worlds, play mini‑games, and keep your plants glowing — even with no internet.</span>
+      </div>
+      <div class="stats">
+        <div class="stat-pill" id="stat-streak">Streak: 0 days</div>
+        <div class="stat-pill" id="stat-plants">Plants: 0</div>
+        <div class="stat-pill" id="stat-world">World: Cute</div>
+      </div>
+    </header>
 
-    <div id="worldRow">
-        <button class="world-btn active" data-world="magical">🌸 Magical</button>
-        <button class="world-btn" data-world="cute">🐾 Cute</button>
-        <button class="world-btn" data-world="cosmic">🌌 Cosmic</button>
-        <button class="world-btn" data-world="full">🎮 Full</button>
+    <div class="world-selector" id="world-selector">
+      <button class="world-btn active" data-world="cute">
+        <span>🌸</span><span>Cute</span>
+      </button>
+      <button class="world-btn" data-world="magical">
+        <span>✨</span><span>Magical</span>
+      </button>
+      <button class="world-btn" data-world="cosmic">
+        <span>🌌</span><span>Cosmic</span>
+      </button>
+      <button class="world-btn" data-world="full">
+        <span>🎮</span><span>Full</span>
+      </button>
     </div>
 
-    <div class="stats">
-        World: <span id="worldName">Magical</span><br>
-        Water: <span id="water">0</span> • Glow: <span id="glow">0</span> • Sun: <span id="sun">0</span><br>
-        Streak: <span id="streak">0</span> days
-    </div>
+    <div class="main-layout">
+      <!-- Left: Garden -->
+      <section class="panel">
+        <h2>Garden</h2>
+        <div
+          class="garden-wrapper cute-bg size-cute"
+          id="garden-wrapper"
+          data-world="cute"
+        >
+          <div class="garden-grid" id="garden-grid">
+            <!-- Tiles will be injected by JS in later chunks -->
+          </div>
+        </div>
+      </section>
 
-    <div id="garden"></div>
-
-    <div class="row">
-        <button id="playGame">💧 Mini‑games for Water</button>
-        <button id="collectSun">☀️ Collect Sun</button>
-    </div>
-
-    <div id="upgrades">
-        <h3>Upgrades</h3>
-        <div id="upgradeText"></div>
-        <button id="buyUpgrade" class="small">Buy Upgrade</button>
-    </div>
-
-    <div id="taskBox">
-        <b>Task:</b> <span id="taskText"></span><br>
-        <button id="completeTask" class="small">Complete Task</button>
-    </div>
-
-    <div id="msg"></div>
-</div>
-
-<!-- Mini‑game overlay -->
-<div id="overlay">
-    <div id="miniGame">
-        <div id="miniTabs">
-            <button class="mini-tab active" data-mini="flappy">🐦 Flappy</button>
-            <button class="mini-tab" data-mini="block">🧱 Block</button>
-            <button class="mini-tab" data-mini="word">🌱 Word</button>
-            <button class="mini-tab" data-mini="memory">🧠 Memory</button>
+      <!-- Right: Tasks, upgrades, mini-games -->
+      <section class="panel">
+        <div class="section-header">
+          <h2>Today</h2>
+          <span id="today-label">Welcome back</span>
         </div>
 
-        <!-- Flappy -->
-        <div id="panel-flappy" class="mini-panel active">
-            <p>Tap to keep the bird flying through gaps. Pass 8 pipes to earn +1 water.</p>
-            <canvas id="flappy" width="300" height="200"></canvas><br>
+        <div class="pill-row" id="task-pills">
+          <div class="pill">Water 3 plants</div>
+          <div class="pill">Play 1 mini‑game</div>
+          <div class="pill">Visit 2 worlds</div>
         </div>
 
-        <!-- Block Blast -->
-        <div id="panel-block" class="mini-panel">
-            <p>Click cells to fill them. Clear full rows or columns. Clear 5 lines to earn +1 water.</p>
-            <div id="bbGrid"></div>
-            <div id="bbInfo"></div>
+        <div class="section-header" style="margin-top: 8px;">
+          <h2>Mini‑games</h2>
+          <span>Earn boosts while you play</span>
         </div>
 
-        <!-- Word Garden -->
-        <div id="panel-word" class="mini-panel">
-            <p>Unscramble the word. Get 3 correct to earn +1 water.</p>
-            <div id="wgWord"></div>
-            <input id="wgInput" type="text" autocomplete="off">
-            <button id="wgSubmit" class="small">Guess</button>
-            <div id="wgInfo"></div>
+        <div class="mini-game-list">
+          <button class="mini-game-btn" data-game="flappy">
+            <span class="label">🐦 Flappy Sprout</span>
+            <span class="meta">Quick reflex boost</span>
+          </button>
+          <button class="mini-game-btn" data-game="blocks">
+            <span class="label">🧱 Block Bloom</span>
+            <span class="meta">Strategic growth boost</span>
+          </button>
+          <button class="mini-game-btn" data-game="words">
+            <span class="label">🔤 Word Garden</span>
+            <span class="meta">Focus & calm boost</span>
+          </button>
+          <button class="mini-game-btn" data-game="memory">
+            <span class="label">🧠 Memory Petals</span>
+            <span class="meta">Memory & recall boost</span>
+          </button>
         </div>
-
-        <!-- Memory Match -->
-        <div id="panel-memory" class="mini-panel">
-            <p>Flip cards to find all pairs. Match all pairs to earn +1 water.</p>
-            <div id="mmGrid"></div>
-            <div id="mmInfo"></div>
-        </div>
-
-        <button id="closeGame" class="small">Close</button>
+      </section>
     </div>
-</div>
 
-<script>
-/* -------------------------
-   WORLDS
---------------------------*/
-const worlds = {
-    magical: {
-        name: "Magical",
-        bg: "radial-gradient(circle at top, #ffe6ff, #2b1040)",
-        cardBg: "rgba(30, 10, 60, 0.9)",
-        accent: "#ffb3ff"
-    },
-    cute: {
-        name: "Cute",
-        bg: "radial-gradient(circle at top, #ffe9d6, #40203a)",
-        cardBg: "rgba(50, 20, 50, 0.9)",
-        accent: "#ffcfdf"
-    },
-    cosmic: {
-        name: "Cosmic",
-        bg: "radial-gradient(circle at top, #d0e6ff, #050816)",
-        cardBg: "rgba(8, 10, 40, 0.9)",
-        accent: "#7bd5ff"
-    },
-    full: {
-        name: "Full Game",
-        bg: "radial-gradient(circle at top, #ffe6ff, #101820)",
-        cardBg: "rgba(15, 15, 35, 0.95)",
-        accent: "#ffdd88"
-    }
-};
+    <!-- Mini-game overlay -->
+    <div class="overlay" id="mini-game-overlay">
+      <div class="overlay-inner">
+        <div class="overlay-header">
+          <h3 id="mini-game-title">Mini‑game</h3>
+          <button class="overlay-close" id="mini-game-close">
+            <span>✖</span><span>Close</span>
+          </button>
+        </div>
+        <div class="overlay-body">
+          <div class="mini-game-area" id="mini-game-area">
+            Mini‑game will load here (Chunk 5).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-const worldGardenBG = {
-    magical: "rgba(255, 200, 255, 0.15)",
-    cute: "rgba(255, 220, 240, 0.15)",
-    cosmic: "rgba(180, 220, 255, 0.15)",
-    full: "rgba(255, 255, 200, 0.15)"
-};
+  <!-- JS will be added in later chunks -->
+  <script>
+    // Minimal JS here ONLY to ensure Cute world is clickable and not blocked.
+    // Full logic (world switching, sprites, growth, mini-games) comes in later chunks.
 
-const plantSprites = {
-    magical: [
-        "https://i.imgur.com/3QeQZ8S.png",
-        "https://i.imgur.com/8m4uV1w.png",
-        "https://i.imgur.com/0h8xk4U.png",
-        "https://i.imgur.com/6Yx0x5F.png"
-    ],
-    cute: [
-        "https://i.imgur.com/8uQ2j4b.png",
-        "https://i.imgur.com/2x1z7QK.png",
-        "https://i.imgur.com/5z0p8mF.png",
-        "https://i.imgur.com/1m8Q4sP.png"
-    ],
-    cosmic: [
-        "https://i.imgur.com/4gY8x0R.png",
-        "https://i.imgur.com/7pQ2t8C.png",
-        "https://i.imgur.com/9dZ4k1L.png",
-        "https://i.imgur.com/0sP9m8T.png"
-    ],
-    full: [
-        "https://i.imgur.com/6tP0x9Q.png",
-        "https://i.imgur.com/3bL8z2N.png",
-        "https://i.imgur.com/7fQ1p5B.png",
-        "https://i.imgur.com/2mP4x8S.png"
-    ]
-};
+    document.addEventListener("DOMContentLoaded", () => {
+      const worldButtons = Array.from(document.querySelectorAll(".world-btn"));
+      const gardenWrapper = document.getElementById("garden-wrapper");
+      const statWorld = document.getElementById("stat-world");
 
-let currentWorld = "magical";
+      function applyWorldClasses(worldKey) {
+        gardenWrapper.classList.remove("cute-bg", "magical-bg", "cosmic-bg", "full-bg");
+        gardenWrapper.classList.remove("size-cute", "size-magical", "size-cosmic", "size-full");
 
-/* -------------------------
-   STATE
---------------------------*/
-let water = 0;
-let glow = 0;
-let sun = 0;
-let streak = 0;
-let lastVisit = Date.now();
-let lastDayKey = null;
-let upgradeBought = false;
-
-let gardenSize = 9;
-let garden = [];
-
-/* -------------------------
-   INIT GARDEN
---------------------------*/
-function initGarden() {
-    garden = [];
-    for (let i = 0; i < gardenSize; i++) {
-        garden.push({ stage: 0, world: currentWorld });
-    }
-}
-
-/* -------------------------
-   TASKS
---------------------------*/
-const tasks = [
-    "Take a 5‑minute break",
-    "Drink a glass of water",
-    "Do homework for 10 minutes",
-    "Stretch for 2 minutes",
-    "Clean your desk",
-    "Read for 5 minutes"
-];
-
-function newTask() {
-    const t = tasks[Math.floor(Math.random() * tasks.length)];
-    document.getElementById("taskText").textContent = t;
-}
-
-/* -------------------------
-   STREAK + TIME AWAY SUN
---------------------------*/
-function todayKey() {
-    const d = new Date();
-    return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
-}
-
-function loadTimeData() {
-    const savedLast = localStorage.getItem("ggv3_lastVisit");
-    const savedDay = localStorage.getItem("ggv3_lastDay");
-    const savedStreak = localStorage.getItem("ggv3_streak");
-
-    if (savedLast) lastVisit = parseInt(savedLast, 10) || Date.now();
-    if (savedDay) lastDayKey = savedDay;
-    if (savedStreak) streak = parseInt(savedStreak, 10) || 0;
-
-    const today = todayKey();
-    if (!lastDayKey) {
-        streak = 1;
-    } else {
-        const [y,m,d] = lastDayKey.split("-").map(Number);
-        const prev = new Date(y, m-1, d);
-        const now = new Date();
-        const diff = Math.floor((now - prev) / (1000*60*60*24));
-        if (diff === 1) streak++;
-        else if (diff > 1) streak = 1;
-    }
-    lastDayKey = today;
-    localStorage.setItem("ggv3_lastDay", today);
-    localStorage.setItem("ggv3_streak", String(streak));
-}
-
-function collectSunFromTimeAway() {
-    const now = Date.now();
-    const diffMs = now - lastVisit;
-    const minutes = Math.floor(diffMs / 60000);
-    if (minutes <= 0) {
-        setMsg("You just checked in. Try again later.");
-        return;
-    }
-    const gained = Math.min(10, Math.floor(minutes / 3));
-    if (gained <= 0) {
-        setMsg("Not enough time away yet.");
-        return;
-    }
-    sun += gained;
-    glow += Math.floor(gained / 2);
-    setMsg(`You were away ${minutes} minutes. Collected ${gained} sun.`);
-    lastVisit = now;
-    localStorage.setItem("ggv3_lastVisit", String(now));
-    updateStats();
-}
-
-/* -------------------------
-   RENDER GARDEN
---------------------------*/
-function renderGarden() {
-    const g = document.getElementById("garden");
-    g.innerHTML = "";
-    garden.forEach((plot, i) => {
-        const div = document.createElement("div");
-        div.className = "plot";
-        div.style.background = worldGardenBG[currentWorld];
-        if (plot.stage === 0) div.classList.add("empty");
-
-        if (plot.stage > 0) {
-            const img = document.createElement("div");
-            img.className = "plant";
-            const w = plot.world || currentWorld;
-            img.style.backgroundImage = `url(${plantSprites[w][plot.stage - 1]})`;
-            div.appendChild(img);
+        if (worldKey === "cute") {
+          gardenWrapper.classList.add("cute-bg", "size-cute");
+        } else if (worldKey === "magical") {
+          gardenWrapper.classList.add("magical-bg", "size-magical");
+        } else if (worldKey === "cosmic") {
+          gardenWrapper.classList.add("cosmic-bg", "size-cosmic");
+        } else if (worldKey === "full") {
+          gardenWrapper.classList.add("full-bg", "size-full");
         }
 
-        div.addEventListener("click", () => growPlant(i));
-        g.appendChild(div);
+        gardenWrapper.dataset.world = worldKey;
+        statWorld.textContent = "World: " + worldKey.charAt(0).toUpperCase() + worldKey.slice(1);
+      }
+
+      worldButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.world;
+          worldButtons.forEach(b => b.classList.toggle("active", b === btn));
+          applyWorldClasses(key);
+          // Garden content will be updated in later chunks.
+        });
+      });
+
+      // Ensure Cute world is accessible on load
+      applyWorldClasses("cute");
     });
-}
-
-function growPlant(i) {
-    if (garden[i].stage >= 4) return;
-    if (water <= 0) {
-        setMsg("You need water to grow a plant.");
-        return;
-    }
-    water -= 1;
-    glow += 1;
-    garden[i].stage++;
-    garden[i].world = garden[i].world || currentWorld;
-    updateStats();
-    renderGarden();
-}
-
-function updateStats() {
-    document.getElementById("water").textContent = water;
-    document.getElementById("glow").textContent = glow;
-    document.getElementById("sun").textContent = sun;
-    document.getElementById("streak").textContent = streak;
-}
-
-function setMsg(text) {
-    document.getElementById("msg").textContent = text;
-}
-
-/* -------------------------
-   WORLD SWITCH
---------------------------*/
-const worldButtons = document.querySelectorAll(".world-btn");
-const worldNameEl = document.getElementById("worldName");
-
-function setWorld(key) {
-    currentWorld = key;
-    const w = worlds[key];
-
-    document.documentElement.style.setProperty("--bg-main", w.bg);
-    document.documentElement.style.setProperty("--card-bg", w.cardBg);
-    document.documentElement.style.setProperty("--accent", w.accent);
-
-    worldButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.world === key);
-    });
-
-    worldNameEl.textContent = w.name;
-    renderUpgrade();
-    renderGarden();
-}
-
-/* -------------------------
-   UPGRADES (WORLD‑SPECIFIC)
---------------------------*/
-const upgradeTextEl = document.getElementById("upgradeText");
-const buyUpgradeBtn = document.getElementById("buyUpgrade");
-
-const worldUpgrades = {
-    magical: {
-        cost: 10,
-        text: "Magical Upgrade: +3 extra plots",
-        effect() {
-            gardenSize += 3;
-            initGarden();
-            renderGarden();
-        }
-    },
-    cute: {
-        cost: 10,
-        text: "Cute Upgrade: Plants grow +1 stage instantly",
-        effect() {
-            garden.forEach(p => {
-                if (p.stage > 0 && p.stage < 4) p.stage++;
-            });
-            renderGarden();
-        }
-    },
-    cosmic: {
-        cost: 10,
-        text: "Cosmic Upgrade: +5 sun",
-        effect() {
-            sun += 5;
-            updateStats();
-        }
-    },
-    full: {
-        cost: 15,
-        text: "Full Upgrade: +2 water +2 glow",
-        effect() {
-            water += 2;
-            glow += 2;
-            updateStats();
-        }
-    }
-};
-
-function renderUpgrade() {
-    const up = worldUpgrades[currentWorld];
-    upgradeTextEl.textContent = up.text + ` (Cost: ${up.cost} glow)`;
-    buyUpgradeBtn.disabled = upgradeBought || glow < up.cost;
-    buyUpgradeBtn.textContent = upgradeBought ? "Unlocked" : "Buy Upgrade";
-}
-
-buyUpgradeBtn.addEventListener("click", () => {
-    const up = worldUpgrades[currentWorld];
-    if (upgradeBought || glow < up.cost) return;
-
-    glow -= up.cost;
-    upgradeBought = true;
-    up.effect();
-    updateStats();
-    renderUpgrade();
-    setMsg("Upgrade unlocked!");
-});
-
-/* -------------------------
-   TASK COMPLETION
---------------------------*/
-document.getElementById("completeTask").onclick = () => {
-    glow += 2;
-    updateStats();
-    newTask();
-    setMsg("Nice! You earned glow and got a new task.");
-};
-
-/* -------------------------
-   MINI‑GAME HUB
---------------------------*/
-const overlay = document.getElementById("overlay");
-const miniTabs = document.querySelectorAll(".mini-tab");
-const miniPanels = {
-    flappy: document.getElementById("panel-flappy"),
-    block: document.getElementById("panel-block"),
-    word: document.getElementById("panel-word"),
-    memory: document.getElementById("panel-memory")
-};
-
-function openMiniGames() {
-    overlay.style.display = "flex";
-    switchMini("flappy");
-    startFlappy();
-}
-
-function closeMiniGames() {
-    overlay.style.display = "none";
-    stopFlappy();
-}
-
-function switchMini(key) {
-    miniTabs.forEach(t => t.classList.toggle("active", t.dataset.mini === key));
-    Object.keys(miniPanels).forEach(k => {
-        miniPanels[k].classList.toggle("active", k === key);
-    });
-
-    if (key === "flappy") {
-        startFlappy();
-    } else {
-        stopFlappy();
-        if (key === "block") initBlockBlast();
-        if (key === "word") initWordGarden();
-        if (key === "memory") initMemoryMatch();
-    }
-}
-
-miniTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-        switchMini(tab.dataset.mini);
-    });
-});
-
-/* -------------------------
-   FLAPPY (CANVAS)
---------------------------*/
-const canvas = document.getElementById("flappy");
-const ctx = canvas.getContext("2d");
-
-let birdY, velocity, pipes, score, gameLoop;
-
-function startFlappy() {
-    birdY = 100;
-    velocity = 0;
-    pipes = [];
-    score = 0;
-
-    canvas.onclick = () => velocity = -5;
-
-    if (gameLoop) clearInterval(gameLoop);
-    gameLoop = setInterval(updateFlappy, 30);
-}
-
-function stopFlappy() {
-    if (gameLoop) clearInterval(gameLoop);
-    gameLoop = null;
-}
-
-function updateFlappy() {
-    ctx.clearRect(0,0,300,200);
-
-    velocity += 0.4;
-    birdY += velocity;
-
-    ctx.fillStyle = "yellow";
-    ctx.beginPath();
-    ctx.arc(50, birdY, 10, 0, Math.PI*2);
-    ctx.fill();
-
-    if (Math.random() < 0.03) {
-        const gap = 60;
-        const top = Math.random() * 100;
-        pipes.push({ x: 300, top, bottom: top + gap });
-    }
-
-    pipes.forEach(p => {
-        p.x -= 3;
-
-        ctx.fillStyle = "white";
-        ctx.fillRect(p.x, 0, 30, p.top);
-        ctx.fillRect(p.x, p.bottom, 30, 200 - p.bottom);
-
-        if (p.x === 50) score++;
-
-        if (p.x < 80 && p.x > 20) {
-            if (birdY < p.top || birdY > p.bottom) gameOverFlappy(false);
-        }
-    });
-
-    pipes = pipes.filter(p => p.x > -30);
-
-    if (birdY > 200 || birdY < 0) gameOverFlappy(false);
-
-    if (score >= 8) gameOverFlappy(true);
-}
-
-function gameOverFlappy(win) {
-    stopFlappy();
-
-    if (win) {
-        water += 1;
-        updateStats();
-        alert("You earned +1 water!");
-    } else {
-        alert("You crashed!");
-    }
-}
-
-/* -------------------------
-   BLOCK BLAST
---------------------------*/
-const bbGridEl = document.getElementById("bbGrid");
-const bbInfoEl = document.getElementById("bbInfo");
-let bbGrid = [];
-let bbClears = 0;
-
-function initBlockBlast() {
-    bbGrid = [];
-    for (let r = 0; r < 5; r++) {
-        const row = [];
-        for (let c = 0; c < 5; c++) row.push(0);
-        bbGrid.push(row);
-    }
-    bbClears = 0;
-    renderBlockBlast();
-}
-
-function renderBlockBlast() {
-    bbGridEl.innerHTML = "";
-    for (let r = 0; r < 5; r++) {
-        for (let c = 0; c < 5; c++) {
-            const cell = document.createElement("div");
-            cell.className = "bb-cell";
-            if (bbGrid[r][c] === 1) cell.classList.add("filled");
-            cell.addEventListener("click", () => toggleBBCell(r,c));
-            bbGridEl.appendChild(cell);
-        }
-    }
-    bbInfoEl.textContent = `Lines cleared: ${bbClears}/5`;
-}
-
-function toggleBBCell(r,c) {
-    bbGrid[r][c] = bbGrid[r][c] ? 0 : 1;
-    const cleared = clearBBLines();
-    if (cleared > 0) {
-        bbClears += cleared;
-    }
-    renderBlockBlast();
-    if (bbClears >= 5) {
-        water += 1;
-        glow += 1;
-        updateStats();
-        alert("Block Blast win! +1 water.");
-        overlay.style.display = "none";
-    }
-}
-
-function clearBBLines() {
-    let cleared = 0;
-    for (let r = 0; r < 5; r++) {
-        if (bbGrid[r].every(v => v === 1)) {
-            for (let c = 0; c < 5; c++) bbGrid[r][c] = 0;
-            cleared++;
-        }
-    }
-    for (let c = 0; c < 5; c++) {
-        let full = true;
-        for (let r = 0; r < 5; r++) {
-            if (bbGrid[r][c] === 0) { full = false; break; }
-        }
-        if (full) {
-            for (let r = 0; r < 5; r++) bbGrid[r][c] = 0;
-            cleared++;
-        }
-    }
-    return cleared;
-}
-
-/* -------------------------
-   WORD GARDEN
---------------------------*/
-const wgWords = ["GARDEN","FLOWER","MAGIC","COSMIC","PETAL","SUNLIGHT"];
-let wgCurrent = "";
-let wgCorrect = 0;
-
-const wgWordEl = document.getElementById("wgWord");
-const wgInputEl = document.getElementById("wgInput");
-const wgInfoEl = document.getElementById("wgInfo");
-const wgSubmitBtn = document.getElementById("wgSubmit");
-
-function shuffleWord(word) {
-    const arr = word.split("");
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i+1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr.join("");
-}
-
-function initWordGarden() {
-    wgCorrect = 0;
-    nextWordGarden();
-    wgInfoEl.textContent = "Solve 3 words to earn +1 water.";
-}
-
-function nextWordGarden() {
-    wgCurrent = wgWords[Math.floor(Math.random()*wgWords.length)];
-    wgWordEl.textContent = shuffleWord(wgCurrent);
-    wgInputEl.value = "";
-    wgInputEl.focus();
-}
-
-wgSubmitBtn.addEventListener("click", () => {
-    const guess = wgInputEl.value.trim().toUpperCase();
-    if (!guess) return;
-    if (guess === wgCurrent) {
-        wgCorrect++;
-        wgInfoEl.textContent = `Correct! (${wgCorrect}/3)`;
-        if (wgCorrect >= 3) {
-            water += 1;
-            glow += 1;
-            updateStats();
-            alert("Word Garden win! +1 water.");
-            overlay.style.display = "none";
-        } else {
-            nextWordGarden();
-        }
-    } else {
-        wgInfoEl.textContent = "Not quite, try again.";
-    }
-});
-
-/* -------------------------
-   MEMORY MATCH
---------------------------*/
-const mmGridEl = document.getElementById("mmGrid");
-const mmInfoEl = document.getElementById("mmInfo");
-const mmIcons = ["🌸","🌿","🌙","⭐","🍀","💎"];
-let mmCards = [];
-let mmFirst = null;
-let mmLock = false;
-let mmMatches = 0;
-
-function initMemoryMatch() {
-    const doubled = mmIcons.concat(mmIcons);
-    for (let i = doubled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i+1));
-        [doubled[i], doubled[j]] = [doubled[j], doubled[i]];
-    }
-    mmCards = doubled.map((icon, index) => ({
-        icon,
-        index,
-        revealed: false,
-        matched: false
-    }));
-    mmFirst = null;
-    mmLock = false;
-    mmMatches = 0;
-    renderMemoryMatch();
-    mmInfoEl.textContent = "Match all pairs to earn +1 water.";
-}
-
-function renderMemoryMatch() {
-    mmGridEl.innerHTML = "";
-    mmCards.forEach(card => {
-        const div = document.createElement("div");
-        div.className = "mm-card";
-        if (card.revealed || card.matched) {
-            div.classList.add("revealed");
-            div.textContent = card.icon;
-        } else {
-            div.textContent = "";
-        }
-        div.addEventListener("click", () => onMemoryClick(card.index));
-        mmGridEl.appendChild(div);
-    });
-}
-
-function onMemoryClick(index) {
-    if (mmLock) return;
-    const card = mmCards[index];
-    if (card.matched || card.revealed) return;
-
-    card.revealed = true;
-    renderMemoryMatch();
-
-    if (!mmFirst) {
-        mmFirst = card;
-    } else {
-        mmLock = true;
-        setTimeout(() => {
-            if (mmFirst.icon === card.icon) {
-                mmFirst.matched = true;
-                card.matched = true;
-                mmMatches++;
-                if (mmMatches === mmIcons.length) {
-                    water += 1;
-                    glow += 1;
-                    updateStats();
-                    alert("Memory Match win! +1 water.");
-                    overlay.style.display = "none";
-                }
-            } else {
-                mmFirst.revealed = false;
-                card.revealed = false;
-            }
-            mmFirst = null;
-            mmLock = false;
-            renderMemoryMatch();
-        }, 600);
-    }
-}
-
-/* -------------------------
-   BUTTONS + EVENTS
---------------------------*/
-document.getElementById("playGame").onclick = openMiniGames;
-document.getElementById("closeGame").onclick = closeMiniGames;
-document.getElementById("collectSun").onclick = collectSunFromTimeAway;
-
-worldButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        setWorld(btn.dataset.world);
-    });
-});
-
-/* -------------------------
-   SAVE LAST VISIT
---------------------------*/
-window.addEventListener("beforeunload", () => {
-    localStorage.setItem("ggv3_lastVisit", String(Date.now()));
-});
-
-/* -------------------------
-   INIT
---------------------------*/
-function init() {
-    loadTimeData();
-    initGarden();
-    newTask();
-    setWorld("magical");
-    renderGarden();
-    updateStats();
-    renderUpgrade();
-    setMsg("Welcome back to your garden.");
-}
-
-init();
-</script>
-
+  </script>
 </body>
 </html>
+<script>
+/* ---------------------------------------------------------
+   GLOWGARDEN v3 — CHUNK 2
+   Worlds, backgrounds, tile sizing, animation behavior
+   (Sprites, growth logic, mini‑games come in later chunks)
+--------------------------------------------------------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------------------------------------------------------
+     WORLD DEFINITIONS
+     (Sprite sets added in Chunk 3)
+  --------------------------------------------------------- */
+  const WORLDS = {
+    cute: {
+      key: "cute",
+      tileClass: "size-cute",
+      bgClass: "cute-bg",
+      idleAnimation: null,            // Cute only animates on growth
+      growAnimation: "anim-cute-grow"
+    },
+
+    magical: {
+      key: "magical",
+      tileClass: "size-magical",
+      bgClass: "magical-bg",
+      idleAnimation: "anim-magical-idle",  // Magical glows continuously
+      growAnimation: "anim-magical-grow"
+    },
+
+    cosmic: {
+      key: "cosmic",
+      tileClass: "size-cosmic",
+      bgClass: "cosmic-bg",
+      idleAnimation: "anim-cosmic-idle",   // Cosmic swirls continuously
+      growAnimation: "anim-cosmic-grow"
+    },
+
+    full: {
+      key: "full",
+      tileClass: "size-full",
+      bgClass: "full-bg",
+      idleAnimation: null,            // Pixel world only animates on growth
+      growAnimation: "anim-full-grow"
+    }
+  };
+
+  /* ---------------------------------------------------------
+     DOM ELEMENTS
+  --------------------------------------------------------- */
+  const worldButtons = Array.from(document.querySelectorAll(".world-btn"));
+  const gardenWrapper = document.getElementById("garden-wrapper");
+  const gardenGrid = document.getElementById("garden-grid");
+  const statWorld = document.getElementById("stat-world");
+
+  /* ---------------------------------------------------------
+     CURRENT WORLD STATE
+  --------------------------------------------------------- */
+  let currentWorld = "cute";
+
+  /* ---------------------------------------------------------
+     APPLY WORLD VISUALS
+     (Background, tile size, stat label)
+  --------------------------------------------------------- */
+  function applyWorldClasses(worldKey) {
+    const world = WORLDS[worldKey];
+    if (!world) return;
+
+    // Remove all world classes
+    gardenWrapper.classList.remove(
+      "cute-bg", "magical-bg", "cosmic-bg", "full-bg",
+      "size-cute", "size-magical", "size-cosmic", "size-full"
+    );
+
+    // Add the correct classes
+    gardenWrapper.classList.add(world.bgClass, world.tileClass);
+
+    // Update stat label
+    statWorld.textContent =
+      "World: " + worldKey.charAt(0).toUpperCase() + worldKey.slice(1);
+
+    // Save state
+    currentWorld = worldKey;
+    gardenWrapper.dataset.world = worldKey;
+
+    // Update idle animations for existing plants
+    updateIdleAnimations();
+  }
+
+  /* ---------------------------------------------------------
+     WORLD BUTTON CLICK HANDLERS
+  --------------------------------------------------------- */
+  worldButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.world;
+
+      // Toggle active button
+      worldButtons.forEach(b => b.classList.toggle("active", b === btn));
+
+      // Apply world visuals
+      applyWorldClasses(key);
+
+      // Re-render garden tiles (Chunk 4 will fill them)
+      refreshGardenTiles();
+    });
+  });
+
+  /* ---------------------------------------------------------
+     GARDEN TILE RENDERING (placeholder)
+     Chunk 4 will replace this with full logic.
+  --------------------------------------------------------- */
+  const GRID_SIZE = 12; // 12 tiles for now
+
+  function refreshGardenTiles() {
+    gardenGrid.innerHTML = "";
+
+    for (let i = 0; i < GRID_SIZE; i++) {
+      const tile = document.createElement("div");
+      tile.className = "garden-tile";
+      tile.dataset.index = i;
+
+      // Placeholder plant sprite container
+      const img = document.createElement("img");
+      img.className = "plant-sprite";
+      img.style.opacity = "0.35"; // Placeholder until sprites arrive
+      img.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgVwBEmpAAAAAElFTkSuQmCC";
+
+      tile.appendChild(img);
+      gardenGrid.appendChild(tile);
+    }
+
+    updateIdleAnimations();
+  }
+
+  /* ---------------------------------------------------------
+     IDLE ANIMATION HANDLING
+     Magical + Cosmic animate continuously
+     Cute + Full animate only on growth
+  --------------------------------------------------------- */
+  function updateIdleAnimations() {
+    const world = WORLDS[currentWorld];
+    const tiles = gardenGrid.querySelectorAll(".plant-sprite");
+
+    tiles.forEach(sprite => {
+      sprite.classList.remove(
+        "anim-magical-idle",
+        "anim-cosmic-idle"
+      );
+
+      if (world.idleAnimation) {
+        sprite.classList.add(world.idleAnimation);
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------
+     TAB VISIBILITY — PAUSE ANIMATIONS WHEN INACTIVE
+     (Your choice: Option A)
+  --------------------------------------------------------- */
+  document.addEventListener("visibilitychange", () => {
+    const tiles = gardenGrid.querySelectorAll(".plant-sprite");
+
+    if (document.hidden) {
+      // Pause idle animations
+      tiles.forEach(sprite => {
+        sprite.style.animationPlayState = "paused";
+      });
+    } else {
+      // Resume idle animations
+      tiles.forEach(sprite => {
+        sprite.style.animationPlayState = "running";
+      });
+    }
+  });
+
+  /* ---------------------------------------------------------
+     INITIALIZE
+  --------------------------------------------------------- */
+  applyWorldClasses("cute");
+  refreshGardenTiles();
+
+});
+</script>
+<script>
+/* ---------------------------------------------------------
+   GLOWGARDEN v3 — CHUNK 3
+   SVG sprites (offline, per‑world shading)
+   Cute: pastel
+   Magical: glow
+   Cosmic: nebula
+   Full: pixel‑style
+--------------------------------------------------------- */
+
+/* Convert raw SVG markup → data URL */
+function svgToDataUrl(svg) {
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg.trim());
+}
+
+/* ---------------------------------------------------------
+   🌸 CUTE — Pastel Chibi Flowers (64×64)
+--------------------------------------------------------- */
+const cuteSVG = [
+  `<svg width="64" height="64" viewBox="0 0 64 64">
+     <defs>
+       <radialGradient id="c1" cx="50%" cy="30%" r="60%">
+         <stop offset="0%" stop-color="#ffe6ff"/>
+         <stop offset="50%" stop-color="#ffc8f0"/>
+         <stop offset="100%" stop-color="#f5a8ff"/>
+       </radialGradient>
+     </defs>
+     <circle cx="32" cy="38" r="10" fill="url(#c1)"/>
+     <rect x="30" y="38" width="4" height="10" rx="2" fill="#7fd6a3"/>
+   </svg>`,
+
+  `<svg width="64" height="64" viewBox="0 0 64 64">
+     <defs>
+       <radialGradient id="c2" cx="50%" cy="30%" r="60%">
+         <stop offset="0%" stop-color="#fff5ff"/>
+         <stop offset="50%" stop-color="#ffd6ff"/>
+         <stop offset="100%" stop-color="#ffb3e6"/>
+       </radialGradient>
+     </defs>
+     <circle cx="32" cy="24" r="6" fill="#fff7d6"/>
+     <circle cx="24" cy="24" r="8" fill="url(#c2)"/>
+     <circle cx="40" cy="24" r="8" fill="url(#c2)"/>
+     <rect x="30" y="28" width="4" height="14" rx="2" fill="#7fd6a3"/>
+   </svg>`,
+
+  `<svg width="64" height="64" viewBox="0 0 64 64">
+     <defs>
+       <radialGradient id="c3" cx="50%" cy="30%" r="65%">
+         <stop offset="0%" stop-color="#fff7ff"/>
+         <stop offset="30%" stop-color="#ffd6ff"/>
+         <stop offset="60%" stop-color="#ffe6b3"/>
+         <stop offset="100%" stop-color="#c8f5ff"/>
+       </radialGradient>
+     </defs>
+     <circle cx="32" cy="22" r="7" fill="#fffbe0"/>
+     <circle cx="20" cy="24" r="10" fill="url(#c3)"/>
+     <circle cx="44" cy="24" r="10" fill="url(#c3)"/>
+     <rect x="29" y="34" width="6" height="16" rx="3" fill="#7fd6a3"/>
+   </svg>`,
+
+  `<svg width="64" height="64" viewBox="0 0 64 64">
+     <defs>
+       <radialGradient id="c4" cx="50%" cy="30%" r="70%">
+         <stop offset="0%" stop-color="#ffffff"/>
+         <stop offset="25%" stop-color="#ffe6ff"/>
+         <stop offset="50%" stop-color="#ffd6ff"/>
+         <stop offset="75%" stop-color="#ffe6b3"/>
+         <stop offset="100%" stop-color="#c8f5ff"/>
+       </radialGradient>
+     </defs>
+     <circle cx="32" cy="22" r="8" fill="#fffbe8"/>
+     <circle cx="18" cy="24" r="11" fill="url(#c4)"/>
+     <circle cx="46" cy="24" r="11" fill="url(#c4)"/>
+     <circle cx="32" cy="34" r="11" fill="url(#c4)"/>
+     <rect x="28" y="38" width="8" height="18" rx="4" fill="#7fd6a3"/>
+   </svg>`
+];
+
+/* ---------------------------------------------------------
+   ✨ MAGICAL — Glow Fantasy Plants (96×96)
+--------------------------------------------------------- */
+const magicalSVG = [
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="m1" cx="50%" cy="20%" r="70%">
+         <stop offset="0%" stop-color="#cfe0ff"/>
+         <stop offset="40%" stop-color="#7f8cff"/>
+         <stop offset="100%" stop-color="#4b2c88"/>
+       </radialGradient>
+     </defs>
+     <circle cx="48" cy="52" r="14" fill="url(#m1)"/>
+     <ellipse cx="48" cy="64" rx="4" ry="14" fill="#4fd1c5"/>
+   </svg>`,
+
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="m2" cx="50%" cy="20%" r="70%">
+         <stop offset="0%" stop-color="#ffe6f7"/>
+         <stop offset="40%" stop-color="#ff9ad6"/>
+         <stop offset="100%" stop-color="#ffcc66"/>
+       </radialGradient>
+     </defs>
+     <ellipse cx="48" cy="40" rx="18" ry="22" fill="url(#m2)"/>
+     <rect x="45" y="56" width="6" height="18" rx="3" fill="#38b2ac"/>
+   </svg>`,
+
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="m3" cx="50%" cy="20%" r="70%">
+         <stop offset="0%" stop-color="#e0fff5"/>
+         <stop offset="40%" stop-color="#34d399"/>
+         <stop offset="100%" stop-color="#0f766e"/>
+       </radialGradient>
+     </defs>
+     <ellipse cx="48" cy="34" rx="20" ry="24" fill="url(#m3)"/>
+     <rect x="44" y="56" width="8" height="20" rx="4" fill="#0f766e"/>
+   </svg>`,
+
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="m4" cx="50%" cy="40%" r="70%">
+         <stop offset="0%" stop-color="#dcfce7"/>
+         <stop offset="50%" stop-color="#22c55e"/>
+         <stop offset="100%" stop-color="#065f46"/>
+       </radialGradient>
+     </defs>
+     <ellipse cx="48" cy="50" rx="22" ry="24" fill="url(#m4)"/>
+     <circle cx="48" cy="40" r="10" fill="#fefce8"/>
+   </svg>`
+];
+
+/* ---------------------------------------------------------
+   🌌 COSMIC — Nebula Swirl Plants (96×96)
+--------------------------------------------------------- */
+const cosmicSVG = [
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="co1" cx="50%" cy="40%" r="60%">
+         <stop offset="0%" stop-color="#e0f2ff"/>
+         <stop offset="40%" stop-color="#7dd3fc"/>
+         <stop offset="100%" stop-color="#312e81"/>
+       </radialGradient>
+     </defs>
+     <ellipse cx="48" cy="50" rx="14" ry="10" fill="url(#co1)"/>
+   </svg>`,
+
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="co2" cx="40%" cy="40%" r="70%">
+         <stop offset="0%" stop-color="#e0f2ff"/>
+         <stop offset="40%" stop-color="#a5b4fc"/>
+         <stop offset="100%" stop-color="#1e3a8a"/>
+       </radialGradient>
+     </defs>
+     <path d="M30 56 C 40 36, 64 36, 70 52 C 60 50, 48 60, 36 62 Z"
+           fill="url(#co2)"/>
+   </svg>`,
+
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="co3" cx="50%" cy="40%" r="70%">
+         <stop offset="0%" stop-color="#e0f2ff"/>
+         <stop offset="30%" stop-color="#a5b4fc"/>
+         <stop offset="70%" stop-color="#6366f1"/>
+         <stop offset="100%" stop-color="#1e293b"/>
+       </radialGradient>
+     </defs>
+     <path d="M30 52 C 34 34, 62 30, 70 46
+              C 60 42, 50 52, 44 60
+              C 40 62, 34 60, 30 56 Z"
+           fill="url(#co3)"/>
+   </svg>`,
+
+  `<svg width="96" height="96" viewBox="0 0 96 96">
+     <defs>
+       <radialGradient id="co4" cx="50%" cy="40%" r="75%">
+         <stop offset="0%" stop-color="#e0f2ff"/>
+         <stop offset="25%" stop-color="#a5b4fc"/>
+         <stop offset="55%" stop-color="#6366f1"/>
+         <stop offset="100%" stop-color="#020617"/>
+       </radialGradient>
+     </defs>
+     <path d="M26 54 C 30 32, 64 28, 74 44
+              C 64 40, 54 46, 48 54
+              C 44 60, 36 64, 28 62 Z"
+           fill="url(#co4)"/>
+   </svg>`
+];
+
+/* ---------------------------------------------------------
+   🎮 FULL — Pixel‑Style Sprouts (32×32)
+--------------------------------------------------------- */
+const fullSVG = [
+  `<svg width="32" height="32" viewBox="0 0 32 32">
+     <rect x="14" y="18" width="4" height="8" fill="#00a000"/>
+     <rect x="10" y="16" width="6" height="4" fill="#00c000"/>
+     <rect x="16" y="16" width="6" height="4" fill="#00c000"/>
+   </svg>`,
+
+  `<svg width="32" height="32" viewBox="0 0 32 32">
+     <rect x="14" y="16" width="4" height="10" fill="#008000"/>
+     <rect x="10" y="14" width="8" height="4" fill="#00c000"/>
+   </svg>`,
+
+  `<svg width="32" height="32" viewBox="0 0 32 32">
+     <rect x="14" y="14" width="4" height="12" fill="#006400"/>
+     <rect x="10" y="12" width="8" height="4" fill="#00b000"/>
+   </svg>`,
+
+  `<svg width="32" height="32" viewBox="0 0 32 32">
+     <rect x="14" y="14" width="4" height="12" fill="#004d00"/>
+     <rect x="10" y="10" width="4" height="4" fill="#00ff66"/>
+     <rect x="18" y="10" width="4" height="4" fill="#00ff66"/>
+   </svg>`
+];
+
+/* ---------------------------------------------------------
+   Build final sprite object
+--------------------------------------------------------- */
+const plantSprites = {
+  cute: cuteSVG.map(svgToDataUrl),
+  magical: magicalSVG.map(svgToDataUrl),
+  cosmic: cosmicSVG.map(svgToDataUrl),
+  full: fullSVG.map(svgToDataUrl)
+};
+
+window.plantSprites = plantSprites;
+</script>
+<script>
+/* ---------------------------------------------------------
+   GLOWGARDEN v3 — CHUNK 4
+   Growth logic, tasks, streaks, tile interactions
+--------------------------------------------------------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------------------------------------------------------
+     GLOBAL GAME STATE
+  --------------------------------------------------------- */
+  const GRID_SIZE = 12;
+  const MAX_STAGE = 3; // 0–3 (4 stages)
+  const growthTimes = {
+    cute:    10000,  // 10s per stage
+    magical: 14000,  // 14s per stage
+    cosmic:  16000,  // 16s per stage
+    full:     8000   // 8s per stage
+  };
+
+  let garden = []; // each tile: { stage, lastGrowth }
+  let lastLogin = null;
+  let streak = 0;
+
+  const gardenGrid = document.getElementById("garden-grid");
+  const statPlants = document.getElementById("stat-plants");
+  const statStreak = document.getElementById("stat-streak");
+
+  /* ---------------------------------------------------------
+     INITIALIZE GARDEN ARRAY
+  --------------------------------------------------------- */
+  function initGarden() {
+    if (garden.length === GRID_SIZE) return;
+
+    garden = Array.from({ length: GRID_SIZE }, () => ({
+      stage: 0,
+      lastGrowth: Date.now()
+    }));
+  }
+
+  /* ---------------------------------------------------------
+     RENDER ALL TILES
+  --------------------------------------------------------- */
+  function renderGarden() {
+    gardenGrid.innerHTML = "";
+
+    garden.forEach((tile, index) => {
+      const div = document.createElement("div");
+      div.className = "garden-tile";
+      div.dataset.index = index;
+
+      const img = document.createElement("img");
+      img.className = "plant-sprite";
+
+      const world = gardenWrapper.dataset.world;
+      img.src = plantSprites[world][tile.stage];
+
+      div.appendChild(img);
+      gardenGrid.appendChild(div);
+
+      div.addEventListener("click", () => growTile(index));
+    });
+
+    updateIdleAnimations();
+    updatePlantCount();
+  }
+
+  /* ---------------------------------------------------------
+     GROW A TILE (user click)
+  --------------------------------------------------------- */
+  function growTile(index) {
+    const tile = garden[index];
+    const world = gardenWrapper.dataset.world;
+
+    if (tile.stage < MAX_STAGE) {
+      tile.stage++;
+      tile.lastGrowth = Date.now();
+    }
+
+    // Apply growth animation
+    applyGrowAnimation(index, world);
+
+    renderGarden();
+  }
+
+  /* ---------------------------------------------------------
+     APPLY GROW ANIMATION
+  --------------------------------------------------------- */
+  function applyGrowAnimation(index, world) {
+    const tile = gardenGrid.children[index];
+    if (!tile) return;
+
+    const img = tile.querySelector(".plant-sprite");
+    img.classList.remove(
+      "anim-cute-grow",
+      "anim-magical-grow",
+      "anim-cosmic-grow",
+      "anim-full-grow"
+    );
+
+    void img.offsetWidth; // force reflow
+
+    if (world === "cute")    img.classList.add("anim-cute-grow");
+    if (world === "magical") img.classList.add("anim-magical-grow");
+    if (world === "cosmic")  img.classList.add("anim-cosmic-grow");
+    if (world === "full")    img.classList.add("anim-full-grow");
+  }
+
+  /* ---------------------------------------------------------
+     IDLE ANIMATIONS (Magical + Cosmic)
+  --------------------------------------------------------- */
+  function updateIdleAnimations() {
+    const world = gardenWrapper.dataset.world;
+    const sprites = gardenGrid.querySelectorAll(".plant-sprite");
+
+    sprites.forEach(s => {
+      s.classList.remove("anim-magical-idle", "anim-cosmic-idle");
+
+      if (world === "magical") s.classList.add("anim-magical-idle");
+      if (world === "cosmic")  s.classList.add("anim-cosmic-idle");
+    });
+  }
+
+  /* ---------------------------------------------------------
+     AUTO-GROWTH OVER TIME
+  --------------------------------------------------------- */
+  function autoGrow() {
+    const world = gardenWrapper.dataset.world;
+    const interval = growthTimes[world];
+
+    const now = Date.now();
+
+    garden.forEach(tile => {
+      if (tile.stage < MAX_STAGE && now - tile.lastGrowth >= interval) {
+        tile.stage++;
+        tile.lastGrowth = now;
+      }
+    });
+
+    renderGarden();
+  }
+
+  setInterval(autoGrow, 2000);
+
+  /* ---------------------------------------------------------
+     PLANT COUNT
+  --------------------------------------------------------- */
+  function updatePlantCount() {
+    const count = garden.filter(t => t.stage === MAX_STAGE).length;
+    statPlants.textContent = "Plants: " + count;
+  }
+
+  /* ---------------------------------------------------------
+     DAILY STREAK SYSTEM
+  --------------------------------------------------------- */
+  function loadStreak() {
+    const saved = localStorage.getItem("ggv3-lastLogin");
+    const today = new Date().toDateString();
+
+    if (!saved) {
+      streak = 1;
+    } else {
+      const last = new Date(saved).toDateString();
+      if (last === today) {
+        // same day
+      } else {
+        const diff = (new Date(today) - new Date(last)) / 86400000;
+        streak = diff === 1 ? streak + 1 : 1;
+      }
+    }
+
+    localStorage.setItem("ggv3-lastLogin", today);
+    statStreak.textContent = "Streak: " + streak + " days";
+  }
+
+  /* ---------------------------------------------------------
+     TASKS (simple placeholder system)
+  --------------------------------------------------------- */
+  const tasks = [
+    { id: "water", text: "Water 3 plants", progress: 0, goal: 3 },
+    { id: "visit", text: "Visit 2 worlds", progress: 0, goal: 2 },
+    { id: "play",  text: "Play 1 mini‑game", progress: 0, goal: 1 }
+  ];
+
+  function updateTasks() {
+    const row = document.getElementById("task-pills");
+    row.innerHTML = "";
+
+    tasks.forEach(t => {
+      const pill = document.createElement("div");
+      pill.className = "pill";
+      pill.textContent = `${t.text} (${t.progress}/${t.goal})`;
+      row.appendChild(pill);
+    });
+  }
+
+  function incrementTask(id) {
+    const t = tasks.find(x => x.id === id);
+    if (!t) return;
+    if (t.progress < t.goal) t.progress++;
+    updateTasks();
+  }
+
+  /* ---------------------------------------------------------
+     WORLD VISIT TASK HOOK
+  --------------------------------------------------------- */
+  const worldButtons = document.querySelectorAll(".world-btn");
+  worldButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      incrementTask("visit");
+    });
+  });
+
+  /* ---------------------------------------------------------
+     MINI-GAME TASK HOOK (Chunk 5 will trigger this)
+  --------------------------------------------------------- */
+  window.completeMiniGameTask = function() {
+    incrementTask("play");
+  };
+
+  /* ---------------------------------------------------------
+     INITIALIZE EVERYTHING
+  --------------------------------------------------------- */
+  initGarden();
+  loadStreak();
+  updateTasks();
+  renderGarden();
+
+});
+</script>
+<script>
+/* ---------------------------------------------------------
+   GLOWGARDEN v3 — CHUNK 5
+   Mini‑games + overlay + reward hooks
+--------------------------------------------------------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------------------------------------------------------
+     DOM ELEMENTS
+  --------------------------------------------------------- */
+  const overlay = document.getElementById("mini-game-overlay");
+  const overlayTitle = document.getElementById("mini-game-title");
+  const overlayClose = document.getElementById("mini-game-close");
+  const overlayArea = document.getElementById("mini-game-area");
+
+  const miniGameButtons = document.querySelectorAll(".mini-game-btn");
+
+  /* ---------------------------------------------------------
+     OPEN MINI‑GAME
+  --------------------------------------------------------- */
+  miniGameButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const game = btn.dataset.game;
+      openMiniGame(game);
+    });
+  });
+
+  function openMiniGame(game) {
+    overlay.classList.add("active");
+
+    if (game === "flappy") {
+      overlayTitle.textContent = "Flappy Sprout";
+      loadFlappy();
+    }
+    if (game === "blocks") {
+      overlayTitle.textContent = "Block Bloom";
+      loadBlocks();
+    }
+    if (game === "words") {
+      overlayTitle.textContent = "Word Garden";
+      loadWordGarden();
+    }
+    if (game === "memory") {
+      overlayTitle.textContent = "Memory Petals";
+      loadMemory();
+    }
+  }
+
+  /* ---------------------------------------------------------
+     CLOSE MINI‑GAME
+  --------------------------------------------------------- */
+  overlayClose.addEventListener("click", () => {
+    overlay.classList.remove("active");
+    overlayArea.innerHTML = "Mini‑game will load here (Chunk 5).";
+  });
+
+  /* ---------------------------------------------------------
+     MINI‑GAME: FLAPPY SPROUT
+     (Simple canvas-based flappy clone)
+  --------------------------------------------------------- */
+  function loadFlappy() {
+    overlayArea.innerHTML = "";
+    const canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 500;
+    canvas.style.background = "#0a0f1f";
+    canvas.style.borderRadius = "12px";
+    overlayArea.appendChild(canvas);
+
+    const ctx = canvas.getContext("2d");
+
+    let y = 200;
+    let velocity = 0;
+    let pipes = [];
+    let score = 0;
+    let running = true;
+
+    function addPipe() {
+      const gap = 120;
+      const top = Math.random() * 200 + 50;
+      pipes.push({ x: 400, top, bottom: top + gap });
+    }
+
+    addPipe();
+
+    canvas.addEventListener("click", () => {
+      velocity = -6;
+    });
+
+    function loop() {
+      if (!running) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Gravity
+      velocity += 0.4;
+      y += velocity;
+
+      // Draw sprout
+      ctx.fillStyle = "#7fd6a3";
+      ctx.beginPath();
+      ctx.arc(80, y, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pipes
+      pipes.forEach(p => {
+        p.x -= 3;
+
+        ctx.fillStyle = "#4b5563";
+        ctx.fillRect(p.x, 0, 40, p.top);
+        ctx.fillRect(p.x, p.bottom, 40, 500 - p.bottom);
+
+        // Collision
+        if (p.x < 100 && p.x + 40 > 60) {
+          if (y < p.top || y > p.bottom) {
+            running = false;
+            finishMiniGame("flappy", score);
+          }
+        }
+
+        // Score
+        if (p.x === 40) score++;
+      });
+
+      // Add new pipes
+      if (pipes[pipes.length - 1].x < 200) addPipe();
+
+      // Out of bounds
+      if (y > 500 || y < 0) {
+        running = false;
+        finishMiniGame("flappy", score);
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  }
+
+  /* ---------------------------------------------------------
+     MINI‑GAME: BLOCK BLOOM
+     (Simple falling-block puzzle)
+  --------------------------------------------------------- */
+  function loadBlocks() {
+    overlayArea.innerHTML = `
+      <div style="text-align:center; opacity:0.8;">
+        Block Bloom is coming soon — enjoy a quick reward!
+      </div>
+    `;
+    finishMiniGame("blocks", 1);
+  }
+
+  /* ---------------------------------------------------------
+     MINI‑GAME: WORD GARDEN
+     (Simple word scramble)
+  --------------------------------------------------------- */
+  function loadWordGarden() {
+    const words = ["petal", "garden", "cosmic", "magical", "sprout"];
+    const word = words[Math.floor(Math.random() * words.length)];
+    const scrambled = word.split("").sort(() => Math.random() - 0.5).join("");
+
+    overlayArea.innerHTML = `
+      <div style="text-align:center;">
+        <p>Unscramble this word:</p>
+        <h2>${scrambled}</h2>
+        <input id="wg-input" style="padding:6px; border-radius:6px; margin-top:8px;">
+        <button id="wg-btn" style="margin-left:6px;">Submit</button>
+      </div>
+    `;
+
+    document.getElementById("wg-btn").onclick = () => {
+      const guess = document.getElementById("wg-input").value.trim().toLowerCase();
+      if (guess === word) {
+        finishMiniGame("words", 1);
+      } else {
+        alert("Try again!");
+      }
+    };
+  }
+
+  /* ---------------------------------------------------------
+     MINI‑GAME: MEMORY PETALS
+     (Simple 4-card memory match)
+  --------------------------------------------------------- */
+  function loadMemory() {
+    const cards = ["🌸", "🌸", "✨", "✨"].sort(() => Math.random() - 0.5);
+    let first = null;
+    let lock = false;
+
+    overlayArea.innerHTML = `
+      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px;">
+        ${cards.map((c, i) => `
+          <div class="mem-card" data-i="${i}"
+               style="background:#1b1f3b; padding:20px; border-radius:10px;
+                      text-align:center; font-size:2rem; cursor:pointer;">
+            ?
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    const els = overlayArea.querySelectorAll(".mem-card");
+
+    els.forEach(el => {
+      el.onclick = () => {
+        if (lock) return;
+
+        const i = el.dataset.i;
+        el.textContent = cards[i];
+
+        if (first === null) {
+          first = el;
+        } else {
+          lock = true;
+          setTimeout(() => {
+            if (first.textContent === el.textContent) {
+              first.style.opacity = "0.4";
+              el.style.opacity = "0.4";
+              finishMiniGame("memory", 1);
+            } else {
+              first.textContent = "?";
+              el.textContent = "?";
+            }
+            first = null;
+            lock = false;
+          }, 700);
+        }
+      };
+    });
+  }
+
+  /* ---------------------------------------------------------
+     MINI‑GAME COMPLETION + REWARD
+  --------------------------------------------------------- */
+  function finishMiniGame(game, score) {
+    // Reward: grow 1 random plant
+    const index = Math.floor(Math.random() * garden.length);
+    if (garden[index].stage < 3) {
+      garden[index].stage++;
+    }
+
+    // Task progress
+    if (window.completeMiniGameTask) {
+      window.completeMiniGameTask();
+    }
+
+    // Re-render
+    renderGarden();
+
+    // Close overlay after short delay
+    setTimeout(() => {
+      overlay.classList.remove("active");
+      overlayArea.innerHTML = "Mini‑game will load here (Chunk 5).";
+    }, 800);
+  }
+
+});
+</script>
