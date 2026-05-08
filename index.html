@@ -111,15 +111,14 @@
     }
 
     .plot {
-        width: 100%;
-        height: 80px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 12px;
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
-    }
-
+    width: 100%;
+    height: 120px; /* bigger so plants show clearly */
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
     .plot.empty {
         opacity: 0.6;
     }
@@ -128,8 +127,8 @@
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
         transform: translateX(-50%);
         background-size: cover;
         animation: grow 0.6s ease forwards;
@@ -379,7 +378,13 @@
 /* -------------------------
    WORLD DEFINITIONS
 --------------------------*/
-const worlds = {
+const worldGardenBG = {
+    magical: "rgba(255, 200, 255, 0.15)",
+    cute: "rgba(255, 220, 240, 0.15)",
+    cosmic: "rgba(180, 220, 255, 0.15)",
+    full: "rgba(255, 255, 200, 0.15)"
+};
+
     magical: {
         name: "Magical",
         bg: "radial-gradient(circle at top, #ffe6ff, #2b1040)",
@@ -403,6 +408,8 @@ const worlds = {
         bg: "radial-gradient(circle at top, #ffe6ff, #101820)",
         cardBg: "rgba(15, 15, 35, 0.95)",
         accent: "#ffdd88"
+};
+
     }
 };
 
@@ -545,6 +552,7 @@ function renderGarden() {
     garden.forEach((plot, i) => {
         const div = document.createElement("div");
         div.className = "plot";
+        div.style.background = worldGardenBG[currentWorld];
         if (plot.stage === 0) div.classList.add("empty");
 
         if (plot.stage > 0) {
@@ -609,6 +617,45 @@ function setWorld(key) {
 /* -------------------------
    UPGRADES
 --------------------------*/
+const worldUpgrades = {
+    magical: {
+        cost: 10,
+        text: "Magical Upgrade: +3 extra plots",
+        effect() {
+            gardenSize += 3;
+            initGarden();
+            renderGarden();
+        }
+    },
+    cute: {
+        cost: 10,
+        text: "Cute Upgrade: Plants grow +1 stage instantly",
+        effect() {
+            garden.forEach(p => {
+                if (p.stage > 0 && p.stage < 4) p.stage++;
+            });
+            renderGarden();
+        }
+    },
+    cosmic: {
+        cost: 10,
+        text: "Cosmic Upgrade: +5 sun",
+        effect() {
+            sun += 5;
+            updateStats();
+        }
+    },
+    full: {
+        cost: 15,
+        text: "Full Upgrade: +2 water +2 glow",
+        effect() {
+            water += 2;
+            glow += 2;
+            updateStats();
+        }
+    }
+};
+
 const upgradeTextEl = document.getElementById("upgradeText");
 const buyUpgradeBtn = document.getElementById("buyUpgrade");
 
@@ -624,7 +671,7 @@ function renderUpgrade() {
 }
 
 buyUpgradeBtn.addEventListener("click", () => {
-    if (glow < 10 || upgradeBought) return;
+ if (glow < 10 || upgradeBought) return;
     glow -= 10;
     upgradeBought = true;
     gardenSize = 12;
@@ -632,7 +679,7 @@ buyUpgradeBtn.addEventListener("click", () => {
     renderGarden();
     updateStats();
     renderUpgrade();
-    setMsg("Your garden expanded!");
+    setMsg("Your garden expanded!"); 
 });
 
 /* -------------------------
