@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GlowGarden — Compact Everything</title>
+<title>GlowGarden – Everything Compact</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   html, body {
@@ -87,8 +87,8 @@
     position: absolute;
     left: 1100px;
     top: 1100px;
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
     background: radial-gradient(circle,#ffe3ec,#ff8fa3);
     border-radius: 40px;
     box-shadow: 0 0 40px #ff8fa3;
@@ -144,8 +144,8 @@
   /* Stands */
   .stand {
     position: absolute;
-    width: 140px;
-    height: 100px;
+    width: 150px;
+    height: 110px;
     border-radius: 16px;
     box-shadow: 0 10px 22px rgba(0,0,0,0.6);
     cursor: pointer;
@@ -194,7 +194,7 @@
     position: absolute;
     right: 8px;
     top: 8px;
-    width: 220px;
+    width: 230px;
     height: calc(100% - 16px);
     background: rgba(10,10,20,0.9);
     border-radius: 12px;
@@ -289,7 +289,9 @@
       <ul>
         <li data-id="plant3">Plant 3 seeds</li>
         <li data-id="visitCute">Visit Cute Stand</li>
-        <li data-id="visitMagic">Visit Magic Stand</li>
+        <li data-id="visitMagic">Visit Magical Stand</li>
+        <li data-id="visitCosmic">Visit Cosmic Stand</li>
+        <li data-id="visitPixel">Visit Pixel Stand</li>
       </ul>
     </div>
     <div id="decorations">
@@ -298,7 +300,7 @@
       <button data-dec="flower">Place Flower</button>
       <button data-dec="orb">Place Orb</button>
       <p style="margin-top:6px;font-size:11px;color:#b0b3d0;">
-        Click in the world after choosing a decoration.
+        Choose a decoration, then click in the world.
       </p>
     </div>
   </div>
@@ -362,16 +364,16 @@ for (let i = 0; i < 16; i++) {
 }
 
 /* -------- Stands + Interactions -------- */
-function standMessage(name) {
+function standMessage(name, id) {
   alert("You interacted with the " + name + "!");
-  if (name === "Cute Stand") markTaskDone("visitCute");
-  if (name === "Magic Stand") markTaskDone("visitMagic");
+  markTaskDone(id);
+  playChime();
 }
 
-document.getElementById("standCute").onclick = () => standMessage("Cute Stand");
-document.getElementById("standMagic").onclick = () => standMessage("Magic Stand");
-document.getElementById("standCosmic").onclick = () => standMessage("Cosmic Stand");
-document.getElementById("standPixel").onclick = () => standMessage("Pixel Stand");
+document.getElementById("standCute").onclick   = () => standMessage("Cute Stand","visitCute");
+document.getElementById("standMagic").onclick  = () => standMessage("Magical Stand","visitMagic");
+document.getElementById("standCosmic").onclick = () => standMessage("Cosmic Stand","visitCosmic");
+document.getElementById("standPixel").onclick  = () => standMessage("Pixel Stand","visitPixel");
 
 /* -------- Tasks -------- */
 const taskList = document.querySelectorAll("#tasks li");
