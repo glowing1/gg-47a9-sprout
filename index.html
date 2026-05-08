@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GlowGarden v2 Worlds + Mini‑Games</title>
+<title>GlowGarden v3</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -111,24 +111,24 @@
     }
 
     .plot {
-    width: 100%;
-    height: 120px; /* bigger so plants show clearly */
-    background: rgba(255,255,255,0.08);
-    border-radius: 12px;
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
-}
+        width: 100%;
+        height: 140px;
+        border-radius: 12px;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
     .plot.empty {
-        opacity: 0.6;
+        opacity: 0.7;
     }
 
     .plant {
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         transform: translateX(-50%);
         background-size: cover;
         animation: grow 0.6s ease forwards;
@@ -320,7 +320,7 @@
     <div id="upgrades">
         <h3>Upgrades</h3>
         <div id="upgradeText"></div>
-        <button id="buyUpgrade" class="small">Buy Bigger Garden (10 glow)</button>
+        <button id="buyUpgrade" class="small">Buy Upgrade</button>
     </div>
 
     <div id="taskBox">
@@ -336,8 +336,8 @@
     <div id="miniGame">
         <div id="miniTabs">
             <button class="mini-tab active" data-mini="flappy">🐦 Flappy</button>
-            <button class="mini-tab" data-mini="block">🧱 Block Blast</button>
-            <button class="mini-tab" data-mini="word">🌱 Word Garden</button>
+            <button class="mini-tab" data-mini="block">🧱 Block</button>
+            <button class="mini-tab" data-mini="word">🌱 Word</button>
             <button class="mini-tab" data-mini="memory">🧠 Memory</button>
         </div>
 
@@ -376,15 +376,9 @@
 
 <script>
 /* -------------------------
-   WORLD DEFINITIONS
+   WORLDS
 --------------------------*/
-const worldGardenBG = {
-    magical: "rgba(255, 200, 255, 0.15)",
-    cute: "rgba(255, 220, 240, 0.15)",
-    cosmic: "rgba(180, 220, 255, 0.15)",
-    full: "rgba(255, 255, 200, 0.15)"
-};
-
+const worlds = {
     magical: {
         name: "Magical",
         bg: "radial-gradient(circle at top, #ffe6ff, #2b1040)",
@@ -408,26 +402,15 @@ const worldGardenBG = {
         bg: "radial-gradient(circle at top, #ffe6ff, #101820)",
         cardBg: "rgba(15, 15, 35, 0.95)",
         accent: "#ffdd88"
-};
-
     }
 };
 
-let currentWorld = "magical";
-
-/* -------------------------
-   STATE
---------------------------*/
-let water = 0;
-let glow = 0;
-let sun = 0;
-let streak = 0;
-let lastVisit = Date.now();
-let lastDayKey = null;
-let upgradeBought = false;
-
-let gardenSize = 9;
-let garden = [];
+const worldGardenBG = {
+    magical: "rgba(255, 200, 255, 0.15)",
+    cute: "rgba(255, 220, 240, 0.15)",
+    cosmic: "rgba(180, 220, 255, 0.15)",
+    full: "rgba(255, 255, 200, 0.15)"
+};
 
 const plantSprites = {
     magical: [
@@ -456,11 +439,21 @@ const plantSprites = {
     ]
 };
 
-    "https://i.imgur.com/3QeQZ8S.png", // sprout
-    "https://i.imgur.com/8m4uV1w.png", // small plant
-    "https://i.imgur.com/0h8xk4U.png", // medium plant
-    "https://i.imgur.com/6Yx0x5F.png"  // full flower
-];
+let currentWorld = "magical";
+
+/* -------------------------
+   STATE
+--------------------------*/
+let water = 0;
+let glow = 0;
+let sun = 0;
+let streak = 0;
+let lastVisit = Date.now();
+let lastDayKey = null;
+let upgradeBought = false;
+
+let gardenSize = 9;
+let garden = [];
 
 /* -------------------------
    INIT GARDEN
@@ -468,12 +461,12 @@ const plantSprites = {
 function initGarden() {
     garden = [];
     for (let i = 0; i < gardenSize; i++) {
-        garden.push({ stage: 0 });
+        garden.push({ stage: 0, world: currentWorld });
     }
 }
 
 /* -------------------------
-   TASK SYSTEM
+   TASKS
 --------------------------*/
 const tasks = [
     "Take a 5‑minute break",
@@ -498,9 +491,9 @@ function todayKey() {
 }
 
 function loadTimeData() {
-    const savedLast = localStorage.getItem("ggv2_lastVisit");
-    const savedDay = localStorage.getItem("ggv2_lastDay");
-    const savedStreak = localStorage.getItem("ggv2_streak");
+    const savedLast = localStorage.getItem("ggv3_lastVisit");
+    const savedDay = localStorage.getItem("ggv3_lastDay");
+    const savedStreak = localStorage.getItem("ggv3_streak");
 
     if (savedLast) lastVisit = parseInt(savedLast, 10) || Date.now();
     if (savedDay) lastDayKey = savedDay;
@@ -518,8 +511,8 @@ function loadTimeData() {
         else if (diff > 1) streak = 1;
     }
     lastDayKey = today;
-    localStorage.setItem("ggv2_lastDay", today);
-    localStorage.setItem("ggv2_streak", String(streak));
+    localStorage.setItem("ggv3_lastDay", today);
+    localStorage.setItem("ggv3_streak", String(streak));
 }
 
 function collectSunFromTimeAway() {
@@ -539,12 +532,12 @@ function collectSunFromTimeAway() {
     glow += Math.floor(gained / 2);
     setMsg(`You were away ${minutes} minutes. Collected ${gained} sun.`);
     lastVisit = now;
-    localStorage.setItem("ggv2_lastVisit", String(now));
+    localStorage.setItem("ggv3_lastVisit", String(now));
     updateStats();
 }
 
 /* -------------------------
-   RENDER
+   RENDER GARDEN
 --------------------------*/
 function renderGarden() {
     const g = document.getElementById("garden");
@@ -558,7 +551,8 @@ function renderGarden() {
         if (plot.stage > 0) {
             const img = document.createElement("div");
             img.className = "plant";
-            img.style.backgroundImage = `url(${plantSprites[plot.stage - 1]})`;
+            const w = plot.world || currentWorld;
+            img.style.backgroundImage = `url(${plantSprites[w][plot.stage - 1]})`;
             div.appendChild(img);
         }
 
@@ -576,8 +570,7 @@ function growPlant(i) {
     water -= 1;
     glow += 1;
     garden[i].stage++;
-    garden[i].world = currentWorld;
-
+    garden[i].world = garden[i].world || currentWorld;
     updateStats();
     renderGarden();
 }
@@ -612,11 +605,16 @@ function setWorld(key) {
     });
 
     worldNameEl.textContent = w.name;
+    renderUpgrade();
+    renderGarden();
 }
 
 /* -------------------------
-   UPGRADES
+   UPGRADES (WORLD‑SPECIFIC)
 --------------------------*/
+const upgradeTextEl = document.getElementById("upgradeText");
+const buyUpgradeBtn = document.getElementById("buyUpgrade");
+
 const worldUpgrades = {
     magical: {
         cost: 10,
@@ -656,30 +654,23 @@ const worldUpgrades = {
     }
 };
 
-const upgradeTextEl = document.getElementById("upgradeText");
-const buyUpgradeBtn = document.getElementById("buyUpgrade");
-
 function renderUpgrade() {
-    if (upgradeBought) {
-        upgradeTextEl.textContent = "Bigger garden unlocked! You now have 12 plots.";
-        buyUpgradeBtn.disabled = true;
-        buyUpgradeBtn.textContent = "Unlocked";
-    } else {
-        upgradeTextEl.textContent = "Reach 10 glow to unlock 3 extra plots.";
-        buyUpgradeBtn.disabled = glow < 10;
-    }
+    const up = worldUpgrades[currentWorld];
+    upgradeTextEl.textContent = up.text + ` (Cost: ${up.cost} glow)`;
+    buyUpgradeBtn.disabled = upgradeBought || glow < up.cost;
+    buyUpgradeBtn.textContent = upgradeBought ? "Unlocked" : "Buy Upgrade";
 }
 
 buyUpgradeBtn.addEventListener("click", () => {
- if (glow < 10 || upgradeBought) return;
-    glow -= 10;
+    const up = worldUpgrades[currentWorld];
+    if (upgradeBought || glow < up.cost) return;
+
+    glow -= up.cost;
     upgradeBought = true;
-    gardenSize = 12;
-    initGarden();
-    renderGarden();
+    up.effect();
     updateStats();
     renderUpgrade();
-    setMsg("Your garden expanded!"); 
+    setMsg("Upgrade unlocked!");
 });
 
 /* -------------------------
@@ -1018,7 +1009,7 @@ function onMemoryClick(index) {
 }
 
 /* -------------------------
-   BUTTONS
+   BUTTONS + EVENTS
 --------------------------*/
 document.getElementById("playGame").onclick = openMiniGames;
 document.getElementById("closeGame").onclick = closeMiniGames;
@@ -1031,10 +1022,10 @@ worldButtons.forEach(btn => {
 });
 
 /* -------------------------
-   VISIBILITY SAVE
+   SAVE LAST VISIT
 --------------------------*/
 window.addEventListener("beforeunload", () => {
-    localStorage.setItem("ggv2_lastVisit", String(Date.now()));
+    localStorage.setItem("ggv3_lastVisit", String(Date.now()));
 });
 
 /* -------------------------
