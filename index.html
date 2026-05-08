@@ -1,1537 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>GlowGarden v3 — Offline Edition</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <style>
-    :root {
-      --bg-main: #050814;
-      --text-main: #fdfcff;
-      --accent: #ffb3ff;
-      --card-bg: rgba(10, 12, 30, 0.9);
-      --border-soft: rgba(255, 255, 255, 0.12);
-
-      /* Tile sizes per world */
-      --tile-size-cute: 120px;
-      --tile-size-magical: 160px;
-      --tile-size-cosmic: 160px;
-      --tile-size-full: 80px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1b1f3b 0, #050814 55%, #02030a 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-    }
-
-    #app {
-      width: 100%;
-      max-width: 1100px;
-      margin: 16px;
-      padding: 16px;
-      border-radius: 18px;
-      background: linear-gradient(145deg, rgba(10, 12, 30, 0.96), rgba(5, 7, 20, 0.98));
-      box-shadow:
-        0 0 40px rgba(0, 0, 0, 0.7),
-        0 0 80px rgba(120, 80, 255, 0.25);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .title-block h1 {
-      font-size: 1.4rem;
-      letter-spacing: 0.04em;
-    }
-
-    .title-block span {
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
-
-    .stats {
-      display: flex;
-      gap: 8px;
-      font-size: 0.8rem;
-      opacity: 0.9;
-    }
-
-    .stat-pill {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 55%);
-    }
-
-    /* World selector */
-
-    .world-selector {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-      flex-wrap: wrap;
-    }
-
-    .world-btn {
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(10, 12, 30, 0.9);
-      color: var(--text-main);
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s, border-color 0.2s;
-    }
-
-    .world-btn span {
-      font-size: 0.9rem;
-    }
-
-    .world-btn.active {
-      background: radial-gradient(circle at top left, #ffb3ff 0, #7b5cff 40%, #1b1f3b 100%);
-      border-color: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 0 12px rgba(123, 92, 255, 0.7);
-      transform: translateY(-1px);
-    }
-
-    .world-btn:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    /* Layout */
-
-    .main-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.2fr);
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 900px) {
-      .main-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .panel {
-      border-radius: 14px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-soft);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel h2 {
-      font-size: 0.95rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      opacity: 0.9;
-    }
-
-    /* Garden area */
-
-    .garden-wrapper {
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: radial-gradient(circle at top, #15182c 0, #050814 60%, #02030a 100%);
-      min-height: 260px;
-    }
-
-    /* World backgrounds */
-
-    .garden-wrapper.cute-bg {
-      background:
-        radial-gradient(circle at top left, rgba(255, 200, 255, 0.45), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(180, 240, 255, 0.45), transparent 55%),
-        linear-gradient(145deg, #ffefff 0, #ffe9ff 20%, #e0f5ff 60%, #fdfbff 100%);
-    }
-
-    .garden-wrapper.magical-bg {
-      background:
-        radial-gradient(circle at top, rgba(140, 120, 255, 0.7), transparent 60%),
-        radial-gradient(circle at bottom, rgba(255, 180, 255, 0.5), transparent 60%),
-        linear-gradient(160deg, #0b0420 0, #1b0b3a 40%, #2b0f4f 100%);
-    }
-
-    .garden-wrapper.cosmic-bg {
-      background:
-        radial-gradient(circle at top, rgba(120, 160, 255, 0.7), transparent 60%),
-        radial-gradient(circle at bottom, rgba(80, 20, 140, 0.7), transparent 60%),
-        linear-gradient(160deg, #020314 0, #050826 40%, #090b3a 100%);
-    }
-
-    .garden-wrapper.full-bg {
-      background:
-        repeating-linear-gradient(
-          0deg,
-          #0b1f0b,
-          #0b1f0b 2px,
-          #071707 2px,
-          #071707 4px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          #0b1f0b,
-          #0b1f0b 2px,
-          #071707 2px,
-          #071707 4px
-        );
-    }
-
-    /* Garden grid */
-
-    .garden-grid {
-      display: grid;
-      width: 100%;
-      height: 100%;
-      padding: 10px;
-      gap: 6px;
-      justify-content: center;
-      align-content: center;
-    }
-
-    /* Tile size classes (JS will toggle these on the wrapper) */
-
-    .garden-wrapper.size-cute .garden-grid {
-      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-cute), 1fr));
-    }
-
-    .garden-wrapper.size-magical .garden-grid {
-      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-magical), 1fr));
-    }
-
-    .garden-wrapper.size-cosmic .garden-grid {
-      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-cosmic), 1fr));
-    }
-
-    .garden-wrapper.size-full .garden-grid {
-      grid-template-columns: repeat(auto-fit, minmax(var(--tile-size-full), 1fr));
-    }
-
-    .garden-tile {
-      position: relative;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.35));
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s, background 0.12s;
-    }
-
-    .garden-tile:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .plant-sprite {
-      max-width: 100%;
-      max-height: 100%;
-      image-rendering: auto;
-      pointer-events: none;
-    }
-
-    /* Crisp pixel art for Full world */
-    .garden-wrapper.full-bg .plant-sprite {
-      image-rendering: pixelated;
-    }
-
-    /* Smooth scaling for others */
-    .garden-wrapper.cute-bg .plant-sprite,
-    .garden-wrapper.magical-bg .plant-sprite,
-    .garden-wrapper.cosmic-bg .plant-sprite {
-      image-rendering: auto;
-    }
-
-    /* Animation keyframes */
-
-    @keyframes cuteGrowBounce {
-      0% { transform: scale(0.6) translateY(6px); opacity: 0; }
-      60% { transform: scale(1.08) translateY(-2px); opacity: 1; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
-    }
-
-    @keyframes magicalGlowPulse {
-      0% { transform: translateY(0); filter: drop-shadow(0 0 4px rgba(200, 160, 255, 0.7)); }
-      50% { transform: translateY(-3px); filter: drop-shadow(0 0 12px rgba(255, 210, 255, 0.95)); }
-      100% { transform: translateY(0); filter: drop-shadow(0 0 4px rgba(200, 160, 255, 0.7)); }
-    }
-
-    @keyframes cosmicSwirl {
-      0% { transform: scale(0.98) rotate(0deg); opacity: 0.9; }
-      50% { transform: scale(1.03) rotate(3deg); opacity: 1; }
-      100% { transform: scale(0.98) rotate(0deg); opacity: 0.9; }
-    }
-
-    @keyframes pixelPop {
-      0% { transform: scale(0.4); opacity: 0; }
-      70% { transform: scale(1.1); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Animation utility classes (JS will add/remove these) */
-
-    .anim-cute-grow {
-      animation: cuteGrowBounce 0.5s ease-out;
-    }
-
-    .anim-magical-grow {
-      animation: cuteGrowBounce 1.2s ease-out;
-    }
-
-    .anim-cosmic-grow {
-      animation: cuteGrowBounce 1s ease-out;
-    }
-
-    .anim-full-grow {
-      animation: pixelPop 0.3s steps(4, end);
-    }
-
-    .anim-magical-idle {
-      animation: magicalGlowPulse 1.2s ease-in-out infinite;
-    }
-
-    .anim-cosmic-idle {
-      animation: cosmicSwirl 1s ease-in-out infinite;
-    }
-
-    /* Right panel (tasks, upgrades, mini-games) */
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .section-header span {
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .pill {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 18, 40, 0.9);
-      opacity: 0.9;
-    }
-
-    .mini-game-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .mini-game-btn {
-      width: 100%;
-      text-align: left;
-      border-radius: 10px;
-      border: 1px solid var(--border-soft);
-      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.6));
-      padding: 6px 8px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s, border-color 0.15s;
-    }
-
-    .mini-game-btn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 0 10px rgba(123, 92, 255, 0.6);
-    }
-
-    .mini-game-btn span.label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .mini-game-btn span.meta {
-      font-size: 0.7rem;
-      opacity: 0.8;
-    }
-
-    /* Mini-game overlay */
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(10, 8, 30, 0.96), rgba(0, 0, 0, 0.98));
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .overlay.active {
-      display: flex;
-    }
-
-    .overlay-inner {
-      width: min(100% - 24px, 900px);
-      height: min(100% - 24px, 620px);
-      border-radius: 16px;
-      background: linear-gradient(145deg, #050814, #0b0f24);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow:
-        0 0 40px rgba(0, 0, 0, 0.8),
-        0 0 80px rgba(120, 80, 255, 0.35);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .overlay-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .overlay-header h3 {
-      font-size: 0.95rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .overlay-close {
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(10, 12, 30, 0.9);
-      color: var(--text-main);
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-    }
-
-    .overlay-close:hover {
-      background: radial-gradient(circle at top left, #ffb3ff 0, #7b5cff 40%, #1b1f3b 100%);
-      box-shadow: 0 0 10px rgba(123, 92, 255, 0.7);
-      transform: translateY(-1px);
-    }
-
-    .overlay-body {
-      flex: 1;
-      padding: 10px;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-    }
-
-    /* Placeholder mini-game canvas/area */
-    .mini-game-area {
-      flex: 1;
-      border-radius: 12px;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      opacity: 0.8;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>GlowGarden — Compact Everything</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #050510;
+    font-family: system-ui, sans-serif;
+    color: #f5f5ff;
+  }
+
+  #topBar {
+    height: 48px;
+    background: linear-gradient(90deg,#151520,#1b1b2a);
+    border-bottom: 1px solid #26263a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  #worldName {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #worldDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffb7c5;
+    box-shadow: 0 0 8px #ffb7c5;
+  }
+
+  #themeButtons button {
+    margin-left: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.4);
+    color: #f5f5ff;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  #themeButtons button:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  #soundToggle {
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.4);
+    cursor: pointer;
+    font-size: 11px;
+  }
+
+  #main {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 48px);
+    overflow: hidden;
+  }
+
+  #world {
+    position: absolute;
+    width: 2400px;
+    height: 2400px;
+    background: radial-gradient(circle at center,#1a1a2e,#050510);
+    transition: background 0.4s;
+  }
+
+  /* Plaza */
+  #plaza {
+    position: absolute;
+    left: 1100px;
+    top: 1100px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle,#ffe3ec,#ff8fa3);
+    border-radius: 40px;
+    box-shadow: 0 0 40px #ff8fa3;
+  }
+
+  /* Avatar */
+  #avatar {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle,#ffb7c5,#ff6f91);
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ff8fb0;
+  }
+
+  /* Garden */
+  #garden {
+    position: absolute;
+    left: 1000px;
+    top: 1350px;
+    width: 256px;
+    height: 256px;
+    display: grid;
+    grid-template-columns: repeat(4,64px);
+    grid-template-rows: repeat(4,64px);
+    gap: 4px;
+  }
+
+  .tile {
+    width: 64px;
+    height: 64px;
+    background: #3b2a1a;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.08);
+  }
+
+  .plant {
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+
+  .stage1 { background:#7fd37f; box-shadow:0 0 8px #7fd37f; }
+  .stage2 { background:#ffdf80; box-shadow:0 0 8px #ffdf80; }
+  .stage3 { background:#ff8fa3; box-shadow:0 0 8px #ff8fa3; }
+  .stage4 { background:#c9a7ff; box-shadow:0 0 8px #c9a7ff; }
+
+  /* Stands */
+  .stand {
+    position: absolute;
+    width: 140px;
+    height: 100px;
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.6);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 600;
+    padding-bottom: 6px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    transition: transform 0.2s, filter 0.2s;
+  }
+
+  .stand:hover {
+    transform: translateY(-4px) scale(1.03);
+    filter: brightness(1.08);
+  }
+
+  #standCute {
+    left: 850px;
+    top: 950px;
+    background: linear-gradient(180deg,#ffe3ec,#ff8fa3);
+  }
+
+  #standMagic {
+    left: 1250px;
+    top: 950px;
+    background: radial-gradient(circle,#f5ecff,#7f5fff);
+  }
+
+  #standCosmic {
+    left: 850px;
+    top: 750px;
+    background: radial-gradient(circle,#f0fbff,#3a7bbf);
+  }
+
+  #standPixel {
+    left: 1250px;
+    top: 750px;
+    background: repeating-linear-gradient(90deg,#fff2b3 0,#fff2b3 8px,#ffd966 8px,#ffd966 16px);
+  }
+
+  /* Side panel (tasks + decorations) */
+  #sidePanel {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 220px;
+    height: calc(100% - 16px);
+    background: rgba(10,10,20,0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    padding: 8px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #tasks h3, #decorations h3 {
+    margin: 4px 0;
+    font-size: 13px;
+  }
+
+  #tasks ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  #tasks li {
+    margin-bottom: 4px;
+    cursor: pointer;
+  }
+
+  #tasks li.done {
+    text-decoration: line-through;
+    color: #9fa3c0;
+  }
+
+  #decorations button {
+    margin: 2px 0;
+    width: 100%;
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.4);
+    color: #f5f5ff;
+    cursor: pointer;
+    font-size: 11px;
+  }
+
+  #decorations button:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .decoration {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .dec-star { background: radial-gradient(circle,#fff,#ffd966); box-shadow:0 0 10px #ffd966; }
+  .dec-flower { background: radial-gradient(circle,#fff,#ff8fa3); box-shadow:0 0 10px #ff8fa3; }
+  .dec-orb { background: radial-gradient(circle,#fff,#7fd0ff); box-shadow:0 0 10px #7fd0ff; }
+</style>
 </head>
 <body>
-  <div id="app">
-    <header>
-      <div class="title-block">
-        <h1>GlowGarden v3 — Offline</h1>
-        <span>Grow worlds, play mini‑games, and keep your plants glowing — even with no internet.</span>
-      </div>
-      <div class="stats">
-        <div class="stat-pill" id="stat-streak">Streak: 0 days</div>
-        <div class="stat-pill" id="stat-plants">Plants: 0</div>
-        <div class="stat-pill" id="stat-world">World: Cute</div>
-      </div>
-    </header>
 
-    <div class="world-selector" id="world-selector">
-      <button class="world-btn active" data-world="cute">
-        <span>🌸</span><span>Cute</span>
-      </button>
-      <button class="world-btn" data-world="magical">
-        <span>✨</span><span>Magical</span>
-      </button>
-      <button class="world-btn" data-world="cosmic">
-        <span>🌌</span><span>Cosmic</span>
-      </button>
-      <button class="world-btn" data-world="full">
-        <span>🎮</span><span>Full</span>
-      </button>
-    </div>
+<div id="topBar">
+  <div id="worldName">
+    <div id="worldDot"></div>
+    <span id="worldLabel">Cute World</span>
+  </div>
+  <div id="themeButtons">
+    <button data-theme="cute">Cute</button>
+    <button data-theme="magical">Magical</button>
+    <button data-theme="cosmic">Cosmic</button>
+    <button data-theme="pixel">Pixel</button>
+  </div>
+  <button id="soundToggle">Sound: Off</button>
+</div>
 
-    <div class="main-layout">
-      <!-- Left: Garden -->
-      <section class="panel">
-        <h2>Garden</h2>
-        <div
-          class="garden-wrapper cute-bg size-cute"
-          id="garden-wrapper"
-          data-world="cute"
-        >
-          <div class="garden-grid" id="garden-grid">
-            <!-- Tiles will be injected by JS in later chunks -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Right: Tasks, upgrades, mini-games -->
-      <section class="panel">
-        <div class="section-header">
-          <h2>Today</h2>
-          <span id="today-label">Welcome back</span>
-        </div>
-
-        <div class="pill-row" id="task-pills">
-          <div class="pill">Water 3 plants</div>
-          <div class="pill">Play 1 mini‑game</div>
-          <div class="pill">Visit 2 worlds</div>
-        </div>
-
-        <div class="section-header" style="margin-top: 8px;">
-          <h2>Mini‑games</h2>
-          <span>Earn boosts while you play</span>
-        </div>
-
-        <div class="mini-game-list">
-          <button class="mini-game-btn" data-game="flappy">
-            <span class="label">🐦 Flappy Sprout</span>
-            <span class="meta">Quick reflex boost</span>
-          </button>
-          <button class="mini-game-btn" data-game="blocks">
-            <span class="label">🧱 Block Bloom</span>
-            <span class="meta">Strategic growth boost</span>
-          </button>
-          <button class="mini-game-btn" data-game="words">
-            <span class="label">🔤 Word Garden</span>
-            <span class="meta">Focus & calm boost</span>
-          </button>
-          <button class="mini-game-btn" data-game="memory">
-            <span class="label">🧠 Memory Petals</span>
-            <span class="meta">Memory & recall boost</span>
-          </button>
-        </div>
-      </section>
-    </div>
-
-    <!-- Mini-game overlay -->
-    <div class="overlay" id="mini-game-overlay">
-      <div class="overlay-inner">
-        <div class="overlay-header">
-          <h3 id="mini-game-title">Mini‑game</h3>
-          <button class="overlay-close" id="mini-game-close">
-            <span>✖</span><span>Close</span>
-          </button>
-        </div>
-        <div class="overlay-body">
-          <div class="mini-game-area" id="mini-game-area">
-            Mini‑game will load here (Chunk 5).
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="main">
+  <div id="world">
+    <div id="plaza"></div>
+    <div id="garden"></div>
+    <div id="standCute" class="stand">Cute Stand</div>
+    <div id="standMagic" class="stand">Magic Stand</div>
+    <div id="standCosmic" class="stand">Cosmic Stand</div>
+    <div id="standPixel" class="stand">Pixel Stand</div>
+    <div id="avatar"></div>
   </div>
 
-  <!-- JS will be added in later chunks -->
-  <script>
-    // Minimal JS here ONLY to ensure Cute world is clickable and not blocked.
-    // Full logic (world switching, sprites, growth, mini-games) comes in later chunks.
+  <div id="sidePanel">
+    <div id="tasks">
+      <h3>Tasks</h3>
+      <ul>
+        <li data-id="plant3">Plant 3 seeds</li>
+        <li data-id="visitCute">Visit Cute Stand</li>
+        <li data-id="visitMagic">Visit Magic Stand</li>
+      </ul>
+    </div>
+    <div id="decorations">
+      <h3>Decorations</h3>
+      <button data-dec="star">Place Star</button>
+      <button data-dec="flower">Place Flower</button>
+      <button data-dec="orb">Place Orb</button>
+      <p style="margin-top:6px;font-size:11px;color:#b0b3d0;">
+        Click in the world after choosing a decoration.
+      </p>
+    </div>
+  </div>
+</div>
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const worldButtons = Array.from(document.querySelectorAll(".world-btn"));
-      const gardenWrapper = document.getElementById("garden-wrapper");
-      const statWorld = document.getElementById("stat-world");
-
-      function applyWorldClasses(worldKey) {
-        gardenWrapper.classList.remove("cute-bg", "magical-bg", "cosmic-bg", "full-bg");
-        gardenWrapper.classList.remove("size-cute", "size-magical", "size-cosmic", "size-full");
-
-        if (worldKey === "cute") {
-          gardenWrapper.classList.add("cute-bg", "size-cute");
-        } else if (worldKey === "magical") {
-          gardenWrapper.classList.add("magical-bg", "size-magical");
-        } else if (worldKey === "cosmic") {
-          gardenWrapper.classList.add("cosmic-bg", "size-cosmic");
-        } else if (worldKey === "full") {
-          gardenWrapper.classList.add("full-bg", "size-full");
-        }
-
-        gardenWrapper.dataset.world = worldKey;
-        statWorld.textContent = "World: " + worldKey.charAt(0).toUpperCase() + worldKey.slice(1);
-      }
-
-      worldButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.world;
-          worldButtons.forEach(b => b.classList.toggle("active", b === btn));
-          applyWorldClasses(key);
-          // Garden content will be updated in later chunks.
-        });
-      });
-
-      // Ensure Cute world is accessible on load
-      applyWorldClasses("cute");
-    });
-  </script>
-</body>
-</html>
 <script>
-/* ---------------------------------------------------------
-   GLOWGARDEN v3 — CHUNK 2
-   Worlds, backgrounds, tile sizing, animation behavior
-   (Sprites, growth logic, mini‑games come in later chunks)
---------------------------------------------------------- */
+/* -------- Avatar + Camera -------- */
+const avatar = document.getElementById("avatar");
+const world = document.getElementById("world");
+let x = 1200, y = 1200;
+const speed = 5;
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  /* ---------------------------------------------------------
-     WORLD DEFINITIONS
-     (Sprite sets added in Chunk 3)
-  --------------------------------------------------------- */
-  const WORLDS = {
-    cute: {
-      key: "cute",
-      tileClass: "size-cute",
-      bgClass: "cute-bg",
-      idleAnimation: null,            // Cute only animates on growth
-      growAnimation: "anim-cute-grow"
-    },
-
-    magical: {
-      key: "magical",
-      tileClass: "size-magical",
-      bgClass: "magical-bg",
-      idleAnimation: "anim-magical-idle",  // Magical glows continuously
-      growAnimation: "anim-magical-grow"
-    },
-
-    cosmic: {
-      key: "cosmic",
-      tileClass: "size-cosmic",
-      bgClass: "cosmic-bg",
-      idleAnimation: "anim-cosmic-idle",   // Cosmic swirls continuously
-      growAnimation: "anim-cosmic-grow"
-    },
-
-    full: {
-      key: "full",
-      tileClass: "size-full",
-      bgClass: "full-bg",
-      idleAnimation: null,            // Pixel world only animates on growth
-      growAnimation: "anim-full-grow"
-    }
-  };
-
-  /* ---------------------------------------------------------
-     DOM ELEMENTS
-  --------------------------------------------------------- */
-  const worldButtons = Array.from(document.querySelectorAll(".world-btn"));
-  const gardenWrapper = document.getElementById("garden-wrapper");
-  const gardenGrid = document.getElementById("garden-grid");
-  const statWorld = document.getElementById("stat-world");
-
-  /* ---------------------------------------------------------
-     CURRENT WORLD STATE
-  --------------------------------------------------------- */
-  let currentWorld = "cute";
-
-  /* ---------------------------------------------------------
-     APPLY WORLD VISUALS
-     (Background, tile size, stat label)
-  --------------------------------------------------------- */
-  function applyWorldClasses(worldKey) {
-    const world = WORLDS[worldKey];
-    if (!world) return;
-
-    // Remove all world classes
-    gardenWrapper.classList.remove(
-      "cute-bg", "magical-bg", "cosmic-bg", "full-bg",
-      "size-cute", "size-magical", "size-cosmic", "size-full"
-    );
-
-    // Add the correct classes
-    gardenWrapper.classList.add(world.bgClass, world.tileClass);
-
-    // Update stat label
-    statWorld.textContent =
-      "World: " + worldKey.charAt(0).toUpperCase() + worldKey.slice(1);
-
-    // Save state
-    currentWorld = worldKey;
-    gardenWrapper.dataset.world = worldKey;
-
-    // Update idle animations for existing plants
-    updateIdleAnimations();
-  }
-
-  /* ---------------------------------------------------------
-     WORLD BUTTON CLICK HANDLERS
-  --------------------------------------------------------- */
-  worldButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const key = btn.dataset.world;
-
-      // Toggle active button
-      worldButtons.forEach(b => b.classList.toggle("active", b === btn));
-
-      // Apply world visuals
-      applyWorldClasses(key);
-
-      // Re-render garden tiles (Chunk 4 will fill them)
-      refreshGardenTiles();
-    });
-  });
-
-  /* ---------------------------------------------------------
-     GARDEN TILE RENDERING (placeholder)
-     Chunk 4 will replace this with full logic.
-  --------------------------------------------------------- */
-  const GRID_SIZE = 12; // 12 tiles for now
-
-  function refreshGardenTiles() {
-    gardenGrid.innerHTML = "";
-
-    for (let i = 0; i < GRID_SIZE; i++) {
-      const tile = document.createElement("div");
-      tile.className = "garden-tile";
-      tile.dataset.index = i;
-
-      // Placeholder plant sprite container
-      const img = document.createElement("img");
-      img.className = "plant-sprite";
-      img.style.opacity = "0.35"; // Placeholder until sprites arrive
-      img.src =
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgVwBEmpAAAAAElFTkSuQmCC";
-
-      tile.appendChild(img);
-      gardenGrid.appendChild(tile);
-    }
-
-    updateIdleAnimations();
-  }
-
-  /* ---------------------------------------------------------
-     IDLE ANIMATION HANDLING
-     Magical + Cosmic animate continuously
-     Cute + Full animate only on growth
-  --------------------------------------------------------- */
-  function updateIdleAnimations() {
-    const world = WORLDS[currentWorld];
-    const tiles = gardenGrid.querySelectorAll(".plant-sprite");
-
-    tiles.forEach(sprite => {
-      sprite.classList.remove(
-        "anim-magical-idle",
-        "anim-cosmic-idle"
-      );
-
-      if (world.idleAnimation) {
-        sprite.classList.add(world.idleAnimation);
-      }
-    });
-  }
-
-  /* ---------------------------------------------------------
-     TAB VISIBILITY — PAUSE ANIMATIONS WHEN INACTIVE
-     (Your choice: Option A)
-  --------------------------------------------------------- */
-  document.addEventListener("visibilitychange", () => {
-    const tiles = gardenGrid.querySelectorAll(".plant-sprite");
-
-    if (document.hidden) {
-      // Pause idle animations
-      tiles.forEach(sprite => {
-        sprite.style.animationPlayState = "paused";
-      });
-    } else {
-      // Resume idle animations
-      tiles.forEach(sprite => {
-        sprite.style.animationPlayState = "running";
-      });
-    }
-  });
-
-  /* ---------------------------------------------------------
-     INITIALIZE
-  --------------------------------------------------------- */
-  applyWorldClasses("cute");
-  refreshGardenTiles();
-
-});
-</script>
-<script>
-/* ---------------------------------------------------------
-   GLOWGARDEN v3 — CHUNK 3
-   SVG sprites (offline, per‑world shading)
-   Cute: pastel
-   Magical: glow
-   Cosmic: nebula
-   Full: pixel‑style
---------------------------------------------------------- */
-
-/* Convert raw SVG markup → data URL */
-function svgToDataUrl(svg) {
-  return "data:image/svg+xml;utf8," + encodeURIComponent(svg.trim());
+function updateAvatar() {
+  avatar.style.left = x + "px";
+  avatar.style.top = y + "px";
+  const cx = window.innerWidth / 2 - x - 20;
+  const cy = (window.innerHeight - 48) / 2 - y - 20;
+  world.style.transform = `translate(${cx}px, ${cy}px)`;
 }
 
-/* ---------------------------------------------------------
-   🌸 CUTE — Pastel Chibi Flowers (64×64)
---------------------------------------------------------- */
-const cuteSVG = [
-  `<svg width="64" height="64" viewBox="0 0 64 64">
-     <defs>
-       <radialGradient id="c1" cx="50%" cy="30%" r="60%">
-         <stop offset="0%" stop-color="#ffe6ff"/>
-         <stop offset="50%" stop-color="#ffc8f0"/>
-         <stop offset="100%" stop-color="#f5a8ff"/>
-       </radialGradient>
-     </defs>
-     <circle cx="32" cy="38" r="10" fill="url(#c1)"/>
-     <rect x="30" y="38" width="4" height="10" rx="2" fill="#7fd6a3"/>
-   </svg>`,
+const keys = {};
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
 
-  `<svg width="64" height="64" viewBox="0 0 64 64">
-     <defs>
-       <radialGradient id="c2" cx="50%" cy="30%" r="60%">
-         <stop offset="0%" stop-color="#fff5ff"/>
-         <stop offset="50%" stop-color="#ffd6ff"/>
-         <stop offset="100%" stop-color="#ffb3e6"/>
-       </radialGradient>
-     </defs>
-     <circle cx="32" cy="24" r="6" fill="#fff7d6"/>
-     <circle cx="24" cy="24" r="8" fill="url(#c2)"/>
-     <circle cx="40" cy="24" r="8" fill="url(#c2)"/>
-     <rect x="30" y="28" width="4" height="14" rx="2" fill="#7fd6a3"/>
-   </svg>`,
+function gameLoop() {
+  if (keys["ArrowUp"] || keys["w"]) y -= speed;
+  if (keys["ArrowDown"] || keys["s"]) y += speed;
+  if (keys["ArrowLeft"] || keys["a"]) x -= speed;
+  if (keys["ArrowRight"] || keys["d"]) x += speed;
+  updateAvatar();
+  requestAnimationFrame(gameLoop);
+}
+updateAvatar();
+gameLoop();
 
-  `<svg width="64" height="64" viewBox="0 0 64 64">
-     <defs>
-       <radialGradient id="c3" cx="50%" cy="30%" r="65%">
-         <stop offset="0%" stop-color="#fff7ff"/>
-         <stop offset="30%" stop-color="#ffd6ff"/>
-         <stop offset="60%" stop-color="#ffe6b3"/>
-         <stop offset="100%" stop-color="#c8f5ff"/>
-       </radialGradient>
-     </defs>
-     <circle cx="32" cy="22" r="7" fill="#fffbe0"/>
-     <circle cx="20" cy="24" r="10" fill="url(#c3)"/>
-     <circle cx="44" cy="24" r="10" fill="url(#c3)"/>
-     <rect x="29" y="34" width="6" height="16" rx="3" fill="#7fd6a3"/>
-   </svg>`,
+/* -------- Garden + Plant Growth -------- */
+const garden = document.getElementById("garden");
+let plantedCount = 0;
 
-  `<svg width="64" height="64" viewBox="0 0 64 64">
-     <defs>
-       <radialGradient id="c4" cx="50%" cy="30%" r="70%">
-         <stop offset="0%" stop-color="#ffffff"/>
-         <stop offset="25%" stop-color="#ffe6ff"/>
-         <stop offset="50%" stop-color="#ffd6ff"/>
-         <stop offset="75%" stop-color="#ffe6b3"/>
-         <stop offset="100%" stop-color="#c8f5ff"/>
-       </radialGradient>
-     </defs>
-     <circle cx="32" cy="22" r="8" fill="#fffbe8"/>
-     <circle cx="18" cy="24" r="11" fill="url(#c4)"/>
-     <circle cx="46" cy="24" r="11" fill="url(#c4)"/>
-     <circle cx="32" cy="34" r="11" fill="url(#c4)"/>
-     <rect x="28" y="38" width="8" height="18" rx="4" fill="#7fd6a3"/>
-   </svg>`
-];
+for (let i = 0; i < 16; i++) {
+  const tile = document.createElement("div");
+  tile.className = "tile";
+  tile.dataset.stage = 0;
 
-/* ---------------------------------------------------------
-   ✨ MAGICAL — Glow Fantasy Plants (96×96)
---------------------------------------------------------- */
-const magicalSVG = [
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="m1" cx="50%" cy="20%" r="70%">
-         <stop offset="0%" stop-color="#cfe0ff"/>
-         <stop offset="40%" stop-color="#7f8cff"/>
-         <stop offset="100%" stop-color="#4b2c88"/>
-       </radialGradient>
-     </defs>
-     <circle cx="48" cy="52" r="14" fill="url(#m1)"/>
-     <ellipse cx="48" cy="64" rx="4" ry="14" fill="#4fd1c5"/>
-   </svg>`,
+  tile.onclick = () => {
+    let stage = Number(tile.dataset.stage);
+    if (stage < 4) {
+      stage++;
+      if (stage === 1) plantedCount++;
+      tile.dataset.stage = stage;
+      tile.innerHTML = "";
+      const plant = document.createElement("div");
+      plant.className = "plant stage" + stage;
+      tile.appendChild(plant);
+      checkTasks();
+      playChime();
+    }
+  };
 
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="m2" cx="50%" cy="20%" r="70%">
-         <stop offset="0%" stop-color="#ffe6f7"/>
-         <stop offset="40%" stop-color="#ff9ad6"/>
-         <stop offset="100%" stop-color="#ffcc66"/>
-       </radialGradient>
-     </defs>
-     <ellipse cx="48" cy="40" rx="18" ry="22" fill="url(#m2)"/>
-     <rect x="45" y="56" width="6" height="18" rx="3" fill="#38b2ac"/>
-   </svg>`,
+  garden.appendChild(tile);
+}
 
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="m3" cx="50%" cy="20%" r="70%">
-         <stop offset="0%" stop-color="#e0fff5"/>
-         <stop offset="40%" stop-color="#34d399"/>
-         <stop offset="100%" stop-color="#0f766e"/>
-       </radialGradient>
-     </defs>
-     <ellipse cx="48" cy="34" rx="20" ry="24" fill="url(#m3)"/>
-     <rect x="44" y="56" width="8" height="20" rx="4" fill="#0f766e"/>
-   </svg>`,
+/* -------- Stands + Interactions -------- */
+function standMessage(name) {
+  alert("You interacted with the " + name + "!");
+  if (name === "Cute Stand") markTaskDone("visitCute");
+  if (name === "Magic Stand") markTaskDone("visitMagic");
+}
 
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="m4" cx="50%" cy="40%" r="70%">
-         <stop offset="0%" stop-color="#dcfce7"/>
-         <stop offset="50%" stop-color="#22c55e"/>
-         <stop offset="100%" stop-color="#065f46"/>
-       </radialGradient>
-     </defs>
-     <ellipse cx="48" cy="50" rx="22" ry="24" fill="url(#m4)"/>
-     <circle cx="48" cy="40" r="10" fill="#fefce8"/>
-   </svg>`
-];
+document.getElementById("standCute").onclick = () => standMessage("Cute Stand");
+document.getElementById("standMagic").onclick = () => standMessage("Magic Stand");
+document.getElementById("standCosmic").onclick = () => standMessage("Cosmic Stand");
+document.getElementById("standPixel").onclick = () => standMessage("Pixel Stand");
 
-/* ---------------------------------------------------------
-   🌌 COSMIC — Nebula Swirl Plants (96×96)
---------------------------------------------------------- */
-const cosmicSVG = [
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="co1" cx="50%" cy="40%" r="60%">
-         <stop offset="0%" stop-color="#e0f2ff"/>
-         <stop offset="40%" stop-color="#7dd3fc"/>
-         <stop offset="100%" stop-color="#312e81"/>
-       </radialGradient>
-     </defs>
-     <ellipse cx="48" cy="50" rx="14" ry="10" fill="url(#co1)"/>
-   </svg>`,
+/* -------- Tasks -------- */
+const taskList = document.querySelectorAll("#tasks li");
 
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="co2" cx="40%" cy="40%" r="70%">
-         <stop offset="0%" stop-color="#e0f2ff"/>
-         <stop offset="40%" stop-color="#a5b4fc"/>
-         <stop offset="100%" stop-color="#1e3a8a"/>
-       </radialGradient>
-     </defs>
-     <path d="M30 56 C 40 36, 64 36, 70 52 C 60 50, 48 60, 36 62 Z"
-           fill="url(#co2)"/>
-   </svg>`,
+function markTaskDone(id) {
+  taskList.forEach(li => {
+    if (li.dataset.id === id) li.classList.add("done");
+  });
+}
 
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="co3" cx="50%" cy="40%" r="70%">
-         <stop offset="0%" stop-color="#e0f2ff"/>
-         <stop offset="30%" stop-color="#a5b4fc"/>
-         <stop offset="70%" stop-color="#6366f1"/>
-         <stop offset="100%" stop-color="#1e293b"/>
-       </radialGradient>
-     </defs>
-     <path d="M30 52 C 34 34, 62 30, 70 46
-              C 60 42, 50 52, 44 60
-              C 40 62, 34 60, 30 56 Z"
-           fill="url(#co3)"/>
-   </svg>`,
+function checkTasks() {
+  if (plantedCount >= 3) markTaskDone("plant3");
+}
 
-  `<svg width="96" height="96" viewBox="0 0 96 96">
-     <defs>
-       <radialGradient id="co4" cx="50%" cy="40%" r="75%">
-         <stop offset="0%" stop-color="#e0f2ff"/>
-         <stop offset="25%" stop-color="#a5b4fc"/>
-         <stop offset="55%" stop-color="#6366f1"/>
-         <stop offset="100%" stop-color="#020617"/>
-       </radialGradient>
-     </defs>
-     <path d="M26 54 C 30 32, 64 28, 74 44
-              C 64 40, 54 46, 48 54
-              C 44 60, 36 64, 28 62 Z"
-           fill="url(#co4)"/>
-   </svg>`
-];
+/* -------- Decorations -------- */
+let currentDecoration = null;
 
-/* ---------------------------------------------------------
-   🎮 FULL — Pixel‑Style Sprouts (32×32)
---------------------------------------------------------- */
-const fullSVG = [
-  `<svg width="32" height="32" viewBox="0 0 32 32">
-     <rect x="14" y="18" width="4" height="8" fill="#00a000"/>
-     <rect x="10" y="16" width="6" height="4" fill="#00c000"/>
-     <rect x="16" y="16" width="6" height="4" fill="#00c000"/>
-   </svg>`,
+document.querySelectorAll("#decorations button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentDecoration = btn.dataset.dec;
+  });
+});
 
-  `<svg width="32" height="32" viewBox="0 0 32 32">
-     <rect x="14" y="16" width="4" height="10" fill="#008000"/>
-     <rect x="10" y="14" width="8" height="4" fill="#00c000"/>
-   </svg>`,
+world.addEventListener("click", e => {
+  if (!currentDecoration) return;
+  const rect = world.getBoundingClientRect();
+  const dx = e.clientX - rect.left;
+  const dy = e.clientY - rect.top;
+  const dec = document.createElement("div");
+  dec.classList.add("decoration");
+  if (currentDecoration === "star") dec.classList.add("dec-star");
+  if (currentDecoration === "flower") dec.classList.add("dec-flower");
+  if (currentDecoration === "orb") dec.classList.add("dec-orb");
+  dec.style.left = (dx - 12) + "px";
+  dec.style.top = (dy - 12) + "px";
+  world.appendChild(dec);
+  playChime();
+});
 
-  `<svg width="32" height="32" viewBox="0 0 32 32">
-     <rect x="14" y="14" width="4" height="12" fill="#006400"/>
-     <rect x="10" y="12" width="8" height="4" fill="#00b000"/>
-   </svg>`,
+/* -------- World Themes -------- */
+const worldLabel = document.getElementById("worldLabel");
+const worldDot = document.getElementById("worldDot");
 
-  `<svg width="32" height="32" viewBox="0 0 32 32">
-     <rect x="14" y="14" width="4" height="12" fill="#004d00"/>
-     <rect x="10" y="10" width="4" height="4" fill="#00ff66"/>
-     <rect x="18" y="10" width="4" height="4" fill="#00ff66"/>
-   </svg>`
-];
+function setTheme(theme) {
+  if (theme === "cute") {
+    world.style.background = "radial-gradient(circle at center,#2a1a2e,#050510)";
+    worldDot.style.background = "#ffb7c5";
+    worldDot.style.boxShadow = "0 0 8px #ffb7c5";
+    worldLabel.textContent = "Cute World";
+  } else if (theme === "magical") {
+    world.style.background = "radial-gradient(circle at center,#2b1b4a,#0b0618)";
+    worldDot.style.background = "#c9a7ff";
+    worldDot.style.boxShadow = "0 0 8px #c9a7ff";
+    worldLabel.textContent = "Magical World";
+  } else if (theme === "cosmic") {
+    world.style.background = "radial-gradient(circle at center,#163a5c,#02040a)";
+    worldDot.style.background = "#7fd0ff";
+    worldDot.style.boxShadow = "0 0 8px #7fd0ff";
+    worldLabel.textContent = "Cosmic World";
+  } else if (theme === "pixel") {
+    world.style.background = "repeating-linear-gradient(45deg,#1f1f1f 0,#1f1f1f 8px,#151515 8px,#151515 16px)";
+    worldDot.style.background = "#ffd966";
+    worldDot.style.boxShadow = "0 0 8px #ffd966";
+    worldLabel.textContent = "Pixel World";
+  }
+}
 
-/* ---------------------------------------------------------
-   Build final sprite object
---------------------------------------------------------- */
-const plantSprites = {
-  cute: cuteSVG.map(svgToDataUrl),
-  magical: magicalSVG.map(svgToDataUrl),
-  cosmic: cosmicSVG.map(svgToDataUrl),
-  full: fullSVG.map(svgToDataUrl)
+document.querySelectorAll("#themeButtons button").forEach(btn => {
+  btn.addEventListener("click", () => setTheme(btn.dataset.theme));
+});
+
+setTheme("cute");
+
+/* -------- Sound (simple chime) -------- */
+let soundOn = false;
+const soundToggle = document.getElementById("soundToggle");
+
+soundToggle.onclick = () => {
+  soundOn = !soundOn;
+  soundToggle.textContent = "Sound: " + (soundOn ? "On" : "Off");
 };
 
-window.plantSprites = plantSprites;
+function playChime() {
+  if (!soundOn) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.25);
+  } catch (e) {
+    // ignore if AudioContext not available
+  }
+}
 </script>
-<script>
-/* ---------------------------------------------------------
-   GLOWGARDEN v3 — CHUNK 4
-   Growth logic, tasks, streaks, tile interactions
---------------------------------------------------------- */
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  /* ---------------------------------------------------------
-     GLOBAL GAME STATE
-  --------------------------------------------------------- */
-  const GRID_SIZE = 12;
-  const MAX_STAGE = 3; // 0–3 (4 stages)
-  const growthTimes = {
-    cute:    10000,  // 10s per stage
-    magical: 14000,  // 14s per stage
-    cosmic:  16000,  // 16s per stage
-    full:     8000   // 8s per stage
-  };
-
-  let garden = []; // each tile: { stage, lastGrowth }
-  let lastLogin = null;
-  let streak = 0;
-
-  const gardenGrid = document.getElementById("garden-grid");
-  const statPlants = document.getElementById("stat-plants");
-  const statStreak = document.getElementById("stat-streak");
-
-  /* ---------------------------------------------------------
-     INITIALIZE GARDEN ARRAY
-  --------------------------------------------------------- */
-  function initGarden() {
-    if (garden.length === GRID_SIZE) return;
-
-    garden = Array.from({ length: GRID_SIZE }, () => ({
-      stage: 0,
-      lastGrowth: Date.now()
-    }));
-  }
-
-  /* ---------------------------------------------------------
-     RENDER ALL TILES
-  --------------------------------------------------------- */
-  function renderGarden() {
-    gardenGrid.innerHTML = "";
-
-    garden.forEach((tile, index) => {
-      const div = document.createElement("div");
-      div.className = "garden-tile";
-      div.dataset.index = index;
-
-      const img = document.createElement("img");
-      img.className = "plant-sprite";
-
-      const world = gardenWrapper.dataset.world;
-      img.src = plantSprites[world][tile.stage];
-
-      div.appendChild(img);
-      gardenGrid.appendChild(div);
-
-      div.addEventListener("click", () => growTile(index));
-    });
-
-    updateIdleAnimations();
-    updatePlantCount();
-  }
-
-  /* ---------------------------------------------------------
-     GROW A TILE (user click)
-  --------------------------------------------------------- */
-  function growTile(index) {
-    const tile = garden[index];
-    const world = gardenWrapper.dataset.world;
-
-    if (tile.stage < MAX_STAGE) {
-      tile.stage++;
-      tile.lastGrowth = Date.now();
-    }
-
-    // Apply growth animation
-    applyGrowAnimation(index, world);
-
-    renderGarden();
-  }
-
-  /* ---------------------------------------------------------
-     APPLY GROW ANIMATION
-  --------------------------------------------------------- */
-  function applyGrowAnimation(index, world) {
-    const tile = gardenGrid.children[index];
-    if (!tile) return;
-
-    const img = tile.querySelector(".plant-sprite");
-    img.classList.remove(
-      "anim-cute-grow",
-      "anim-magical-grow",
-      "anim-cosmic-grow",
-      "anim-full-grow"
-    );
-
-    void img.offsetWidth; // force reflow
-
-    if (world === "cute")    img.classList.add("anim-cute-grow");
-    if (world === "magical") img.classList.add("anim-magical-grow");
-    if (world === "cosmic")  img.classList.add("anim-cosmic-grow");
-    if (world === "full")    img.classList.add("anim-full-grow");
-  }
-
-  /* ---------------------------------------------------------
-     IDLE ANIMATIONS (Magical + Cosmic)
-  --------------------------------------------------------- */
-  function updateIdleAnimations() {
-    const world = gardenWrapper.dataset.world;
-    const sprites = gardenGrid.querySelectorAll(".plant-sprite");
-
-    sprites.forEach(s => {
-      s.classList.remove("anim-magical-idle", "anim-cosmic-idle");
-
-      if (world === "magical") s.classList.add("anim-magical-idle");
-      if (world === "cosmic")  s.classList.add("anim-cosmic-idle");
-    });
-  }
-
-  /* ---------------------------------------------------------
-     AUTO-GROWTH OVER TIME
-  --------------------------------------------------------- */
-  function autoGrow() {
-    const world = gardenWrapper.dataset.world;
-    const interval = growthTimes[world];
-
-    const now = Date.now();
-
-    garden.forEach(tile => {
-      if (tile.stage < MAX_STAGE && now - tile.lastGrowth >= interval) {
-        tile.stage++;
-        tile.lastGrowth = now;
-      }
-    });
-
-    renderGarden();
-  }
-
-  setInterval(autoGrow, 2000);
-
-  /* ---------------------------------------------------------
-     PLANT COUNT
-  --------------------------------------------------------- */
-  function updatePlantCount() {
-    const count = garden.filter(t => t.stage === MAX_STAGE).length;
-    statPlants.textContent = "Plants: " + count;
-  }
-
-  /* ---------------------------------------------------------
-     DAILY STREAK SYSTEM
-  --------------------------------------------------------- */
-  function loadStreak() {
-    const saved = localStorage.getItem("ggv3-lastLogin");
-    const today = new Date().toDateString();
-
-    if (!saved) {
-      streak = 1;
-    } else {
-      const last = new Date(saved).toDateString();
-      if (last === today) {
-        // same day
-      } else {
-        const diff = (new Date(today) - new Date(last)) / 86400000;
-        streak = diff === 1 ? streak + 1 : 1;
-      }
-    }
-
-    localStorage.setItem("ggv3-lastLogin", today);
-    statStreak.textContent = "Streak: " + streak + " days";
-  }
-
-  /* ---------------------------------------------------------
-     TASKS (simple placeholder system)
-  --------------------------------------------------------- */
-  const tasks = [
-    { id: "water", text: "Water 3 plants", progress: 0, goal: 3 },
-    { id: "visit", text: "Visit 2 worlds", progress: 0, goal: 2 },
-    { id: "play",  text: "Play 1 mini‑game", progress: 0, goal: 1 }
-  ];
-
-  function updateTasks() {
-    const row = document.getElementById("task-pills");
-    row.innerHTML = "";
-
-    tasks.forEach(t => {
-      const pill = document.createElement("div");
-      pill.className = "pill";
-      pill.textContent = `${t.text} (${t.progress}/${t.goal})`;
-      row.appendChild(pill);
-    });
-  }
-
-  function incrementTask(id) {
-    const t = tasks.find(x => x.id === id);
-    if (!t) return;
-    if (t.progress < t.goal) t.progress++;
-    updateTasks();
-  }
-
-  /* ---------------------------------------------------------
-     WORLD VISIT TASK HOOK
-  --------------------------------------------------------- */
-  const worldButtons = document.querySelectorAll(".world-btn");
-  worldButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      incrementTask("visit");
-    });
-  });
-
-  /* ---------------------------------------------------------
-     MINI-GAME TASK HOOK (Chunk 5 will trigger this)
-  --------------------------------------------------------- */
-  window.completeMiniGameTask = function() {
-    incrementTask("play");
-  };
-
-  /* ---------------------------------------------------------
-     INITIALIZE EVERYTHING
-  --------------------------------------------------------- */
-  initGarden();
-  loadStreak();
-  updateTasks();
-  renderGarden();
-
-});
-</script>
-<script>
-/* ---------------------------------------------------------
-   GLOWGARDEN v3 — CHUNK 5
-   Mini‑games + overlay + reward hooks
---------------------------------------------------------- */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  /* ---------------------------------------------------------
-     DOM ELEMENTS
-  --------------------------------------------------------- */
-  const overlay = document.getElementById("mini-game-overlay");
-  const overlayTitle = document.getElementById("mini-game-title");
-  const overlayClose = document.getElementById("mini-game-close");
-  const overlayArea = document.getElementById("mini-game-area");
-
-  const miniGameButtons = document.querySelectorAll(".mini-game-btn");
-
-  /* ---------------------------------------------------------
-     OPEN MINI‑GAME
-  --------------------------------------------------------- */
-  miniGameButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const game = btn.dataset.game;
-      openMiniGame(game);
-    });
-  });
-
-  function openMiniGame(game) {
-    overlay.classList.add("active");
-
-    if (game === "flappy") {
-      overlayTitle.textContent = "Flappy Sprout";
-      loadFlappy();
-    }
-    if (game === "blocks") {
-      overlayTitle.textContent = "Block Bloom";
-      loadBlocks();
-    }
-    if (game === "words") {
-      overlayTitle.textContent = "Word Garden";
-      loadWordGarden();
-    }
-    if (game === "memory") {
-      overlayTitle.textContent = "Memory Petals";
-      loadMemory();
-    }
-  }
-
-  /* ---------------------------------------------------------
-     CLOSE MINI‑GAME
-  --------------------------------------------------------- */
-  overlayClose.addEventListener("click", () => {
-    overlay.classList.remove("active");
-    overlayArea.innerHTML = "Mini‑game will load here (Chunk 5).";
-  });
-
-  /* ---------------------------------------------------------
-     MINI‑GAME: FLAPPY SPROUT
-     (Simple canvas-based flappy clone)
-  --------------------------------------------------------- */
-  function loadFlappy() {
-    overlayArea.innerHTML = "";
-    const canvas = document.createElement("canvas");
-    canvas.width = 400;
-    canvas.height = 500;
-    canvas.style.background = "#0a0f1f";
-    canvas.style.borderRadius = "12px";
-    overlayArea.appendChild(canvas);
-
-    const ctx = canvas.getContext("2d");
-
-    let y = 200;
-    let velocity = 0;
-    let pipes = [];
-    let score = 0;
-    let running = true;
-
-    function addPipe() {
-      const gap = 120;
-      const top = Math.random() * 200 + 50;
-      pipes.push({ x: 400, top, bottom: top + gap });
-    }
-
-    addPipe();
-
-    canvas.addEventListener("click", () => {
-      velocity = -6;
-    });
-
-    function loop() {
-      if (!running) return;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Gravity
-      velocity += 0.4;
-      y += velocity;
-
-      // Draw sprout
-      ctx.fillStyle = "#7fd6a3";
-      ctx.beginPath();
-      ctx.arc(80, y, 12, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Pipes
-      pipes.forEach(p => {
-        p.x -= 3;
-
-        ctx.fillStyle = "#4b5563";
-        ctx.fillRect(p.x, 0, 40, p.top);
-        ctx.fillRect(p.x, p.bottom, 40, 500 - p.bottom);
-
-        // Collision
-        if (p.x < 100 && p.x + 40 > 60) {
-          if (y < p.top || y > p.bottom) {
-            running = false;
-            finishMiniGame("flappy", score);
-          }
-        }
-
-        // Score
-        if (p.x === 40) score++;
-      });
-
-      // Add new pipes
-      if (pipes[pipes.length - 1].x < 200) addPipe();
-
-      // Out of bounds
-      if (y > 500 || y < 0) {
-        running = false;
-        finishMiniGame("flappy", score);
-      }
-
-      requestAnimationFrame(loop);
-    }
-
-    loop();
-  }
-
-  /* ---------------------------------------------------------
-     MINI‑GAME: BLOCK BLOOM
-     (Simple falling-block puzzle)
-  --------------------------------------------------------- */
-  function loadBlocks() {
-    overlayArea.innerHTML = `
-      <div style="text-align:center; opacity:0.8;">
-        Block Bloom is coming soon — enjoy a quick reward!
-      </div>
-    `;
-    finishMiniGame("blocks", 1);
-  }
-
-  /* ---------------------------------------------------------
-     MINI‑GAME: WORD GARDEN
-     (Simple word scramble)
-  --------------------------------------------------------- */
-  function loadWordGarden() {
-    const words = ["petal", "garden", "cosmic", "magical", "sprout"];
-    const word = words[Math.floor(Math.random() * words.length)];
-    const scrambled = word.split("").sort(() => Math.random() - 0.5).join("");
-
-    overlayArea.innerHTML = `
-      <div style="text-align:center;">
-        <p>Unscramble this word:</p>
-        <h2>${scrambled}</h2>
-        <input id="wg-input" style="padding:6px; border-radius:6px; margin-top:8px;">
-        <button id="wg-btn" style="margin-left:6px;">Submit</button>
-      </div>
-    `;
-
-    document.getElementById("wg-btn").onclick = () => {
-      const guess = document.getElementById("wg-input").value.trim().toLowerCase();
-      if (guess === word) {
-        finishMiniGame("words", 1);
-      } else {
-        alert("Try again!");
-      }
-    };
-  }
-
-  /* ---------------------------------------------------------
-     MINI‑GAME: MEMORY PETALS
-     (Simple 4-card memory match)
-  --------------------------------------------------------- */
-  function loadMemory() {
-    const cards = ["🌸", "🌸", "✨", "✨"].sort(() => Math.random() - 0.5);
-    let first = null;
-    let lock = false;
-
-    overlayArea.innerHTML = `
-      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px;">
-        ${cards.map((c, i) => `
-          <div class="mem-card" data-i="${i}"
-               style="background:#1b1f3b; padding:20px; border-radius:10px;
-                      text-align:center; font-size:2rem; cursor:pointer;">
-            ?
-          </div>
-        `).join("")}
-      </div>
-    `;
-
-    const els = overlayArea.querySelectorAll(".mem-card");
-
-    els.forEach(el => {
-      el.onclick = () => {
-        if (lock) return;
-
-        const i = el.dataset.i;
-        el.textContent = cards[i];
-
-        if (first === null) {
-          first = el;
-        } else {
-          lock = true;
-          setTimeout(() => {
-            if (first.textContent === el.textContent) {
-              first.style.opacity = "0.4";
-              el.style.opacity = "0.4";
-              finishMiniGame("memory", 1);
-            } else {
-              first.textContent = "?";
-              el.textContent = "?";
-            }
-            first = null;
-            lock = false;
-          }, 700);
-        }
-      };
-    });
-  }
-
-  /* ---------------------------------------------------------
-     MINI‑GAME COMPLETION + REWARD
-  --------------------------------------------------------- */
-  function finishMiniGame(game, score) {
-    // Reward: grow 1 random plant
-    const index = Math.floor(Math.random() * garden.length);
-    if (garden[index].stage < 3) {
-      garden[index].stage++;
-    }
-
-    // Task progress
-    if (window.completeMiniGameTask) {
-      window.completeMiniGameTask();
-    }
-
-    // Re-render
-    renderGarden();
-
-    // Close overlay after short delay
-    setTimeout(() => {
-      overlay.classList.remove("active");
-      overlayArea.innerHTML = "Mini‑game will load here (Chunk 5).";
-    }, 800);
-  }
-
-});
-</script>
+</body>
+</html>
