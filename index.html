@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GlowGarden – Full Game</title>
+<title>GlowGarden – Creatures & Worlds</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   html, body {
@@ -61,15 +61,11 @@
     background: #7fb86f;
   }
 
-  /* Medium world */
+  /* Medium world base */
   #world {
     position: absolute;
     width: 2000px;
     height: 2000px;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0, transparent 45%),
-      repeating-linear-gradient(45deg,#7fb86f 0,#7fb86f 16px,#76ad66 16px,#76ad66 32px);
     border-radius: 40px;
     box-shadow: 0 0 40px rgba(0,0,0,0.4);
     cursor: grab;
@@ -92,7 +88,7 @@
     border: 4px solid #c28b4a;
   }
 
-  /* Garden */
+  /* Garden area */
   #garden {
     position: absolute;
     left: 930px;
@@ -171,49 +167,310 @@
     background: repeating-linear-gradient(90deg,#fff2b3 0,#fff2b3 8px,#ffd966 8px,#ffd966 16px);
   }
 
-  /* Avatar base */
+  /* Avatar container (for positioning) */
   #avatar {
     position: absolute;
-    width: 40px;
-    height: 40px;
-    left: 1030px;
-    top: 980px;
-    transition: transform 0.05s linear;
+    width: 60px;
+    height: 60px;
+    left: 1020px;
+    top: 970px;
   }
 
-  /* Cute avatar */
-  .avatar-cute {
+  /* Shared creature base */
+  .creature {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ---------- Cute World Creature: Pufflet ---------- */
+  .creature-cute .body {
+    position: absolute;
+    width: 52px;
+    height: 48px;
+    left: 4px;
+    top: 8px;
+    background: radial-gradient(circle at 30% 20%, #fff, #ffb7c5);
+    border-radius: 50px;
+    box-shadow: 0 0 10px #ffb7c5;
+  }
+
+  .creature-cute .ear-left,
+  .creature-cute .ear-right {
+    position: absolute;
+    width: 16px;
+    height: 24px;
+    background: #ffe3ec;
+    border-radius: 16px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  }
+
+  .creature-cute .ear-left {
+    left: 8px;
+    top: 0;
+  }
+
+  .creature-cute .ear-right {
+    right: 8px;
+    top: 0;
+  }
+
+  .creature-cute .eye-left,
+  .creature-cute .eye-right {
+    position: absolute;
+    width: 10px;
+    height: 12px;
+    background: #2b1b1b;
     border-radius: 50%;
-    background: radial-gradient(circle,#ffe3ec,#ff8fa3);
-    box-shadow: 0 0 12px #ffb7c5;
+    top: 22px;
+  }
+
+  .creature-cute .eye-left {
+    left: 18px;
+  }
+
+  .creature-cute .eye-right {
+    right: 18px;
+  }
+
+  .creature-cute .eye-left::after,
+  .creature-cute .eye-right::after {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    left: 3px;
+  }
+
+  .creature-cute .cheek-left,
+  .creature-cute .cheek-right {
+    position: absolute;
+    width: 8px;
+    height: 6px;
+    background: #ff8fa3;
+    border-radius: 50%;
+    top: 34px;
+  }
+
+  .creature-cute .cheek-left {
+    left: 14px;
+  }
+
+  .creature-cute .cheek-right {
+    right: 14px;
+  }
+
+  .creature-cute .feet {
+    position: absolute;
+    width: 32px;
+    height: 8px;
+    left: 14px;
+    bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .creature-cute .feet::before,
+  .creature-cute .feet::after {
+    content: "";
+    width: 10px;
+    height: 8px;
+    background: #c28b4a;
+    border-radius: 10px 10px 4px 4px;
+  }
+
+  .creature-cute {
     animation: cuteBounce 1.8s infinite ease-in-out, cuteSparkle 3s infinite ease-in-out;
   }
 
-  /* Magical avatar */
-  .avatar-magical {
+  /* ---------- Magical World Creature: Faelight Sprite ---------- */
+  .creature-magical .body {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    left: 7px;
+    top: 10px;
+    background: radial-gradient(circle, #f7f0ff, #b28cff);
     border-radius: 50%;
-    background: radial-gradient(circle,#e5d4ff,#7f5fff);
-    box-shadow: 0 0 14px #c9a7ff;
+    box-shadow: 0 0 16px #c9a7ff;
+  }
+
+  .creature-magical .wing-left,
+  .creature-magical .wing-right {
+    position: absolute;
+    width: 22px;
+    height: 30px;
+    background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(200,180,255,0.1));
+    border-radius: 50%;
+    top: 16px;
+    filter: blur(0.5px);
+  }
+
+  .creature-magical .wing-left {
+    left: -6px;
+  }
+
+  .creature-magical .wing-right {
+    right: -6px;
+  }
+
+  .creature-magical .eye-left,
+  .creature-magical .eye-right {
+    position: absolute;
+    width: 8px;
+    height: 10px;
+    background: #2b1b3b;
+    border-radius: 50%;
+    top: 22px;
+  }
+
+  .creature-magical .eye-left {
+    left: 20px;
+  }
+
+  .creature-magical .eye-right {
+    right: 20px;
+  }
+
+  .creature-magical .eye-left::after,
+  .creature-magical .eye-right::after {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    left: 3px;
+  }
+
+  .creature-magical .sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px #fff;
+    top: 8px;
+    left: 40px;
+    opacity: 0.8;
+  }
+
+  .creature-magical {
     animation: magicalPulse 2.2s infinite ease-in-out, magicalGlow 3.5s infinite ease-in-out;
   }
 
-  /* Cosmic avatar */
-  .avatar-cosmic {
+  /* ---------- Cosmic World Creature: Starling ---------- */
+  .creature-cosmic .body {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: 5px;
+    top: 8px;
+    background: radial-gradient(circle at 30% 20%, #e0f6ff, #163a5c);
     border-radius: 50%;
-    background: radial-gradient(circle,#e0f6ff,#3a7bbf);
-    box-shadow: 0 0 14px #7fd0ff;
+    box-shadow: 0 0 18px #7fd0ff;
+  }
+
+  .creature-cosmic .core {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 20px;
+    top: 20px;
+    background: radial-gradient(circle, #fff, #7fd0ff);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #7fd0ff;
+  }
+
+  .creature-cosmic .orbit {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    left: 0;
+    top: 4px;
+    border-radius: 50%;
+    border: 1px dashed rgba(127,208,255,0.6);
+    box-sizing: border-box;
+    animation: orbitSpin 4s linear infinite;
+  }
+
+  .creature-cosmic .orbit::before {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #7fd0ff;
+    border-radius: 50%;
+    top: -3px;
+    left: 27px;
+    box-shadow: 0 0 8px #7fd0ff;
+  }
+
+  .creature-cosmic {
     animation: cosmicDrift 2.6s infinite ease-in-out, cosmicShimmer 2s infinite ease-in-out;
   }
 
-  /* Pixel avatar */
-  .avatar-pixel {
-    width: 32px;
-    height: 32px;
+  @keyframes orbitSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ---------- Pixel World Creature: Bitling ---------- */
+  .creature-pixel {
+    width: 48px;
+    height: 48px;
+    margin: 6px;
+    position: relative;
     image-rendering: pixelated;
-    background:
-      linear-gradient(#f4d7b5 0 8px,#f4d7b5 8px 16px,#c28b4a 16px 24px,#3b2614 24px 32px);
-    box-shadow: 0 0 8px #ffd966;
     animation: pixelFlicker 0.9s infinite steps(2);
+  }
+
+  .creature-pixel .pixel-body {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(#f4d7b5 0 12px,#f4d7b5 12px 24px,#c28b4a 24px 36px,#3b2614 36px 48px);
+  }
+
+  .creature-pixel .eye-left,
+  .creature-pixel .eye-right {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #2b1b1b;
+    top: 14px;
+  }
+
+  .creature-pixel .eye-left {
+    left: 12px;
+  }
+
+  .creature-pixel .eye-right {
+    right: 12px;
+  }
+
+  .creature-pixel .eye-left::after,
+  .creature-pixel .eye-right::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    top: 1px;
+    left: 1px;
+  }
+
+  .creature-pixel .tail {
+    position: absolute;
+    width: 8px;
+    height: 16px;
+    right: -6px;
+    top: 24px;
+    background: #3b2614;
   }
 
   /* Decorations base */
@@ -227,7 +484,7 @@
     width: 40px;
     height: 40px;
     background: #ffd6e8;
-    border-radius: 6px;
+    border-radius: 10px;
     box-shadow: 0 0 6px #ffb7c5;
   }
 
@@ -236,22 +493,22 @@
     height: 20px;
     background: #ffe3ec;
     border: 2px solid #ff8fa3;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
   .cute-pond {
-    width: 80px;
-    height: 60px;
-    background: #b3eaff;
-    border-radius: 50%;
-    box-shadow: 0 0 12px #a0e0ff;
+    width: 90px;
+    height: 70px;
+    background: radial-gradient(circle at 30% 20%, #fff, #b3eaff);
+    border-radius: 60% 50% 55% 65%;
+    box-shadow: 0 0 14px #a0e0ff;
   }
 
   .cute-tree {
     width: 50px;
     height: 70px;
     background: #ffb7c5;
-    border-radius: 20px;
+    border-radius: 30px 30px 20px 20px;
     box-shadow: 0 0 10px #ff8fa3;
   }
 
@@ -260,7 +517,7 @@
     width: 40px;
     height: 40px;
     background: #c9a7ff;
-    border-radius: 6px;
+    border-radius: 10px;
     box-shadow: 0 0 10px #b28cff;
   }
 
@@ -269,22 +526,22 @@
     height: 20px;
     background: #e5d4ff;
     border: 2px solid #7f5fff;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
   .magical-pond {
-    width: 80px;
-    height: 60px;
-    background: #a0c0ff;
-    border-radius: 50%;
-    box-shadow: 0 0 14px #7f5fff;
+    width: 90px;
+    height: 70px;
+    background: radial-gradient(circle at 30% 20%, #fff, #a0c0ff);
+    border-radius: 55% 60% 50% 65%;
+    box-shadow: 0 0 16px #7f5fff;
   }
 
   .magical-tree {
     width: 50px;
     height: 70px;
     background: #d9c2ff;
-    border-radius: 20px;
+    border-radius: 30px 30px 20px 20px;
     box-shadow: 0 0 12px #b28cff;
   }
 
@@ -293,7 +550,7 @@
     width: 40px;
     height: 40px;
     background: #1b2a40;
-    border-radius: 6px;
+    border-radius: 10px;
     box-shadow: 0 0 10px #3a7bbf;
   }
 
@@ -302,22 +559,22 @@
     height: 20px;
     background: #0b1f33;
     border: 2px solid #3a7bbf;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
   .cosmic-pond {
-    width: 80px;
-    height: 60px;
-    background: #163a5c;
-    border-radius: 50%;
-    box-shadow: 0 0 16px #7fd0ff;
+    width: 90px;
+    height: 70px;
+    background: radial-gradient(circle at 30% 20%, #e0f6ff, #163a5c);
+    border-radius: 60% 55% 50% 65%;
+    box-shadow: 0 0 18px #7fd0ff;
   }
 
   .cosmic-tree {
     width: 50px;
     height: 70px;
-    background: #0b1f33;
-    border-radius: 20px;
+    background: linear-gradient(#163a5c,#0b1f33);
+    border-radius: 30px 30px 20px 20px;
     box-shadow: 0 0 14px #3a7bbf;
   }
 
@@ -345,8 +602,8 @@
   }
 
   .pixel-pond {
-    width: 80px;
-    height: 60px;
+    width: 90px;
+    height: 70px;
     background: repeating-linear-gradient(
       0deg,
       #66ccff 0 8px,
@@ -550,7 +807,9 @@
     <div id="standCosmic" class="stand">Cosmic Stand</div>
     <div id="standPixel" class="stand">Pixel Stand</div>
 
-    <div id="avatar" class="avatar-cute"></div>
+    <div id="avatar">
+      <!-- creature content injected by JS -->
+    </div>
 
     <div id="taskBoardButton">Tasks</div>
   </div>
@@ -580,7 +839,6 @@
 </div>
 
 <script>
-/* ---------- Global theme state ---------- */
 let currentTheme = "cute";
 
 /* ---------- Drag-to-scroll camera ---------- */
@@ -589,7 +847,7 @@ const main = document.getElementById("main");
 
 let isDragging = false;
 let startX = 0, startY = 0;
-let worldX = -500, worldY = -500; // initial offset
+let worldX = -500, worldY = -500;
 
 function applyWorldTransform() {
   world.style.transform = `translate(${worldX}px, ${worldY}px)`;
@@ -615,7 +873,6 @@ window.addEventListener("mouseup", () => {
   world.classList.remove("dragging");
 });
 
-/* Touch support */
 main.addEventListener("touchstart", e => {
   const t = e.touches[0];
   isDragging = true;
@@ -637,10 +894,10 @@ main.addEventListener("touchend", () => {
   world.classList.remove("dragging");
 });
 
-/* ---------- Avatar movement (smooth) ---------- */
+/* ---------- Avatar movement ---------- */
 const avatar = document.getElementById("avatar");
-let avatarX = 1030;
-let avatarY = 980;
+let avatarX = 1020;
+let avatarY = 970;
 const avatarSpeed = 3;
 const keys = {};
 
@@ -662,9 +919,8 @@ function updateAvatar() {
   avatarX += dx;
   avatarY += dy;
 
-  // clamp inside world
-  avatarX = Math.max(0, Math.min(1960, avatarX));
-  avatarY = Math.max(0, Math.min(1960, avatarY));
+  avatarX = Math.max(0, Math.min(1940, avatarX));
+  avatarY = Math.max(0, Math.min(1940, avatarY));
 
   avatar.style.left = avatarX + "px";
   avatar.style.top = avatarY + "px";
@@ -676,7 +932,7 @@ function gameLoop() {
 }
 gameLoop();
 
-/* ---------- Garden + plant growth ---------- */
+/* ---------- Garden ---------- */
 const garden = document.getElementById("garden");
 let plantedCount = 0;
 
@@ -704,7 +960,7 @@ for (let i = 0; i < 16; i++) {
   garden.appendChild(tile);
 }
 
-/* ---------- Stands + tasks ---------- */
+/* ---------- Tasks & stands ---------- */
 const taskItems = document.querySelectorAll("#taskModal li");
 
 function markTaskDone(id) {
@@ -745,7 +1001,7 @@ document.getElementById("standPixel").onclick = e => {
   playChime();
 };
 
-/* ---------- Task board modal ---------- */
+/* ---------- Task modal ---------- */
 const taskBoardButton = document.getElementById("taskBoardButton");
 const taskModalBackdrop = document.getElementById("taskModalBackdrop");
 const closeTasks = document.getElementById("closeTasks");
@@ -782,7 +1038,7 @@ world.addEventListener("click", e => {
   const dec = document.createElement("div");
   dec.classList.add("decoration");
 
-  const theme = currentTheme; // cute, magical, cosmic, pixel
+  const theme = currentTheme;
 
   if (currentDecoration === "path") dec.classList.add(`${theme}-path`);
   if (currentDecoration === "fence") dec.classList.add(`${theme}-fence`);
@@ -795,45 +1051,85 @@ world.addEventListener("click", e => {
   playChime();
 });
 
-/* ---------- Themes + avatar styles ---------- */
-const worldLabel = document.getElementById("worldLabel");
+/* ---------- Creature rendering ---------- */
+function renderCreature(theme) {
+  avatar.innerHTML = "";
+  const c = document.createElement("div");
+  c.classList.add("creature");
 
-function setAvatarClass(cls) {
-  avatar.className = "";
-  avatar.id = "avatar";
-  avatar.classList.add(cls);
+  if (theme === "cute") {
+    c.classList.add("creature-cute");
+    c.innerHTML = `
+      <div class="body"></div>
+      <div class="ear-left"></div>
+      <div class="ear-right"></div>
+      <div class="eye-left"></div>
+      <div class="eye-right"></div>
+      <div class="cheek-left"></div>
+      <div class="cheek-right"></div>
+      <div class="feet"></div>
+    `;
+  } else if (theme === "magical") {
+    c.classList.add("creature-magical");
+    c.innerHTML = `
+      <div class="wing-left"></div>
+      <div class="wing-right"></div>
+      <div class="body"></div>
+      <div class="eye-left"></div>
+      <div class="eye-right"></div>
+      <div class="sparkle"></div>
+    `;
+  } else if (theme === "cosmic") {
+    c.classList.add("creature-cosmic");
+    c.innerHTML = `
+      <div class="orbit"></div>
+      <div class="body"></div>
+      <div class="core"></div>
+    `;
+  } else if (theme === "pixel") {
+    c.classList.add("creature-pixel");
+    c.innerHTML = `
+      <div class="pixel-body"></div>
+      <div class="eye-left"></div>
+      <div class="eye-right"></div>
+      <div class="tail"></div>
+    `;
+  }
+
+  avatar.appendChild(c);
 }
+
+/* ---------- Themes & world styles ---------- */
+const worldLabel = document.getElementById("worldLabel");
 
 function setTheme(theme) {
   currentTheme = theme;
 
   if (theme === "cute") {
     world.style.background =
-      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0, transparent 40%)," +
-      "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0, transparent 45%)," +
-      "repeating-linear-gradient(45deg,#ffcfe0 0,#ffcfe0 16px,#ffb7c5 16px,#ffb7c5 32px)";
+      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.4) 0, transparent 40%)," +
+      "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#ffeaf3 0,#ffeaf3 24px,#ffd6e8 24px,#ffd6e8 48px)";
     worldLabel.textContent = "GlowGarden – Cute World";
-    setAvatarClass("avatar-cute");
   } else if (theme === "magical") {
     world.style.background =
-      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0, transparent 40%)," +
-      "radial-gradient(circle at 80% 70%, rgba(200,180,255,0.3) 0, transparent 45%)," +
-      "repeating-linear-gradient(45deg,#6f5f9f 0,#6f5f9f 16px,#5b4a8a 16px,#5b4a8a 32px)";
+      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0, transparent 40%)," +
+      "radial-gradient(circle at 80% 70%, rgba(200,180,255,0.4) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#6f5f9f 0,#6f5f9f 24px,#5b4a8a 24px,#5b4a8a 48px)";
     worldLabel.textContent = "GlowGarden – Magical World";
-    setAvatarClass("avatar-magical");
   } else if (theme === "cosmic") {
     world.style.background =
       "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2) 0, transparent 40%)," +
-      "radial-gradient(circle at 80% 70%, rgba(150,200,255,0.3) 0, transparent 45%)," +
-      "repeating-linear-gradient(45deg,#163a5c 0,#163a5c 16px,#0b1f33 16px,#0b1f33 32px)";
+      "radial-gradient(circle at 80% 70%, rgba(150,200,255,0.4) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#0b1f33 0,#0b1f33 24px,#050b14 24px,#050b14 48px)";
     worldLabel.textContent = "GlowGarden – Cosmic World";
-    setAvatarClass("avatar-cosmic");
   } else if (theme === "pixel") {
     world.style.background =
-      "repeating-linear-gradient(45deg,#1f1f1f 0,#1f1f1f 16px,#151515 16px,#151515 32px)";
+      "repeating-linear-gradient(45deg,#1f1f1f 0,#1f1f1f 24px,#151515 24px,#151515 48px)";
     worldLabel.textContent = "GlowGarden – Pixel World";
-    setAvatarClass("avatar-pixel");
   }
+
+  renderCreature(theme);
 }
 
 document.querySelectorAll("#themeButtons button").forEach(btn => {
@@ -842,7 +1138,7 @@ document.querySelectorAll("#themeButtons button").forEach(btn => {
 
 setTheme("cute");
 
-/* ---------- Sound (simple chime) ---------- */
+/* ---------- Sound ---------- */
 let soundOn = false;
 const soundToggle = document.getElementById("soundToggle");
 
