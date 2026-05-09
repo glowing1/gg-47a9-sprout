@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GlowGarden – Creatures & Worlds</title>
+<title>GlowGarden – Tasks & Rewards</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   html, body {
@@ -61,7 +61,7 @@
     background: #7fb86f;
   }
 
-  /* Medium world base */
+  /* Medium world */
   #world {
     position: absolute;
     width: 2000px;
@@ -88,7 +88,7 @@
     border: 4px solid #c28b4a;
   }
 
-  /* Garden area */
+  /* Garden */
   #garden {
     position: absolute;
     left: 930px;
@@ -128,46 +128,61 @@
   /* Stands */
   .stand {
     position: absolute;
-    width: 150px;
-    height: 100px;
-    border-radius: 14px;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.5);
+    width: 170px;
+    height: 115px;
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.45);
     cursor: pointer;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    font-size: 13px;
+    font-size: 14px;
     color: #fff;
-    font-weight: 600;
-    padding-bottom: 6px;
+    font-weight: 700;
+    padding-bottom: 10px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
   }
 
+  /* arranged in a ring around the plaza */
   #standCute {
-    left: 820px;
-    top: 840px;
+    left: 760px;
+    top: 820px;
     background: linear-gradient(180deg,#ffe3ec,#ff8fa3);
   }
 
   #standMagic {
-    left: 1120px;
-    top: 840px;
+    left: 1220px;
+    top: 820px;
     background: radial-gradient(circle,#f5ecff,#7f5fff);
   }
 
   #standCosmic {
-    left: 820px;
-    top: 1040px;
+    left: 740px;
+    top: 1180px;
     background: radial-gradient(circle,#f0fbff,#3a7bbf);
   }
 
   #standPixel {
-    left: 1120px;
-    top: 1040px;
+    left: 1240px;
+    top: 1180px;
     background: repeating-linear-gradient(90deg,#fff2b3 0,#fff2b3 8px,#ffd966 8px,#ffd966 16px);
   }
 
-  /* Avatar container (for positioning) */
+  /* Minigames stand above plaza */
+  #standMini {
+    left: 960px;
+    top: 760px;
+    background: linear-gradient(180deg,#9be7ff,#3a7bbf);
+  }
+
+  /* Task stand below plaza */
+  #standTasks {
+    left: 960px;
+    top: 1220px;
+    background: linear-gradient(180deg,#e3c48f,#c28b4a);
+  }
+
+  /* Avatar container */
   #avatar {
     position: absolute;
     width: 60px;
@@ -176,14 +191,13 @@
     top: 970px;
   }
 
-  /* Shared creature base */
   .creature {
     position: relative;
     width: 100%;
     height: 100%;
   }
 
-  /* ---------- Cute World Creature: Pufflet ---------- */
+  /* Cute creature: Pufflet */
   .creature-cute .body {
     position: absolute;
     width: 52px;
@@ -205,15 +219,8 @@
     box-shadow: 0 0 4px rgba(0,0,0,0.1);
   }
 
-  .creature-cute .ear-left {
-    left: 8px;
-    top: 0;
-  }
-
-  .creature-cute .ear-right {
-    right: 8px;
-    top: 0;
-  }
+  .creature-cute .ear-left { left: 8px; top: 0; }
+  .creature-cute .ear-right { right: 8px; top: 0; }
 
   .creature-cute .eye-left,
   .creature-cute .eye-right {
@@ -225,13 +232,8 @@
     top: 22px;
   }
 
-  .creature-cute .eye-left {
-    left: 18px;
-  }
-
-  .creature-cute .eye-right {
-    right: 18px;
-  }
+  .creature-cute .eye-left { left: 18px; }
+  .creature-cute .eye-right { right: 18px; }
 
   .creature-cute .eye-left::after,
   .creature-cute .eye-right::after {
@@ -255,13 +257,8 @@
     top: 34px;
   }
 
-  .creature-cute .cheek-left {
-    left: 14px;
-  }
-
-  .creature-cute .cheek-right {
-    right: 14px;
-  }
+  .creature-cute .cheek-left { left: 14px; }
+  .creature-cute .cheek-right { right: 14px; }
 
   .creature-cute .feet {
     position: absolute;
@@ -286,7 +283,7 @@
     animation: cuteBounce 1.8s infinite ease-in-out, cuteSparkle 3s infinite ease-in-out;
   }
 
-  /* ---------- Magical World Creature: Faelight Sprite ---------- */
+  /* Magical creature: Faelight */
   .creature-magical .body {
     position: absolute;
     width: 46px;
@@ -309,13 +306,8 @@
     filter: blur(0.5px);
   }
 
-  .creature-magical .wing-left {
-    left: -6px;
-  }
-
-  .creature-magical .wing-right {
-    right: -6px;
-  }
+  .creature-magical .wing-left { left: -6px; }
+  .creature-magical .wing-right { right: -6px; }
 
   .creature-magical .eye-left,
   .creature-magical .eye-right {
@@ -327,13 +319,8 @@
     top: 22px;
   }
 
-  .creature-magical .eye-left {
-    left: 20px;
-  }
-
-  .creature-magical .eye-right {
-    right: 20px;
-  }
+  .creature-magical .eye-left { left: 20px; }
+  .creature-magical .eye-right { right: 20px; }
 
   .creature-magical .eye-left::after,
   .creature-magical .eye-right::after {
@@ -363,7 +350,7 @@
     animation: magicalPulse 2.2s infinite ease-in-out, magicalGlow 3.5s infinite ease-in-out;
   }
 
-  /* ---------- Cosmic World Creature: Starling ---------- */
+  /* Cosmic creature: Starling */
   .creature-cosmic .body {
     position: absolute;
     width: 50px;
@@ -419,7 +406,7 @@
     to { transform: rotate(360deg); }
   }
 
-  /* ---------- Pixel World Creature: Bitling ---------- */
+  /* Pixel creature: Bitling */
   .creature-pixel {
     width: 48px;
     height: 48px;
@@ -445,13 +432,8 @@
     top: 14px;
   }
 
-  .creature-pixel .eye-left {
-    left: 12px;
-  }
-
-  .creature-pixel .eye-right {
-    right: 12px;
-  }
+  .creature-pixel .eye-left { left: 12px; }
+  .creature-pixel .eye-right { right: 12px; }
 
   .creature-pixel .eye-left::after,
   .creature-pixel .eye-right::after {
@@ -685,26 +667,6 @@
     animation: pixelFlicker 0.8s infinite steps(2);
   }
 
-  /* Task board button */
-  #taskBoardButton {
-    position: absolute;
-    left: 16px;
-    top: 16px;
-    width: 60px;
-    height: 60px;
-    background: #c28b4a;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #3b2614;
-    font-weight: 700;
-    font-size: 11px;
-    text-align: center;
-  }
-
   /* Task modal */
   #taskModalBackdrop {
     position: absolute;
@@ -716,37 +678,62 @@
   }
 
   #taskModal {
-    width: 260px;
+    width: 320px;
+    max-height: 360px;
     background: #f7f0e2;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     padding: 10px;
     color: #3b2614;
     font-size: 13px;
+    display: flex;
+    flex-direction: column;
   }
 
   #taskModal h3 {
     margin: 0 0 6px 0;
-    font-size: 14px;
+    font-size: 15px;
   }
 
-  #taskModal ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 0 0 8px 0;
+  #taskModal h4 {
+    margin: 6px 0 4px 0;
+    font-size: 13px;
   }
 
-  #taskModal li {
+  #taskList {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 6px;
+  }
+
+  .taskItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 4px;
+    gap: 4px;
   }
 
-  #taskModal li.done {
+  .taskItem span {
+    flex: 1;
+  }
+
+  .taskItem.done span {
     text-decoration: line-through;
     color: #8b7b66;
   }
 
+  .taskItem button {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid #c28b4a;
+    background: #e3c48f;
+    cursor: pointer;
+  }
+
   #closeTasks {
-    display: inline-block;
+    align-self: flex-end;
     margin-top: 4px;
     padding: 3px 8px;
     border-radius: 6px;
@@ -782,6 +769,37 @@
   #decorPanel button:hover {
     background: rgba(255,255,255,0.15);
   }
+
+  /* Inventory panel */
+  #inventoryPanel {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    background: rgba(0,0,0,0.45);
+    border-radius: 10px;
+    padding: 6px 8px;
+    color: #f5f5ff;
+    font-size: 11px;
+    max-width: 220px;
+  }
+
+  #inventoryPanel h4 {
+    margin: 0 0 4px 0;
+    font-size: 12px;
+  }
+
+  #inventorySeeds {
+    margin-bottom: 4px;
+  }
+
+  #inventoryDecor {
+    max-height: 80px;
+    overflow-y: auto;
+  }
+
+  #inventoryDecor div {
+    margin-bottom: 2px;
+  }
 </style>
 </head>
 <body>
@@ -806,28 +824,22 @@
     <div id="standMagic" class="stand">Magic Stand</div>
     <div id="standCosmic" class="stand">Cosmic Stand</div>
     <div id="standPixel" class="stand">Pixel Stand</div>
+    <div id="standMini" class="stand">Minigames</div>
+    <div id="standTasks" class="stand">Tasks</div>
 
-    <div id="avatar">
-      <!-- creature content injected by JS -->
-    </div>
-
-    <div id="taskBoardButton">Tasks</div>
+    <div id="avatar"></div>
   </div>
 
+  <!-- Task modal -->
   <div id="taskModalBackdrop">
     <div id="taskModal">
       <h3>Garden Tasks</h3>
-      <ul>
-        <li data-id="plant3">Plant 3 seeds</li>
-        <li data-id="visitCute">Visit Cute Stand</li>
-        <li data-id="visitMagic">Visit Magic Stand</li>
-        <li data-id="visitCosmic">Visit Cosmic Stand</li>
-        <li data-id="visitPixel">Visit Pixel Stand</li>
-      </ul>
+      <div id="taskList"></div>
       <button id="closeTasks">Close</button>
     </div>
   </div>
 
+  <!-- Decorations panel -->
   <div id="decorPanel">
     <div style="margin-bottom:4px;">Decorations</div>
     <button data-dec="path">Place Path</button>
@@ -835,6 +847,14 @@
     <button data-dec="pond">Place Pond</button>
     <button data-dec="tree2">Place Tree</button>
     <div style="margin-top:4px;">Click in world to place.</div>
+  </div>
+
+  <!-- Inventory panel -->
+  <div id="inventoryPanel">
+    <h4>Inventory</h4>
+    <div id="inventorySeeds">Seeds: 0</div>
+    <div><strong>Decor:</strong></div>
+    <div id="inventoryDecor"></div>
   </div>
 </div>
 
@@ -952,7 +972,7 @@ for (let i = 0; i < 16; i++) {
       const plant = document.createElement("div");
       plant.className = "plant stage" + stage;
       tile.appendChild(plant);
-      checkTasks();
+      checkTasksBasic();
       playChime();
     }
   };
@@ -960,54 +980,136 @@ for (let i = 0; i < 16; i++) {
   garden.appendChild(tile);
 }
 
-/* ---------- Tasks & stands ---------- */
-const taskItems = document.querySelectorAll("#taskModal li");
+/* ---------- Static nature around plaza ---------- */
+function addStaticNature() {
+  const spots = [
+    { x: 860, y: 860 },
+    { x: 1220, y: 860 },
+    { x: 840, y: 1220 },
+    { x: 1220, y: 1220 },
+    { x: 900, y: 1180 },
+    { x: 1180, y: 900 },
+    { x: 1000, y: 1250 },
+    { x: 800, y: 1000 }
+  ];
+  spots.forEach(pos => {
+    const d = document.createElement("div");
+    d.classList.add("decoration", "cute-tree");
+    d.style.left = pos.x + "px";
+    d.style.top = pos.y + "px";
+    world.appendChild(d);
+  });
+}
+addStaticNature();
 
-function markTaskDone(id) {
-  taskItems.forEach(li => {
-    if (li.dataset.id === id) li.classList.add("done");
+/* ---------- Inventory ---------- */
+let seedCount = 0;
+const decorItems = [];
+
+const inventorySeedsEl = document.getElementById("inventorySeeds");
+const inventoryDecorEl = document.getElementById("inventoryDecor");
+
+function updateInventoryUI() {
+  inventorySeedsEl.textContent = "Seeds: " + seedCount;
+  inventoryDecorEl.innerHTML = "";
+  decorItems.forEach(item => {
+    const div = document.createElement("div");
+    div.textContent = "• " + item;
+    inventoryDecorEl.appendChild(div);
   });
 }
 
-function checkTasks() {
-  if (plantedCount >= 3) markTaskDone("plant3");
-}
-
-document.getElementById("standCute").onclick = e => {
-  e.stopPropagation();
-  alert("You visited the Cute Stand!");
-  markTaskDone("visitCute");
-  playChime();
-};
-
-document.getElementById("standMagic").onclick = e => {
-  e.stopPropagation();
-  alert("You visited the Magic Stand!");
-  markTaskDone("visitMagic");
-  playChime();
-};
-
-document.getElementById("standCosmic").onclick = e => {
-  e.stopPropagation();
-  alert("You visited the Cosmic Stand!");
-  markTaskDone("visitCosmic");
-  playChime();
-};
-
-document.getElementById("standPixel").onclick = e => {
-  e.stopPropagation();
-  alert("You visited the Pixel Stand!");
-  markTaskDone("visitPixel");
-  playChime();
-};
-
-/* ---------- Task modal ---------- */
-const taskBoardButton = document.getElementById("taskBoardButton");
+/* ---------- Task system ---------- */
 const taskModalBackdrop = document.getElementById("taskModalBackdrop");
+const taskListEl = document.getElementById("taskList");
 const closeTasks = document.getElementById("closeTasks");
 
-taskBoardButton.onclick = e => {
+/* Proposed tasks with reward mapping */
+const tasks = [
+  // Small tasks
+  { id: "drinkWater", label: "Drink water", size: "small", reward: { type: "seed", name: "Green seed" }, done: false },
+  { id: "stretch", label: "Stretch for 1 minute", size: "small", reward: { type: "seed", name: "Pink seed" }, done: false },
+  { id: "tidyDesk", label: "Tidy your desk", size: "small", reward: { type: "seed", name: "Blue seed" }, done: false },
+  { id: "read5", label: "Read for 5 minutes", size: "small", reward: { type: "seed", name: "Sparkle seed" }, done: false },
+  { id: "goOutside2", label: "Go outside for 2 minutes", size: "small", reward: { type: "seed", name: "Nature seed" }, done: false },
+
+  // Medium tasks
+  { id: "cleanRoom", label: "Clean your room", size: "medium", reward: { type: "seed", name: "2 seeds" }, done: false },
+  { id: "schoolAssignment", label: "Do a school assignment", size: "medium", reward: { type: "seed", name: "Special seed" }, done: false },
+  { id: "organizeBackpack", label: "Organize your backpack", size: "medium", reward: { type: "decor", name: "Mini flower pot" }, done: false },
+  { id: "helpHome", label: "Help someone at home", size: "medium", reward: { type: "seed", name: "Special seed" }, done: false },
+  { id: "practiceHobby", label: "Practice a hobby", size: "medium", reward: { type: "decor", name: "Tiny mushroom" }, done: false },
+
+  // Big tasks
+  { id: "finishHomework", label: "Finish all homework", size: "big", reward: { type: "decor", name: "Pastel bench" }, done: false },
+  { id: "study30", label: "Study for 30 minutes", size: "big", reward: { type: "decor", name: "Heart lamp" }, done: false },
+  { id: "weeklyGoal", label: "Complete a weekly goal", size: "big", reward: { type: "decor", name: "Flower arch" }, done: false },
+  { id: "bigChore", label: "Do a big chore (laundry/dishes/vacuum)", size: "big", reward: { type: "decor", name: "Garden lantern" }, done: false },
+  { id: "goOutside20", label: "Go outside for 20 minutes", size: "big", reward: { type: "decor", name: "Stardust planter" }, done: false }
+];
+
+function renderTasks() {
+  taskListEl.innerHTML = "";
+
+  function addSection(title, size) {
+    const sectionTasks = tasks.filter(t => t.size === size);
+    if (!sectionTasks.length) return;
+    const h4 = document.createElement("h4");
+    h4.textContent = title;
+    taskListEl.appendChild(h4);
+
+    sectionTasks.forEach(task => {
+      const row = document.createElement("div");
+      row.className = "taskItem" + (task.done ? " done" : "");
+      const label = document.createElement("span");
+      label.textContent = task.label + " – Reward: " +
+        (task.reward.type === "seed" ? task.reward.name : task.reward.name);
+      const btn = document.createElement("button");
+      btn.textContent = task.done ? "Done" : "Complete";
+      btn.disabled = task.done;
+      btn.onclick = () => completeTask(task.id);
+      row.appendChild(label);
+      row.appendChild(btn);
+      taskListEl.appendChild(row);
+    });
+  }
+
+  addSection("Small tasks (seeds)", "small");
+  addSection("Medium tasks (seeds & small decor)", "medium");
+  addSection("Big tasks (furniture & decor)", "big");
+}
+
+function completeTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task || task.done) return;
+  task.done = true;
+
+  if (task.reward.type === "seed") {
+    if (task.reward.name === "2 seeds") {
+      seedCount += 2;
+    } else {
+      seedCount += 1;
+    }
+  } else if (task.reward.type === "decor") {
+    decorItems.push(task.reward.name);
+  }
+
+  updateInventoryUI();
+  renderTasks();
+  playChime();
+  alert("You completed: " + task.label + "!\nYou earned: " + task.reward.name);
+}
+
+/* basic check for plant task */
+function checkTasksBasic() {
+  // could hook "plant 3 seeds" here if you want later
+}
+
+/* Task stand opens modal */
+const standTasks = document.getElementById("standTasks");
+standTasks.onclick = e => {
   e.stopPropagation();
+  renderTasks();
   taskModalBackdrop.style.display = "flex";
 };
 
@@ -1020,6 +1122,37 @@ taskModalBackdrop.addEventListener("click", e => {
     taskModalBackdrop.style.display = "none";
   }
 });
+
+/* ---------- Stands basic interactions ---------- */
+document.getElementById("standCute").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Cute Stand!");
+  playChime();
+};
+
+document.getElementById("standMagic").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Magic Stand!");
+  playChime();
+};
+
+document.getElementById("standCosmic").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Cosmic Stand!");
+  playChime();
+};
+
+document.getElementById("standPixel").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Pixel Stand!");
+  playChime();
+};
+
+document.getElementById("standMini").onclick = e => {
+  e.stopPropagation();
+  alert("Minigames coming soon!");
+  playChime();
+};
 
 /* ---------- Decorations ---------- */
 let currentDecoration = null;
@@ -1107,9 +1240,11 @@ function setTheme(theme) {
 
   if (theme === "cute") {
     world.style.background =
-      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.4) 0, transparent 40%)," +
-      "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0, transparent 45%)," +
-      "repeating-linear-gradient(45deg,#ffeaf3 0,#ffeaf3 24px,#ffd6e8 24px,#ffd6e8 48px)";
+      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0, transparent 40%)," +
+      "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.25) 0, transparent 45%)," +
+      "radial-gradient(circle at 30% 80%, rgba(180,230,180,0.4) 0, transparent 40%)," +
+      "radial-gradient(circle at 70% 30%, rgba(200,255,200,0.35) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#b7e39f 0,#b7e39f 28px,#a3d48c 28px,#a3d48c 56px)";
     worldLabel.textContent = "GlowGarden – Cute World";
   } else if (theme === "magical") {
     world.style.background =
@@ -1137,6 +1272,7 @@ document.querySelectorAll("#themeButtons button").forEach(btn => {
 });
 
 setTheme("cute");
+updateInventoryUI();
 
 /* ---------- Sound ---------- */
 let soundOn = false;
