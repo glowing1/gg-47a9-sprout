@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GlowGarden – Tasks & Rewards</title>
+<title>GlowGarden – Tasks & Multi Gardens</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   html, body {
@@ -61,7 +61,6 @@
     background: #7fb86f;
   }
 
-  /* Medium world */
   #world {
     position: absolute;
     width: 2000px;
@@ -75,7 +74,6 @@
     cursor: grabbing;
   }
 
-  /* Plaza */
   #plaza {
     position: absolute;
     left: 900px;
@@ -88,44 +86,124 @@
     border: 4px solid #c28b4a;
   }
 
-  /* Garden */
+  /* --- SHARED GARDEN CONTAINER --- */
   #garden {
     position: absolute;
-    left: 930px;
-    top: 1030px;
-    width: 256px;
-    height: 256px;
-    display: grid;
-    grid-template-columns: repeat(4,64px);
-    grid-template-rows: repeat(4,64px);
-    gap: 4px;
+    left: 860px;
+    top: 980px;
+    width: 416px;
+    height: 416px;
+    padding: 20px;
+    border-radius: 40px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.45);
+    box-sizing: content-box;
   }
 
-  .tile {
-    width: 64px;
-    height: 64px;
-    background: #5b3b24;
-    border-radius: 6px;
-    box-shadow: inset 0 2px 0 rgba(255,255,255,0.15);
+  #garden::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 48px;
+    border: 8px solid #d9c8a3;
+    box-shadow: 0 0 14px rgba(0,0,0,0.4);
+  }
+
+  /* Cute garden background */
+  #garden.cute-garden {
+    background: radial-gradient(circle at 40% 30%, #aee8a1, #7fcf6f);
+  }
+
+  /* Magical garden background */
+  #garden.magical-garden {
+    background: radial-gradient(circle at 40% 30%, #f7f0ff, #b28cff);
+  }
+
+  /* Cosmic garden background */
+  #garden.cosmic-garden {
+    background: radial-gradient(circle at 40% 30%, #e0f6ff, #163a5c);
+  }
+
+  /* Pixel garden background */
+  #garden.pixel-garden {
+    background: repeating-linear-gradient(
+      45deg,
+      #b7e39f 0 16px,
+      #a3d48c 16px 32px
+    );
+  }
+
+  .garden-path {
+    position: absolute;
+    background: repeating-linear-gradient(
+      90deg,
+      #e8dcc2 0 8px,
+      #c9b28a 8px 16px
+    );
+    opacity: 0.9;
+    border-radius: 12px;
+  }
+
+  .garden-path.horizontal {
+    left: 28px;
+    right: 28px;
+    top: 50%;
+    height: 28px;
+    transform: translateY(-50%);
+  }
+
+  .garden-path.vertical {
+    top: 28px;
+    bottom: 28px;
+    left: 50%;
+    width: 28px;
+    transform: translateX(-50%);
+  }
+
+  .plot {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 30% 20%, #7b4a2a, #4b2a16);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.15),
+      0 3px 6px rgba(0,0,0,0.4);
     cursor: pointer;
-    position: relative;
+  }
+
+  .plot:nth-child(odd) {
+    filter: brightness(1.05);
   }
 
   .plant {
     position: absolute;
-    left: 18px;
-    top: 18px;
+    left: 10px;
+    top: 8px;
     width: 28px;
     height: 28px;
     border-radius: 50%;
   }
 
-  .stage1 { background:#7fd37f; box-shadow:0 0 8px #7fd37f; }
-  .stage2 { background:#ffdf80; box-shadow:0 0 8px #ffdf80; }
-  .stage3 { background:#ff8fa3; box-shadow:0 0 8px #ff8fa3; }
-  .stage4 { background:#c9a7ff; box-shadow:0 0 8px #c9a7ff; }
+  .stage1 {
+    background: radial-gradient(circle, #8fd37f, #4f8b4a);
+    box-shadow: 0 0 6px rgba(143,211,127,0.8);
+  }
 
-  /* Stands */
+  .stage2 {
+    background: radial-gradient(circle, #ffdf80, #c28b3a);
+    box-shadow: 0 0 8px rgba(255,223,128,0.9);
+  }
+
+  .stage3 {
+    background: radial-gradient(circle, #ff8fa3, #c24a5f);
+    box-shadow: 0 0 10px rgba(255,143,163,0.9);
+  }
+
+  .stage4 {
+    background: radial-gradient(circle, #c9a7ff, #7f5fff);
+    box-shadow: 0 0 12px rgba(201,167,255,0.95);
+  }
+
   .stand {
     position: absolute;
     width: 170px;
@@ -143,7 +221,6 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
   }
 
-  /* arranged in a ring around the plaza */
   #standCute {
     left: 760px;
     top: 820px;
@@ -168,21 +245,18 @@
     background: repeating-linear-gradient(90deg,#fff2b3 0,#fff2b3 8px,#ffd966 8px,#ffd966 16px);
   }
 
-  /* Minigames stand above plaza */
   #standMini {
     left: 960px;
     top: 760px;
     background: linear-gradient(180deg,#9be7ff,#3a7bbf);
   }
 
-  /* Task stand below plaza */
   #standTasks {
     left: 960px;
     top: 1220px;
     background: linear-gradient(180deg,#e3c48f,#c28b4a);
   }
 
-  /* Avatar container */
   #avatar {
     position: absolute;
     width: 60px;
@@ -197,7 +271,6 @@
     height: 100%;
   }
 
-  /* Cute creature: Pufflet */
   .creature-cute .body {
     position: absolute;
     width: 52px;
@@ -283,7 +356,6 @@
     animation: cuteBounce 1.8s infinite ease-in-out, cuteSparkle 3s infinite ease-in-out;
   }
 
-  /* Magical creature: Faelight */
   .creature-magical .body {
     position: absolute;
     width: 46px;
@@ -350,7 +422,6 @@
     animation: magicalPulse 2.2s infinite ease-in-out, magicalGlow 3.5s infinite ease-in-out;
   }
 
-  /* Cosmic creature: Starling */
   .creature-cosmic .body {
     position: absolute;
     width: 50px;
@@ -401,12 +472,6 @@
     animation: cosmicDrift 2.6s infinite ease-in-out, cosmicShimmer 2s infinite ease-in-out;
   }
 
-  @keyframes orbitSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* Pixel creature: Bitling */
   .creature-pixel {
     width: 48px;
     height: 48px;
@@ -455,13 +520,11 @@
     background: #3b2614;
   }
 
-  /* Decorations base */
   .decoration {
     position: absolute;
     pointer-events: none;
   }
 
-  /* Cute decorations */
   .cute-path {
     width: 40px;
     height: 40px;
@@ -494,7 +557,6 @@
     box-shadow: 0 0 10px #ff8fa3;
   }
 
-  /* Magical decorations */
   .magical-path {
     width: 40px;
     height: 40px;
@@ -527,7 +589,6 @@
     box-shadow: 0 0 12px #b28cff;
   }
 
-  /* Cosmic decorations */
   .cosmic-path {
     width: 40px;
     height: 40px;
@@ -560,7 +621,6 @@
     box-shadow: 0 0 14px #3a7bbf;
   }
 
-  /* Pixel decorations */
   .pixel-path {
     width: 40px;
     height: 40px;
@@ -606,7 +666,6 @@
     image-rendering: pixelated;
   }
 
-  /* Decoration animations */
   @keyframes cuteBounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-4px); }
@@ -667,7 +726,6 @@
     animation: pixelFlicker 0.8s infinite steps(2);
   }
 
-  /* Task modal */
   #taskModalBackdrop {
     position: absolute;
     inset: 0;
@@ -743,7 +801,6 @@
     font-size: 12px;
   }
 
-  /* Decorations panel */
   #decorPanel {
     position: absolute;
     right: 16px;
@@ -770,7 +827,6 @@
     background: rgba(255,255,255,0.15);
   }
 
-  /* Inventory panel */
   #inventoryPanel {
     position: absolute;
     left: 16px;
@@ -830,7 +886,6 @@
     <div id="avatar"></div>
   </div>
 
-  <!-- Task modal -->
   <div id="taskModalBackdrop">
     <div id="taskModal">
       <h3>Garden Tasks</h3>
@@ -839,7 +894,6 @@
     </div>
   </div>
 
-  <!-- Decorations panel -->
   <div id="decorPanel">
     <div style="margin-bottom:4px;">Decorations</div>
     <button data-dec="path">Place Path</button>
@@ -849,7 +903,6 @@
     <div style="margin-top:4px;">Click in world to place.</div>
   </div>
 
-  <!-- Inventory panel -->
   <div id="inventoryPanel">
     <h4>Inventory</h4>
     <div id="inventorySeeds">Seeds: 0</div>
@@ -861,10 +914,9 @@
 <script>
 let currentTheme = "cute";
 
-/* ---------- Drag-to-scroll camera ---------- */
+/* drag world */
 const world = document.getElementById("world");
 const main = document.getElementById("main");
-
 let isDragging = false;
 let startX = 0, startY = 0;
 let worldX = -500, worldY = -500;
@@ -914,7 +966,7 @@ main.addEventListener("touchend", () => {
   world.classList.remove("dragging");
 });
 
-/* ---------- Avatar movement ---------- */
+/* avatar movement */
 const avatar = document.getElementById("avatar");
 let avatarX = 1020;
 let avatarY = 970;
@@ -952,35 +1004,239 @@ function gameLoop() {
 }
 gameLoop();
 
-/* ---------- Garden ---------- */
-const garden = document.getElementById("garden");
-let plantedCount = 0;
+/* GARDENS */
 
-for (let i = 0; i < 16; i++) {
-  const tile = document.createElement("div");
-  tile.className = "tile";
-  tile.dataset.stage = 0;
-
-  tile.onclick = e => {
-    e.stopPropagation();
-    let stage = Number(tile.dataset.stage);
-    if (stage < 4) {
-      stage++;
-      if (stage === 1) plantedCount++;
-      tile.dataset.stage = stage;
-      tile.innerHTML = "";
-      const plant = document.createElement("div");
-      plant.className = "plant stage" + stage;
-      tile.appendChild(plant);
-      checkTasksBasic();
-      playChime();
-    }
-  };
-
-  garden.appendChild(tile);
+function resetGardenClass() {
+  const g = document.getElementById("garden");
+  g.classList.remove("cute-garden","magical-garden","cosmic-garden","pixel-garden");
 }
 
-/* ---------- Static nature around plaza ---------- */
+/* Cute: 8×8 rounded-square */
+function buildCuteGarden() {
+  const garden = document.getElementById("garden");
+  garden.innerHTML = "";
+  resetGardenClass();
+  garden.classList.add("cute-garden");
+
+  const pathH = document.createElement("div");
+  pathH.className = "garden-path horizontal";
+  garden.appendChild(pathH);
+
+  const pathV = document.createElement("div");
+  pathV.className = "garden-path vertical";
+  garden.appendChild(pathV);
+
+  const rows = 8;
+  const cols = 8;
+  const plotSize = 48;
+  const gap = 4;
+  const offsetX = 28;
+  const offsetY = 28;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const plot = document.createElement("div");
+      plot.className = "plot";
+      plot.dataset.stage = 0;
+
+      const x = offsetX + c * (plotSize + gap);
+      const y = offsetY + r * (plotSize + gap);
+      plot.style.left = x + "px";
+      plot.style.top = y + "px";
+
+      plot.onclick = e => {
+        e.stopPropagation();
+        let stage = Number(plot.dataset.stage);
+        if (stage < 4) {
+          stage++;
+          plot.dataset.stage = stage;
+          plot.innerHTML = "";
+          const plant = document.createElement("div");
+          plant.className = "plant stage" + stage;
+          plot.appendChild(plant);
+          playChime();
+        }
+      };
+
+      garden.appendChild(plot);
+    }
+  }
+}
+
+/* Magical: spiral layout */
+function buildMagicalGarden() {
+  const garden = document.getElementById("garden");
+  garden.innerHTML = "";
+  resetGardenClass();
+  garden.classList.add("magical-garden");
+
+  const rows = 8;
+  const cols = 8;
+  const plotSize = 48;
+  const gap = 4;
+  const offsetX = 28;
+  const offsetY = 28;
+
+  const grid = [];
+  for (let r = 0; r < rows; r++) {
+    grid[r] = [];
+    for (let c = 0; c < cols; c++) {
+      grid[r][c] = { r, c };
+    }
+  }
+
+  const order = [];
+  let top = 0, bottom = rows - 1, left = 0, right = cols - 1;
+  while (top <= bottom && left <= right) {
+    for (let c = left; c <= right; c++) order.push(grid[top][c]);
+    top++;
+    for (let r = top; r <= bottom; r++) order.push(grid[r][right]);
+    right--;
+    if (top <= bottom) {
+      for (let c = right; c >= left; c--) order.push(grid[bottom][c]);
+      bottom--;
+    }
+    if (left <= right) {
+      for (let r = bottom; r >= top; r--) order.push(grid[r][left]);
+      left++;
+    }
+  }
+
+  order.forEach(cell => {
+    const { r, c } = cell;
+    const plot = document.createElement("div");
+    plot.className = "plot";
+    plot.dataset.stage = 0;
+
+    const x = offsetX + c * (plotSize + gap);
+    const y = offsetY + r * (plotSize + gap);
+    plot.style.left = x + "px";
+    plot.style.top = y + "px";
+
+    plot.onclick = e => {
+      e.stopPropagation();
+      let stage = Number(plot.dataset.stage);
+      if (stage < 4) {
+        stage++;
+        plot.dataset.stage = stage;
+        plot.innerHTML = "";
+        const plant = document.createElement("div");
+        plant.className = "plant stage" + stage;
+        plot.appendChild(plant);
+        playChime();
+      }
+    };
+
+    garden.appendChild(plot);
+  });
+}
+
+/* Cosmic: star layout */
+function buildCosmicGarden() {
+  const garden = document.getElementById("garden");
+  garden.innerHTML = "";
+  resetGardenClass();
+  garden.classList.add("cosmic-garden");
+
+  const rows = 8;
+  const cols = 8;
+  const plotSize = 48;
+  const gap = 4;
+  const offsetX = 28;
+  const offsetY = 28;
+
+  const centerR = 3.5;
+  const centerC = 3.5;
+
+  function inStar(r, c) {
+    const dr = r - centerR;
+    const dc = c - centerC;
+    const dist = Math.sqrt(dr*dr + dc*dc);
+    if (dist < 1.2) return true;
+    if (Math.abs(dr) < 0.5 && dist < 3.5) return true;
+    if (Math.abs(dc) < 0.5 && dist < 3.5) return true;
+    if (Math.abs(dr - dc) < 0.5 && dist < 3.5) return true;
+    if (Math.abs(dr + dc) < 0.5 && dist < 3.5) return true;
+    return false;
+  }
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (!inStar(r, c)) continue;
+
+      const plot = document.createElement("div");
+      plot.className = "plot";
+      plot.dataset.stage = 0;
+
+      const x = offsetX + c * (plotSize + gap);
+      const y = offsetY + r * (plotSize + gap);
+      plot.style.left = x + "px";
+      plot.style.top = y + "px";
+
+      plot.onclick = e => {
+        e.stopPropagation();
+        let stage = Number(plot.dataset.stage);
+        if (stage < 4) {
+          stage++;
+          plot.dataset.stage = stage;
+          plot.innerHTML = "";
+          const plant = document.createElement("div");
+          plant.className = "plant stage" + stage;
+          plot.appendChild(plant);
+          playChime();
+        }
+      };
+
+      garden.appendChild(plot);
+    }
+  }
+}
+
+/* Pixel: perfect 8×8 grid */
+function buildPixelGarden() {
+  const garden = document.getElementById("garden");
+  garden.innerHTML = "";
+  resetGardenClass();
+  garden.classList.add("pixel-garden");
+
+  const rows = 8;
+  const cols = 8;
+  const plotSize = 48;
+  const gap = 4;
+  const offsetX = 28;
+  const offsetY = 28;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const plot = document.createElement("div");
+      plot.className = "plot";
+      plot.dataset.stage = 0;
+
+      const x = offsetX + c * (plotSize + gap);
+      const y = offsetY + r * (plotSize + gap);
+      plot.style.left = x + "px";
+      plot.style.top = y + "px";
+
+      plot.onclick = e => {
+        e.stopPropagation();
+        let stage = Number(plot.dataset.stage);
+        if (stage < 4) {
+          stage++;
+          plot.dataset.stage = stage;
+          plot.innerHTML = "";
+          const plant = document.createElement("div");
+          plant.className = "plant stage" + stage;
+          plot.appendChild(plant);
+          playChime();
+        }
+      };
+
+      garden.appendChild(plot);
+    }
+  }
+}
+
+/* static nature */
 function addStaticNature() {
   const spots = [
     { x: 860, y: 860 },
@@ -1002,10 +1258,9 @@ function addStaticNature() {
 }
 addStaticNature();
 
-/* ---------- Inventory ---------- */
+/* inventory */
 let seedCount = 0;
 const decorItems = [];
-
 const inventorySeedsEl = document.getElementById("inventorySeeds");
 const inventoryDecorEl = document.getElementById("inventoryDecor");
 
@@ -1019,28 +1274,24 @@ function updateInventoryUI() {
   });
 }
 
-/* ---------- Task system ---------- */
+/* tasks */
 const taskModalBackdrop = document.getElementById("taskModalBackdrop");
 const taskListEl = document.getElementById("taskList");
 const closeTasks = document.getElementById("closeTasks");
 
-/* Proposed tasks with reward mapping */
 const tasks = [
-  // Small tasks
   { id: "drinkWater", label: "Drink water", size: "small", reward: { type: "seed", name: "Green seed" }, done: false },
   { id: "stretch", label: "Stretch for 1 minute", size: "small", reward: { type: "seed", name: "Pink seed" }, done: false },
   { id: "tidyDesk", label: "Tidy your desk", size: "small", reward: { type: "seed", name: "Blue seed" }, done: false },
   { id: "read5", label: "Read for 5 minutes", size: "small", reward: { type: "seed", name: "Sparkle seed" }, done: false },
   { id: "goOutside2", label: "Go outside for 2 minutes", size: "small", reward: { type: "seed", name: "Nature seed" }, done: false },
 
-  // Medium tasks
   { id: "cleanRoom", label: "Clean your room", size: "medium", reward: { type: "seed", name: "2 seeds" }, done: false },
   { id: "schoolAssignment", label: "Do a school assignment", size: "medium", reward: { type: "seed", name: "Special seed" }, done: false },
   { id: "organizeBackpack", label: "Organize your backpack", size: "medium", reward: { type: "decor", name: "Mini flower pot" }, done: false },
   { id: "helpHome", label: "Help someone at home", size: "medium", reward: { type: "seed", name: "Special seed" }, done: false },
   { id: "practiceHobby", label: "Practice a hobby", size: "medium", reward: { type: "decor", name: "Tiny mushroom" }, done: false },
 
-  // Big tasks
   { id: "finishHomework", label: "Finish all homework", size: "big", reward: { type: "decor", name: "Pastel bench" }, done: false },
   { id: "study30", label: "Study for 30 minutes", size: "big", reward: { type: "decor", name: "Heart lamp" }, done: false },
   { id: "weeklyGoal", label: "Complete a weekly goal", size: "big", reward: { type: "decor", name: "Flower arch" }, done: false },
@@ -1062,8 +1313,7 @@ function renderTasks() {
       const row = document.createElement("div");
       row.className = "taskItem" + (task.done ? " done" : "");
       const label = document.createElement("span");
-      label.textContent = task.label + " – Reward: " +
-        (task.reward.type === "seed" ? task.reward.name : task.reward.name);
+      label.textContent = task.label + " – Reward: " + task.reward.name;
       const btn = document.createElement("button");
       btn.textContent = task.done ? "Done" : "Complete";
       btn.disabled = task.done;
@@ -1100,12 +1350,6 @@ function completeTask(id) {
   alert("You completed: " + task.label + "!\nYou earned: " + task.reward.name);
 }
 
-/* basic check for plant task */
-function checkTasksBasic() {
-  // could hook "plant 3 seeds" here if you want later
-}
-
-/* Task stand opens modal */
 const standTasks = document.getElementById("standTasks");
 standTasks.onclick = e => {
   e.stopPropagation();
@@ -1123,7 +1367,7 @@ taskModalBackdrop.addEventListener("click", e => {
   }
 });
 
-/* ---------- Stands basic interactions ---------- */
+/* stands */
 document.getElementById("standCute").onclick = e => {
   e.stopPropagation();
   alert("You visited the Cute Stand!");
@@ -1154,7 +1398,7 @@ document.getElementById("standMini").onclick = e => {
   playChime();
 };
 
-/* ---------- Decorations ---------- */
+/* decorations */
 let currentDecoration = null;
 
 document.querySelectorAll("#decorPanel button").forEach(btn => {
@@ -1184,7 +1428,7 @@ world.addEventListener("click", e => {
   playChime();
 });
 
-/* ---------- Creature rendering ---------- */
+/* creature rendering */
 function renderCreature(theme) {
   avatar.innerHTML = "";
   const c = document.createElement("div");
@@ -1232,7 +1476,7 @@ function renderCreature(theme) {
   avatar.appendChild(c);
 }
 
-/* ---------- Themes & world styles ---------- */
+/* themes */
 const worldLabel = document.getElementById("worldLabel");
 
 function setTheme(theme) {
@@ -1246,22 +1490,26 @@ function setTheme(theme) {
       "radial-gradient(circle at 70% 30%, rgba(200,255,200,0.35) 0, transparent 45%)," +
       "repeating-linear-gradient(45deg,#b7e39f 0,#b7e39f 28px,#a3d48c 28px,#a3d48c 56px)";
     worldLabel.textContent = "GlowGarden – Cute World";
+    buildCuteGarden();
   } else if (theme === "magical") {
     world.style.background =
       "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0, transparent 40%)," +
       "radial-gradient(circle at 80% 70%, rgba(200,180,255,0.4) 0, transparent 45%)," +
       "repeating-linear-gradient(45deg,#6f5f9f 0,#6f5f9f 24px,#5b4a8a 24px,#5b4a8a 48px)";
     worldLabel.textContent = "GlowGarden – Magical World";
+    buildMagicalGarden();
   } else if (theme === "cosmic") {
     world.style.background =
       "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2) 0, transparent 40%)," +
       "radial-gradient(circle at 80% 70%, rgba(150,200,255,0.4) 0, transparent 45%)," +
       "repeating-linear-gradient(45deg,#0b1f33 0,#0b1f33 24px,#050b14 24px,#050b14 48px)";
     worldLabel.textContent = "GlowGarden – Cosmic World";
+    buildCosmicGarden();
   } else if (theme === "pixel") {
     world.style.background =
       "repeating-linear-gradient(45deg,#1f1f1f 0,#1f1f1f 24px,#151515 24px,#151515 48px)";
     worldLabel.textContent = "GlowGarden – Pixel World";
+    buildPixelGarden();
   }
 
   renderCreature(theme);
@@ -1274,7 +1522,7 @@ document.querySelectorAll("#themeButtons button").forEach(btn => {
 setTheme("cute");
 updateInventoryUI();
 
-/* ---------- Sound ---------- */
+/* sound */
 let soundOn = false;
 const soundToggle = document.getElementById("soundToggle");
 
