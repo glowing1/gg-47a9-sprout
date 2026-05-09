@@ -2,67 +2,53 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GlowGarden – Everything Compact</title>
+<title>GlowGarden – Medium World</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #050510;
+    background: #87c27b;
     font-family: system-ui, sans-serif;
-    color: #f5f5ff;
   }
 
   #topBar {
     height: 48px;
-    background: linear-gradient(90deg,#151520,#1b1b2a);
-    border-bottom: 1px solid #26263a;
+    background: linear-gradient(90deg,#4f7b3a,#365427);
+    color: #f5f5ff;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
     font-size: 13px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
 
-  #worldName {
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  #worldDot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #ffb7c5;
-    box-shadow: 0 0 8px #ffb7c5;
+  #worldLabel {
+    font-weight: 600;
   }
 
   #themeButtons button {
     margin-left: 4px;
     padding: 3px 8px;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.2);
     color: #f5f5ff;
     font-size: 11px;
     cursor: pointer;
   }
 
   #themeButtons button:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.15);
   }
 
   #soundToggle {
     padding: 3px 8px;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.2);
     cursor: pointer;
     font-size: 11px;
   }
@@ -72,43 +58,45 @@
     width: 100vw;
     height: calc(100vh - 48px);
     overflow: hidden;
+    background: #7fb86f;
   }
 
+  /* Medium world */
   #world {
     position: absolute;
-    width: 2400px;
-    height: 2400px;
-    background: radial-gradient(circle at center,#1a1a2e,#050510);
-    transition: background 0.4s;
+    width: 2000px;
+    height: 2000px;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0, transparent 45%),
+      repeating-linear-gradient(45deg,#7fb86f 0,#7fb86f 16px,#76ad66 16px,#76ad66 32px);
+    border-radius: 40px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    cursor: grab;
+  }
+
+  #world.dragging {
+    cursor: grabbing;
   }
 
   /* Plaza */
   #plaza {
     position: absolute;
-    left: 1100px;
-    top: 1100px;
-    width: 220px;
-    height: 220px;
-    background: radial-gradient(circle,#ffe3ec,#ff8fa3);
+    left: 900px;
+    top: 900px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle,#f5e0b8,#d9a96a);
     border-radius: 40px;
-    box-shadow: 0 0 40px #ff8fa3;
-  }
-
-  /* Avatar */
-  #avatar {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle,#ffb7c5,#ff6f91);
-    border-radius: 50%;
-    box-shadow: 0 0 12px #ff8fb0;
+    box-shadow: 0 0 30px rgba(0,0,0,0.4);
+    border: 4px solid #c28b4a;
   }
 
   /* Garden */
   #garden {
     position: absolute;
-    left: 1000px;
-    top: 1350px;
+    left: 930px;
+    top: 1030px;
     width: 256px;
     height: 256px;
     display: grid;
@@ -120,19 +108,19 @@
   .tile {
     width: 64px;
     height: 64px;
-    background: #3b2a1a;
-    border-radius: 8px;
+    background: #5b3b24;
+    border-radius: 6px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.15);
     cursor: pointer;
     position: relative;
-    box-shadow: inset 0 2px 0 rgba(255,255,255,0.08);
   }
 
   .plant {
     position: absolute;
-    left: 22px;
-    top: 22px;
-    width: 20px;
-    height: 20px;
+    left: 18px;
+    top: 18px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
   }
 
@@ -145,9 +133,9 @@
   .stand {
     position: absolute;
     width: 150px;
-    height: 110px;
-    border-radius: 16px;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.6);
+    height: 100px;
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.5);
     cursor: pointer;
     display: flex;
     align-items: flex-end;
@@ -157,112 +145,189 @@
     font-weight: 600;
     padding-bottom: 6px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-    transition: transform 0.2s, filter 0.2s;
-  }
-
-  .stand:hover {
-    transform: translateY(-4px) scale(1.03);
-    filter: brightness(1.08);
   }
 
   #standCute {
-    left: 850px;
-    top: 950px;
+    left: 820px;
+    top: 840px;
     background: linear-gradient(180deg,#ffe3ec,#ff8fa3);
   }
 
   #standMagic {
-    left: 1250px;
-    top: 950px;
+    left: 1120px;
+    top: 840px;
     background: radial-gradient(circle,#f5ecff,#7f5fff);
   }
 
   #standCosmic {
-    left: 850px;
-    top: 750px;
+    left: 820px;
+    top: 1040px;
     background: radial-gradient(circle,#f0fbff,#3a7bbf);
   }
 
   #standPixel {
-    left: 1250px;
-    top: 750px;
+    left: 1120px;
+    top: 1040px;
     background: repeating-linear-gradient(90deg,#fff2b3 0,#fff2b3 8px,#ffd966 8px,#ffd966 16px);
   }
 
-  /* Side panel (tasks + decorations) */
-  #sidePanel {
+  /* Avatar (base) */
+  #avatar {
     position: absolute;
-    right: 8px;
-    top: 8px;
-    width: 230px;
-    height: calc(100% - 16px);
-    background: rgba(10,10,20,0.9);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    padding: 8px;
-    font-size: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    width: 40px;
+    height: 40px;
+    left: 1030px;
+    top: 980px;
+    transition: transform 0.05s linear;
   }
 
-  #tasks h3, #decorations h3 {
-    margin: 4px 0;
-    font-size: 13px;
+  /* Cute avatar */
+  .avatar-cute {
+    border-radius: 50%;
+    background: radial-gradient(circle,#ffe3ec,#ff8fa3);
+    box-shadow: 0 0 12px #ffb7c5;
   }
 
-  #tasks ul {
-    list-style: none;
-    padding-left: 0;
+  /* Magical avatar */
+  .avatar-magical {
+    border-radius: 50%;
+    background: radial-gradient(circle,#e5d4ff,#7f5fff);
+    box-shadow: 0 0 14px #c9a7ff;
   }
 
-  #tasks li {
-    margin-bottom: 4px;
-    cursor: pointer;
+  /* Cosmic avatar */
+  .avatar-cosmic {
+    border-radius: 50%;
+    background: radial-gradient(circle,#e0f6ff,#3a7bbf);
+    box-shadow: 0 0 14px #7fd0ff;
   }
 
-  #tasks li.done {
-    text-decoration: line-through;
-    color: #9fa3c0;
+  /* Pixel avatar */
+  .avatar-pixel {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    background:
+      linear-gradient(#f4d7b5 0 8px,#f4d7b5 8px 16px,#c28b4a 16px 24px,#3b2614 24px 32px);
+    box-shadow: 0 0 8px #ffd966;
   }
 
-  #decorations button {
-    margin: 2px 0;
-    width: 100%;
-    padding: 4px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.4);
-    color: #f5f5ff;
-    cursor: pointer;
-    font-size: 11px;
-  }
-
-  #decorations button:hover {
-    background: rgba(255,255,255,0.08);
-  }
-
+  /* Decorations */
   .decoration {
     position: absolute;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     pointer-events: none;
   }
 
-  .dec-star { background: radial-gradient(circle,#fff,#ffd966); box-shadow:0 0 10px #ffd966; }
-  .dec-flower { background: radial-gradient(circle,#fff,#ff8fa3); box-shadow:0 0 10px #ff8fa3; }
-  .dec-orb { background: radial-gradient(circle,#fff,#7fd0ff); box-shadow:0 0 10px #7fd0ff; }
+  .dec-tree { background: radial-gradient(circle,#4f7b3a,#2f4f23); box-shadow:0 0 8px rgba(0,0,0,0.4); }
+  .dec-flower { background: radial-gradient(circle,#fff,#ff8fa3); box-shadow:0 0 8px #ff8fa3; }
+  .dec-stone { background: radial-gradient(circle,#ddd,#999); box-shadow:0 0 6px rgba(0,0,0,0.4); }
+
+  /* Task board button */
+  #taskBoardButton {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    width: 60px;
+    height: 60px;
+    background: #c28b4a;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b2614;
+    font-weight: 700;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  /* Task modal */
+  #taskModalBackdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #taskModal {
+    width: 260px;
+    background: #f7f0e2;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    padding: 10px;
+    color: #3b2614;
+    font-size: 13px;
+  }
+
+  #taskModal h3 {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+  }
+
+  #taskModal ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 8px 0;
+  }
+
+  #taskModal li {
+    margin-bottom: 4px;
+  }
+
+  #taskModal li.done {
+    text-decoration: line-through;
+    color: #8b7b66;
+  }
+
+  #closeTasks {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #c28b4a;
+    background: #e3c48f;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  /* Decorations panel */
+  #decorPanel {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 10px;
+    padding: 6px;
+    color: #f5f5ff;
+    font-size: 11px;
+  }
+
+  #decorPanel button {
+    margin: 2px 0;
+    width: 100%;
+    padding: 3px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.3);
+    color: #f5f5ff;
+    cursor: pointer;
+  }
+
+  #decorPanel button:hover {
+    background: rgba(255,255,255,0.15);
+  }
 </style>
 </head>
 <body>
 
 <div id="topBar">
-  <div id="worldName">
-    <div id="worldDot"></div>
-    <span id="worldLabel">Cute World</span>
-  </div>
+  <span id="worldLabel">GlowGarden – Cute World</span>
   <div id="themeButtons">
     <button data-theme="cute">Cute</button>
     <button data-theme="magical">Magical</button>
@@ -276,67 +341,135 @@
   <div id="world">
     <div id="plaza"></div>
     <div id="garden"></div>
+
     <div id="standCute" class="stand">Cute Stand</div>
     <div id="standMagic" class="stand">Magic Stand</div>
     <div id="standCosmic" class="stand">Cosmic Stand</div>
     <div id="standPixel" class="stand">Pixel Stand</div>
-    <div id="avatar"></div>
+
+    <div id="avatar" class="avatar-cute"></div>
+
+    <div id="taskBoardButton">Tasks</div>
   </div>
 
-  <div id="sidePanel">
-    <div id="tasks">
-      <h3>Tasks</h3>
+  <div id="taskModalBackdrop">
+    <div id="taskModal">
+      <h3>Garden Tasks</h3>
       <ul>
         <li data-id="plant3">Plant 3 seeds</li>
         <li data-id="visitCute">Visit Cute Stand</li>
-        <li data-id="visitMagic">Visit Magical Stand</li>
+        <li data-id="visitMagic">Visit Magic Stand</li>
         <li data-id="visitCosmic">Visit Cosmic Stand</li>
         <li data-id="visitPixel">Visit Pixel Stand</li>
       </ul>
+      <button id="closeTasks">Close</button>
     </div>
-    <div id="decorations">
-      <h3>Decorations</h3>
-      <button data-dec="star">Place Star</button>
-      <button data-dec="flower">Place Flower</button>
-      <button data-dec="orb">Place Orb</button>
-      <p style="margin-top:6px;font-size:11px;color:#b0b3d0;">
-        Choose a decoration, then click in the world.
-      </p>
-    </div>
+  </div>
+
+  <div id="decorPanel">
+    <div style="margin-bottom:4px;">Decorations</div>
+    <button data-dec="tree">Place Tree</button>
+    <button data-dec="flower">Place Flower</button>
+    <button data-dec="stone">Place Stone</button>
+    <div style="margin-top:4px;">Click in world to place.</div>
   </div>
 </div>
 
 <script>
-/* -------- Avatar + Camera -------- */
-const avatar = document.getElementById("avatar");
+/* ---------- Drag-to-scroll camera ---------- */
 const world = document.getElementById("world");
-let x = 1200, y = 1200;
-const speed = 5;
+const main = document.getElementById("main");
+
+let isDragging = false;
+let startX = 0, startY = 0;
+let worldX = -500, worldY = -500; // initial offset
+
+function applyWorldTransform() {
+  world.style.transform = `translate(${worldX}px, ${worldY}px)`;
+}
+applyWorldTransform();
+
+main.addEventListener("mousedown", e => {
+  isDragging = true;
+  world.classList.add("dragging");
+  startX = e.clientX - worldX;
+  startY = e.clientY - worldY;
+});
+
+window.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  worldX = e.clientX - startX;
+  worldY = e.clientY - startY;
+  applyWorldTransform();
+});
+
+window.addEventListener("mouseup", () => {
+  isDragging = false;
+  world.classList.remove("dragging");
+});
+
+/* Touch support */
+main.addEventListener("touchstart", e => {
+  const t = e.touches[0];
+  isDragging = true;
+  world.classList.add("dragging");
+  startX = t.clientX - worldX;
+  startY = t.clientY - worldY;
+});
+
+main.addEventListener("touchmove", e => {
+  if (!isDragging) return;
+  const t = e.touches[0];
+  worldX = t.clientX - startX;
+  worldY = t.clientY - startY;
+  applyWorldTransform();
+});
+
+main.addEventListener("touchend", () => {
+  isDragging = false;
+  world.classList.remove("dragging");
+});
+
+/* ---------- Avatar movement (smooth) ---------- */
+const avatar = document.getElementById("avatar");
+let avatarX = 1030;
+let avatarY = 980;
+const avatarSpeed = 3;
+const keys = {};
+
+document.addEventListener("keydown", e => {
+  keys[e.key.toLowerCase()] = true;
+});
+
+document.addEventListener("keyup", e => {
+  keys[e.key.toLowerCase()] = false;
+});
 
 function updateAvatar() {
-  avatar.style.left = x + "px";
-  avatar.style.top = y + "px";
-  const cx = window.innerWidth / 2 - x - 20;
-  const cy = (window.innerHeight - 48) / 2 - y - 20;
-  world.style.transform = `translate(${cx}px, ${cy}px)`;
+  let dx = 0, dy = 0;
+  if (keys["w"] || keys["arrowup"]) dy -= avatarSpeed;
+  if (keys["s"] || keys["arrowdown"]) dy += avatarSpeed;
+  if (keys["a"] || keys["arrowleft"]) dx -= avatarSpeed;
+  if (keys["d"] || keys["arrowright"]) dx += avatarSpeed;
+
+  avatarX += dx;
+  avatarY += dy;
+
+  // clamp inside world
+  avatarX = Math.max(0, Math.min(1960, avatarX));
+  avatarY = Math.max(0, Math.min(1960, avatarY));
+
+  avatar.style.left = avatarX + "px";
+  avatar.style.top = avatarY + "px";
 }
 
-const keys = {};
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
-
 function gameLoop() {
-  if (keys["ArrowUp"] || keys["w"]) y -= speed;
-  if (keys["ArrowDown"] || keys["s"]) y += speed;
-  if (keys["ArrowLeft"] || keys["a"]) x -= speed;
-  if (keys["ArrowRight"] || keys["d"]) x += speed;
   updateAvatar();
   requestAnimationFrame(gameLoop);
 }
-updateAvatar();
 gameLoop();
 
-/* -------- Garden + Plant Growth -------- */
+/* ---------- Garden + plant growth ---------- */
 const garden = document.getElementById("garden");
 let plantedCount = 0;
 
@@ -345,7 +478,8 @@ for (let i = 0; i < 16; i++) {
   tile.className = "tile";
   tile.dataset.stage = 0;
 
-  tile.onclick = () => {
+  tile.onclick = e => {
+    e.stopPropagation();
     let stage = Number(tile.dataset.stage);
     if (stage < 4) {
       stage++;
@@ -363,23 +497,11 @@ for (let i = 0; i < 16; i++) {
   garden.appendChild(tile);
 }
 
-/* -------- Stands + Interactions -------- */
-function standMessage(name, id) {
-  alert("You interacted with the " + name + "!");
-  markTaskDone(id);
-  playChime();
-}
-
-document.getElementById("standCute").onclick   = () => standMessage("Cute Stand","visitCute");
-document.getElementById("standMagic").onclick  = () => standMessage("Magical Stand","visitMagic");
-document.getElementById("standCosmic").onclick = () => standMessage("Cosmic Stand","visitCosmic");
-document.getElementById("standPixel").onclick  = () => standMessage("Pixel Stand","visitPixel");
-
-/* -------- Tasks -------- */
-const taskList = document.querySelectorAll("#tasks li");
+/* ---------- Stands + tasks ---------- */
+const taskItems = document.querySelectorAll("#taskModal li");
 
 function markTaskDone(id) {
-  taskList.forEach(li => {
+  taskItems.forEach(li => {
     if (li.dataset.id === id) li.classList.add("done");
   });
 }
@@ -388,10 +510,58 @@ function checkTasks() {
   if (plantedCount >= 3) markTaskDone("plant3");
 }
 
-/* -------- Decorations -------- */
+document.getElementById("standCute").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Cute Stand!");
+  markTaskDone("visitCute");
+  playChime();
+};
+
+document.getElementById("standMagic").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Magic Stand!");
+  markTaskDone("visitMagic");
+  playChime();
+};
+
+document.getElementById("standCosmic").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Cosmic Stand!");
+  markTaskDone("visitCosmic");
+  playChime();
+};
+
+document.getElementById("standPixel").onclick = e => {
+  e.stopPropagation();
+  alert("You visited the Pixel Stand!");
+  markTaskDone("visitPixel");
+  playChime();
+};
+
+/* ---------- Task board modal ---------- */
+const taskBoardButton = document.getElementById("taskBoardButton");
+const taskModalBackdrop = document.getElementById("taskModalBackdrop");
+const closeTasks = document.getElementById("closeTasks");
+
+taskBoardButton.onclick = e => {
+  e.stopPropagation();
+  taskModalBackdrop.style.display = "flex";
+};
+
+closeTasks.onclick = () => {
+  taskModalBackdrop.style.display = "none";
+};
+
+taskModalBackdrop.addEventListener("click", e => {
+  if (e.target === taskModalBackdrop) {
+    taskModalBackdrop.style.display = "none";
+  }
+});
+
+/* ---------- Decorations ---------- */
 let currentDecoration = null;
 
-document.querySelectorAll("#decorations button").forEach(btn => {
+document.querySelectorAll("#decorPanel button").forEach(btn => {
   btn.addEventListener("click", () => {
     currentDecoration = btn.dataset.dec;
   });
@@ -400,44 +570,55 @@ document.querySelectorAll("#decorations button").forEach(btn => {
 world.addEventListener("click", e => {
   if (!currentDecoration) return;
   const rect = world.getBoundingClientRect();
-  const dx = e.clientX - rect.left;
-  const dy = e.clientY - rect.top;
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
   const dec = document.createElement("div");
   dec.classList.add("decoration");
-  if (currentDecoration === "star") dec.classList.add("dec-star");
+  if (currentDecoration === "tree") dec.classList.add("dec-tree");
   if (currentDecoration === "flower") dec.classList.add("dec-flower");
-  if (currentDecoration === "orb") dec.classList.add("dec-orb");
-  dec.style.left = (dx - 12) + "px";
-  dec.style.top = (dy - 12) + "px";
+  if (currentDecoration === "stone") dec.classList.add("dec-stone");
+  dec.style.left = (x - 13) + "px";
+  dec.style.top = (y - 13) + "px";
   world.appendChild(dec);
   playChime();
 });
 
-/* -------- World Themes -------- */
+/* ---------- Themes + avatar styles ---------- */
 const worldLabel = document.getElementById("worldLabel");
-const worldDot = document.getElementById("worldDot");
+
+function setAvatarClass(cls) {
+  avatar.className = "";
+  avatar.id = "avatar";
+  avatar.classList.add(cls);
+}
 
 function setTheme(theme) {
   if (theme === "cute") {
-    world.style.background = "radial-gradient(circle at center,#2a1a2e,#050510)";
-    worldDot.style.background = "#ffb7c5";
-    worldDot.style.boxShadow = "0 0 8px #ffb7c5";
-    worldLabel.textContent = "Cute World";
+    world.style.background =
+      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0, transparent 40%)," +
+      "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#ffcfe0 0,#ffcfe0 16px,#ffb7c5 16px,#ffb7c5 32px)";
+    worldLabel.textContent = "GlowGarden – Cute World";
+    setAvatarClass("avatar-cute");
   } else if (theme === "magical") {
-    world.style.background = "radial-gradient(circle at center,#2b1b4a,#0b0618)";
-    worldDot.style.background = "#c9a7ff";
-    worldDot.style.boxShadow = "0 0 8px #c9a7ff";
-    worldLabel.textContent = "Magical World";
+    world.style.background =
+      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0, transparent 40%)," +
+      "radial-gradient(circle at 80% 70%, rgba(200,180,255,0.3) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#6f5f9f 0,#6f5f9f 16px,#5b4a8a 16px,#5b4a8a 32px)";
+    worldLabel.textContent = "GlowGarden – Magical World";
+    setAvatarClass("avatar-magical");
   } else if (theme === "cosmic") {
-    world.style.background = "radial-gradient(circle at center,#163a5c,#02040a)";
-    worldDot.style.background = "#7fd0ff";
-    worldDot.style.boxShadow = "0 0 8px #7fd0ff";
-    worldLabel.textContent = "Cosmic World";
+    world.style.background =
+      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2) 0, transparent 40%)," +
+      "radial-gradient(circle at 80% 70%, rgba(150,200,255,0.3) 0, transparent 45%)," +
+      "repeating-linear-gradient(45deg,#163a5c 0,#163a5c 16px,#0b1f33 16px,#0b1f33 32px)";
+    worldLabel.textContent = "GlowGarden – Cosmic World";
+    setAvatarClass("avatar-cosmic");
   } else if (theme === "pixel") {
-    world.style.background = "repeating-linear-gradient(45deg,#1f1f1f 0,#1f1f1f 8px,#151515 8px,#151515 16px)";
-    worldDot.style.background = "#ffd966";
-    worldDot.style.boxShadow = "0 0 8px #ffd966";
-    worldLabel.textContent = "Pixel World";
+    world.style.background =
+      "repeating-linear-gradient(45deg,#1f1f1f 0,#1f1f1f 16px,#151515 16px,#151515 32px)";
+    worldLabel.textContent = "GlowGarden – Pixel World";
+    setAvatarClass("avatar-pixel");
   }
 }
 
@@ -447,7 +628,7 @@ document.querySelectorAll("#themeButtons button").forEach(btn => {
 
 setTheme("cute");
 
-/* -------- Sound (simple chime) -------- */
+/* ---------- Sound (simple chime) ---------- */
 let soundOn = false;
 const soundToggle = document.getElementById("soundToggle");
 
@@ -470,9 +651,7 @@ function playChime() {
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + 0.25);
-  } catch (e) {
-    // ignore if AudioContext not available
-  }
+  } catch (e) {}
 }
 </script>
 
