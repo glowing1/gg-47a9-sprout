@@ -7,13 +7,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:sans-serif}
 .magicalWorld{background:radial-gradient(circle at 10% 0,#fbe6ff,#dfe5ff)}
 .cosmicWorld{background:radial-gradient(circle at 10% 0,#1a2340,#050818)}
 .pixelWorld{background:#9be58a;background-image:linear-gradient(#8fd27f 1px,transparent 1px),linear-gradient(90deg,#8fd27f 1px,transparent 1px);background-size:16px 16px;image-rendering:pixelated}
-#garden{position:absolute;left:300px;top:300px;width:420px;height:420px;background:#ffffff50;border-radius:20px;backdrop-filter:blur(4px);padding:10px;display:grid;grid-template-columns:repeat(6,1fr);grid-gap:6px;box-shadow:0 0 15px #0002}
+#garden{position:absolute;left:300px;top:300px;width:420px;height:420px;background:#ffffff50;border-radius:20px;backdrop-filter:blur(4px);padding:10px;display:grid;grid-template-columns:repeat(6,1fr);grid-gap:6px;box-shadow:0 0 15px #0002;z-index:12}
 .plot{width:100%;height:100%;background:#c2a878;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:inset 0 2px 0 #e7cda0}
-#inventory,#tasks,#status{position:fixed;bottom:10px;background:#ffffffdd;padding:8px 10px;border-radius:12px;box-shadow:0 0 12px #0003;font-size:12px}
+#inventory,#tasks,#status{position:fixed;bottom:10px;background:#ffffffdd;padding:8px 10px;border-radius:12px;box-shadow:0 0 12px #0003;font-size:12px;z-index:50}
 #inventory{left:10px}#tasks{right:10px}#status{left:50%;transform:translateX(-50%)}
-.stall{position:absolute;width:130px;height:90px;border-radius:12px;box-shadow:0 6px 12px #0003;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;color:#222;overflow:hidden}
+.stall{position:absolute;width:130px;height:90px;border-radius:12px;box-shadow:0 6px 12px #0003;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;color:#222;overflow:hidden;z-index:14}
 .stallRoof{position:absolute;top:-18px;left:-5px;width:140px;height:40px;border-radius:16px 16px 10px 10px;box-shadow:0 4px 8px #0003;z-index:-1}
-.npc{position:absolute;width:42px;height:42px;border-radius:50%;box-shadow:0 0 8px #0006;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:2px solid #fff}
+.npc{position:absolute;width:42px;height:42px;border-radius:50%;box-shadow:0 0 8px #0006;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:2px solid #fff;z-index:15}
 .cuteStall{background:#ffe4f2;border:2px solid #ff9acb}
 .cuteRoof{background:linear-gradient(#ffb9dd,#ff8fc4)}
 .magicalStall{background:#f4e6ff;border:2px solid #b38cff}
@@ -32,6 +32,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:sans-serif}
 .cosmicDeco{background:radial-gradient(circle at 30% 20%,#fff,#5fd4ff);box-shadow:0 0 14px #5fd4ff}
 .pixelDeco{background:#6bbf5b;border-radius:0;box-shadow:0 0 0 2px #4f8f45;image-rendering:pixelated}
 .spark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;opacity:.8;pointer-events:none;z-index:8}
+.blob{position:absolute;border-radius:999px;pointer-events:none;z-index:3;opacity:.9}
+.cuteBlob{background:#ffe4f5;box-shadow:0 0 20px #ffb9dd}
+.magicalBlob{background:#e7d4ff;box-shadow:0 0 22px #c9a6ff}
+.cosmicBlob{background:#151c3a;box-shadow:0 0 26px #5fd4ff}
+.pixelBlob{background:#7fd06c;border-radius:0;image-rendering:pixelated;box-shadow:0 0 0 3px #4f8f45}
 .creature{position:absolute;width:30px;height:30px;border-radius:50%;background:#fffa;box-shadow:0 0 6px #0004;font-size:20px;display:flex;align-items:center;justify-content:center;z-index:15}
 </style></head><body>
 
@@ -113,9 +118,32 @@ setInterval(()=>{
  w.style.filter=timeIsDay?"brightness(1)":"brightness(.55)";
 },9000);
 
-/* Auto decorations */
+/* Blobs + decorations */
 function clearDecor(){
- [...w.querySelectorAll(".deco,.spark")].forEach(d=>d.remove());
+ [...w.querySelectorAll(".deco,.spark,.blob")].forEach(d=>d.remove());
+}
+function addBlobs(type){
+ // big blobs
+ for(let i=0;i<4;i++){
+  let b=document.createElement("div");
+  b.className="blob "+type+"Blob";
+  let size=400+Math.random()*260;
+  b.style.width=size+"px";b.style.height=size+"px";
+  b.style.left=(400+Math.random()*1600-size/2)+"px";
+  b.style.top=(400+Math.random()*1600-size/2)+"px";
+  w.appendChild(b);
+ }
+ // small blobs
+ for(let i=0;i<8;i++){
+  let b=document.createElement("div");
+  b.className="blob "+type+"Blob";
+  let size=120+Math.random()*120;
+  b.style.width=size+"px";b.style.height=size+"px";
+  b.style.left=(300+Math.random()*1800-size/2)+"px";
+  b.style.top=(300+Math.random()*1800-size/2)+"px";
+  b.style.opacity=.85;
+  w.appendChild(b);
+ }
 }
 function addDecor(type,count){
  for(let i=0;i<count;i++){
@@ -160,7 +188,7 @@ function applyWorldTheme(){
   npcSeed.textContent="😊";npcDecor.textContent="🌸";npcCraft.textContent="🧵";
   seedLabel.textContent="Flower Seeds";decorLabel.textContent="Cute Decor";craftLabel.textContent="Simple Craft";
   document.getElementById("wName").textContent="Cute";
-  addDecor("cute",18);
+  addBlobs("cute");addDecor("cute",18);
  }else if(curWorld==="magical"){
   w.className="magicalWorld";
   seedStall.classList.add("magicalStall");decorStall.classList.add("magicalStall");craftStall.classList.add("magicalStall");
@@ -169,7 +197,7 @@ function applyWorldTheme(){
   npcSeed.textContent="🧙";npcDecor.textContent="🔮";npcCraft.textContent="📜";
   seedLabel.textContent="Potion Seeds";decorLabel.textContent="Arcane Decor";craftLabel.textContent="Enchant Craft";
   document.getElementById("wName").textContent="Magical";
-  addDecor("magical",18);
+  addBlobs("magical");addDecor("magical",18);
  }else if(curWorld==="cosmic"){
   w.className="cosmicWorld";
   seedStall.classList.add("cosmicStall");decorStall.classList.add("cosmicStall");craftStall.classList.add("cosmicStall");
@@ -178,7 +206,7 @@ function applyWorldTheme(){
   npcSeed.textContent="✨";npcDecor.textContent="🌌";npcCraft.textContent="🪐";
   seedLabel.textContent="Star Seeds";decorLabel.textContent="Cosmic Decor";craftLabel.textContent="Stellar Craft";
   document.getElementById("wName").textContent="Cosmic";
-  addDecor("cosmic",18);
+  addBlobs("cosmic");addDecor("cosmic",18);
  }else if(curWorld==="pixel"){
   w.className="pixelWorld";
   seedStall.classList.add("pixelStall");decorStall.classList.add("pixelStall");craftStall.classList.add("pixelStall");
@@ -187,7 +215,7 @@ function applyWorldTheme(){
   npcSeed.textContent="🧑";npcDecor.textContent="🧱";npcCraft.textContent="🛠";
   seedLabel.textContent="Pixel Seeds";decorLabel.textContent="Retro Decor";craftLabel.textContent="8‑bit Craft";
   document.getElementById("wName").textContent="Pixel";
-  addDecor("pixel",18);
+  addBlobs("pixel");addDecor("pixel",18);
  }
 }
 applyWorldTheme();
@@ -244,27 +272,27 @@ updateInv();
 /* NPC interactions */
 function npcTalk(msg){alert(msg);}
 
-npcSeed.onclick=()=>{
+document.getElementById("npcSeed").onclick=()=>{
  seedA++;updateInv();
  if(curWorld==="cute")npcTalk("Cute Seller: A flower seed for your cozy garden!");
  else if(curWorld==="magical")npcTalk("Mage: A potion seed, may it bubble with power.");
  else if(curWorld==="cosmic")npcTalk("Star Being: A star seed to light your soil.");
  else npcTalk("Pixel Merchant: One pixel seed, straight from the cartridge.");
 };
-npcDecor.onclick=()=>{
+document.getElementById("npcDecor").onclick=()=>{
  decor++;updateInv();
  if(curWorld==="cute")npcTalk("Decorator: Cute decor makes everyone smile.");
  else if(curWorld==="magical")npcTalk("Enchanter: Place this where magic feels strong.");
  else if(curWorld==="cosmic")npcTalk("Cosmic Artisan: A shard of the cosmos for you.");
  else npcTalk("Retro Builder: Classic decor, low‑res but high charm.");
 };
-npcCraft.onclick=()=>{
+document.getElementById("npcCraft").onclick=()=>{
  if(glow>=3){glow-=3;seedB++;updateInv();npcTalk("Crafted: Glow turned into a special seed!");}
  else npcTalk("You need 3 Glow to craft a special seed.");
 };
-seedStall.onclick=()=>npcSeed.onclick();
-decorStall.onclick=()=>npcDecor.onclick();
-craftStall.onclick=()=>npcCraft.onclick();
+document.getElementById("seedStall").onclick=()=>document.getElementById("npcSeed").onclick();
+document.getElementById("decorStall").onclick=()=>document.getElementById("npcDecor").onclick();
+document.getElementById("craftStall").onclick=()=>document.getElementById("npcCraft").onclick();
 
 /* Creatures wander slightly */
 function wander(id){
