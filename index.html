@@ -1,26 +1,38 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GlowGarden Final</title><style>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GlowGarden Combimon</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;font-family:sans-serif}
-#world{position:relative;width:2400px;height:2400px;transform-origin:0 0;transition:background .4s}
-#player{position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 0 6px #0004;z-index:10}
-.cuteWorld{background:#dfffe0}
-.magicalWorld{background:#f0e6ff}
-.cosmicWorld{background:#050818}
-.pixelWorld{background:#c8ffc8;image-rendering:pixelated}
-#garden{position:absolute;left:300px;top:300px;width:420px;height:420px;background:#ffffff40;border-radius:20px;backdrop-filter:blur(3px);padding:10px;display:grid;grid-template-columns:repeat(6,1fr);grid-gap:6px}
-.plot{width:100%;height:100%;background:#c2a878;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px}
-#inventory,#tasks,#status{position:fixed;bottom:10px;background:#fff;padding:8px 10px;border-radius:10px;box-shadow:0 0 10px #0003;font-size:12px}
+#world{position:relative;width:2400px;height:2400px;transform-origin:0 0;transition:background .4s,filter .4s}
+#player{position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 0 6px #0004;z-index:20}
+.cuteWorld{background:radial-gradient(circle at 20% 20%,#ffeef7,#dfffe0)}
+.magicalWorld{background:radial-gradient(circle at 10% 0,#fbe6ff,#dfe5ff)}
+.cosmicWorld{background:radial-gradient(circle at 10% 0,#1a2340,#050818)}
+.pixelWorld{background:#9be58a;background-image:linear-gradient(#8fd27f 1px,transparent 1px),linear-gradient(90deg,#8fd27f 1px,transparent 1px);background-size:16px 16px;image-rendering:pixelated}
+#garden{position:absolute;left:300px;top:300px;width:420px;height:420px;background:#ffffff50;border-radius:20px;backdrop-filter:blur(4px);padding:10px;display:grid;grid-template-columns:repeat(6,1fr);grid-gap:6px;box-shadow:0 0 15px #0002}
+.plot{width:100%;height:100%;background:#c2a878;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:inset 0 2px 0 #e7cda0}
+#inventory,#tasks,#status{position:fixed;bottom:10px;background:#ffffffdd;padding:8px 10px;border-radius:12px;box-shadow:0 0 12px #0003;font-size:12px}
 #inventory{left:10px}#tasks{right:10px}#status{left:50%;transform:translateX(-50%)}
-.stall{position:absolute;width:120px;height:80px;border-radius:10px;box-shadow:0 0 10px #0003;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;color:#222}
-.npc{position:absolute;width:40px;height:40px;border-radius:50%;box-shadow:0 0 6px #0006;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+.stall{position:absolute;width:130px;height:90px;border-radius:12px;box-shadow:0 6px 12px #0003;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;color:#222;overflow:hidden}
+.stallRoof{position:absolute;top:-18px;left:-5px;width:140px;height:40px;border-radius:16px 16px 10px 10px;box-shadow:0 4px 8px #0003;z-index:-1}
+.npc{position:absolute;width:42px;height:42px;border-radius:50%;box-shadow:0 0 8px #0006;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:2px solid #fff}
 .cuteStall{background:#ffe4f2;border:2px solid #ff9acb}
+.cuteRoof{background:linear-gradient(#ffb9dd,#ff8fc4)}
 .magicalStall{background:#f4e6ff;border:2px solid #b38cff}
+.magicalRoof{background:linear-gradient(#c9a6ff,#9a7bff)}
 .cosmicStall{background:#111633;border:2px solid #6ad0ff;color:#e8f6ff}
+.cosmicRoof{background:linear-gradient(#283a7a,#0c1638)}
 .pixelStall{background:#f0f0f0;border:2px solid #555;image-rendering:pixelated}
+.pixelRoof{background:repeating-linear-gradient(90deg,#ffcc66 0 8px,#ff9966 8px 16px)}
 .cuteNPC{background:#ffd6e8}
 .magicalNPC{background:#d9c2ff}
 .cosmicNPC{background:#1b2348;color:#f5f9ff}
 .pixelNPC{background:#f5f5f5;border:2px solid #444;image-rendering:pixelated}
+.deco{position:absolute;border-radius:999px;opacity:.95;pointer-events:none;z-index:5}
+.cuteDeco{background:radial-gradient(circle at 30% 20%,#fff,#ffb9dd);box-shadow:0 0 10px #ffb9dd}
+.magicalDeco{background:radial-gradient(circle at 30% 20%,#fff,#c9a6ff);box-shadow:0 0 12px #c9a6ff}
+.cosmicDeco{background:radial-gradient(circle at 30% 20%,#fff,#5fd4ff);box-shadow:0 0 14px #5fd4ff}
+.pixelDeco{background:#6bbf5b;border-radius:0;box-shadow:0 0 0 2px #4f8f45;image-rendering:pixelated}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;opacity:.8;pointer-events:none;z-index:8}
+.creature{position:absolute;width:30px;height:30px;border-radius:50%;background:#fffa;box-shadow:0 0 6px #0004;font-size:20px;display:flex;align-items:center;justify-content:center;z-index:15}
 </style></head><body>
 
 <div id="world" class="cuteWorld">
@@ -28,15 +40,25 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:sans-serif}
 
 <div id="garden"></div>
 
-<!-- Stalls (same location in all worlds) -->
-<div class="stall cuteStall" id="seedStall" style="left:1100px;top:900px">Seed Stall</div>
-<div class="stall cuteStall" id="decorStall" style="left:1250px;top:900px">Decor Stall</div>
-<div class="stall cuteStall" id="craftStall" style="left:1400px;top:900px">Craft Stall</div>
+<!-- Stalls (same plaza) -->
+<div class="stall cuteStall" id="seedStall" style="left:1100px;top:900px">
+ <div class="stallRoof cuteRoof"></div><span id="seedLabel">Flower Seeds</span>
+</div>
+<div class="stall cuteStall" id="decorStall" style="left:1260px;top:900px">
+ <div class="stallRoof cuteRoof"></div><span id="decorLabel">Cute Decor</span>
+</div>
+<div class="stall cuteStall" id="craftStall" style="left:1420px;top:900px">
+ <div class="stallRoof cuteRoof"></div><span id="craftLabel">Simple Craft</span>
+</div>
 
 <!-- NPCs in front of stalls -->
 <div class="npc cuteNPC" id="npcSeed" style="left:1120px;top:860px">😊</div>
-<div class="npc cuteNPC" id="npcDecor" style="left:1270px;top:860px">🌸</div>
-<div class="npc cuteNPC" id="npcCraft" style="left:1420px;top:860px">🧵</div>
+<div class="npc cuteNPC" id="npcDecor" style="left:1280px;top:860px">🌸</div>
+<div class="npc cuteNPC" id="npcCraft" style="left:1440px;top:860px">🧵</div>
+
+<!-- Creatures -->
+<div class="creature" id="cre1" style="left:700px;top:700px">🐦</div>
+<div class="creature" id="cre2" style="left:1700px;top:1500px">🐇</div>
 
 </div>
 
@@ -78,52 +100,99 @@ function movePlayer(){
 }
 setInterval(movePlayer,20);
 
+function cam(){
+ let cx=innerWidth/2,cy=innerHeight/2,tx=cx-px,ty=cy-py;
+ if(curWorld==="pixel"){tx*=0.7;ty*=0.7;}
+ w.style.transform=`translate(${tx}px,${ty}px)`;
+}
+setInterval(cam,20);
+
+setInterval(()=>{
+ timeIsDay=!timeIsDay;
+ document.getElementById("timeLabel").textContent=timeIsDay?"Day":"Night";
+ w.style.filter=timeIsDay?"brightness(1)":"brightness(.55)";
+},9000);
+
+/* Auto decorations */
+function clearDecor(){
+ [...w.querySelectorAll(".deco,.spark")].forEach(d=>d.remove());
+}
+function addDecor(type,count){
+ for(let i=0;i<count;i++){
+  let d=document.createElement("div");
+  d.className="deco "+type+"Deco";
+  let size=40+Math.random()*60;
+  d.style.width=size+"px";d.style.height=size+"px";
+  d.style.left=(200+Math.random()*2000-size)+"px";
+  d.style.top=(200+Math.random()*2000-size)+"px";
+  w.appendChild(d);
+ }
+ for(let i=0;i<20;i++){
+  let s=document.createElement("div");
+  s.className="spark";
+  s.style.left=(200+Math.random()*2000)+"px";
+  s.style.top=(200+Math.random()*2000)+"px";
+  w.appendChild(s);
+ }
+}
+
+/* World theming + stalls + NPCs */
 function applyWorldTheme(){
  let seedStall=document.getElementById("seedStall"),
      decorStall=document.getElementById("decorStall"),
      craftStall=document.getElementById("craftStall"),
      npcSeed=document.getElementById("npcSeed"),
      npcDecor=document.getElementById("npcDecor"),
-     npcCraft=document.getElementById("npcCraft");
+     npcCraft=document.getElementById("npcCraft"),
+     seedLabel=document.getElementById("seedLabel"),
+     decorLabel=document.getElementById("decorLabel"),
+     craftLabel=document.getElementById("craftLabel"),
+     roofs=[...w.querySelectorAll(".stallRoof")];
  seedStall.className="stall";decorStall.className="stall";craftStall.className="stall";
  npcSeed.className="npc";npcDecor.className="npc";npcCraft.className="npc";
+ roofs.forEach(r=>r.className="stallRoof");
+ clearDecor();
  if(curWorld==="cute"){
   w.className="cuteWorld";
   seedStall.classList.add("cuteStall");decorStall.classList.add("cuteStall");craftStall.classList.add("cuteStall");
+  roofs.forEach(r=>r.classList.add("cuteRoof"));
   npcSeed.classList.add("cuteNPC");npcDecor.classList.add("cuteNPC");npcCraft.classList.add("cuteNPC");
   npcSeed.textContent="😊";npcDecor.textContent="🌸";npcCraft.textContent="🧵";
-  seedStall.textContent="Flower Seeds";decorStall.textContent="Cute Decor";craftStall.textContent="Simple Craft";
+  seedLabel.textContent="Flower Seeds";decorLabel.textContent="Cute Decor";craftLabel.textContent="Simple Craft";
   document.getElementById("wName").textContent="Cute";
+  addDecor("cute",18);
  }else if(curWorld==="magical"){
   w.className="magicalWorld";
   seedStall.classList.add("magicalStall");decorStall.classList.add("magicalStall");craftStall.classList.add("magicalStall");
+  roofs.forEach(r=>r.classList.add("magicalRoof"));
   npcSeed.classList.add("magicalNPC");npcDecor.classList.add("magicalNPC");npcCraft.classList.add("magicalNPC");
   npcSeed.textContent="🧙";npcDecor.textContent="🔮";npcCraft.textContent="📜";
-  seedStall.textContent="Potion Seeds";decorStall.textContent="Arcane Decor";craftStall.textContent="Enchant Craft";
+  seedLabel.textContent="Potion Seeds";decorLabel.textContent="Arcane Decor";craftLabel.textContent="Enchant Craft";
   document.getElementById("wName").textContent="Magical";
+  addDecor("magical",18);
  }else if(curWorld==="cosmic"){
   w.className="cosmicWorld";
   seedStall.classList.add("cosmicStall");decorStall.classList.add("cosmicStall");craftStall.classList.add("cosmicStall");
+  roofs.forEach(r=>r.classList.add("cosmicRoof"));
   npcSeed.classList.add("cosmicNPC");npcDecor.classList.add("cosmicNPC");npcCraft.classList.add("cosmicNPC");
   npcSeed.textContent="✨";npcDecor.textContent="🌌";npcCraft.textContent="🪐";
-  seedStall.textContent="Star Seeds";decorStall.textContent="Cosmic Decor";craftStall.textContent="Stellar Craft";
+  seedLabel.textContent="Star Seeds";decorLabel.textContent="Cosmic Decor";craftLabel.textContent="Stellar Craft";
   document.getElementById("wName").textContent="Cosmic";
+  addDecor("cosmic",18);
  }else if(curWorld==="pixel"){
   w.className="pixelWorld";
   seedStall.classList.add("pixelStall");decorStall.classList.add("pixelStall");craftStall.classList.add("pixelStall");
+  roofs.forEach(r=>r.classList.add("pixelRoof"));
   npcSeed.classList.add("pixelNPC");npcDecor.classList.add("pixelNPC");npcCraft.classList.add("pixelNPC");
   npcSeed.textContent="🧑";npcDecor.textContent="🧱";npcCraft.textContent="🛠";
-  seedStall.textContent="Pixel Seeds";decorStall.textContent="Retro Decor";craftStall.textContent="8‑bit Craft";
+  seedLabel.textContent="Pixel Seeds";decorLabel.textContent="Retro Decor";craftLabel.textContent="8‑bit Craft";
   document.getElementById("wName").textContent="Pixel";
+  addDecor("pixel",18);
  }
 }
 applyWorldTheme();
 
-function switchWorld(wd){
- curWorld=wd;
- speed=wd==="pixel"?4:6;
- applyWorldTheme();
-}
+function switchWorld(wd){curWorld=wd;speed=wd==="pixel"?4:6;applyWorldTheme();}
 function checkWorldSwitch(){
  if(px<200&&py<200)switchWorld("cute");
  if(px>2200&&py<200)switchWorld("magical");
@@ -132,26 +201,11 @@ function checkWorldSwitch(){
 }
 setInterval(checkWorldSwitch,120);
 
-function cam(){
- let cx=innerWidth/2,cy=innerHeight/2,tx=cx-px,ty=cy-py;
- if(curWorld==="pixel"){tx*=0.7;ty*=0.7;}
- w.style.transform=`translate(${tx}px,${ty}px)`;
-}
-setInterval(cam,20);
-
-/* Day / Night toggle */
-setInterval(()=>{
- timeIsDay=!timeIsDay;
- document.getElementById("timeLabel").textContent=timeIsDay?"Day":"Night";
- w.style.filter=timeIsDay?"brightness(1)":"brightness(.5)";
-},9000);
-
-/* Farming: two crop types */
+/* Farming */
 let garden=document.getElementById("garden");
 for(let i=0;i<36;i++){
  let plot=document.createElement("div");
- plot.className="plot";
- plot.dataset.state="empty";
+ plot.className="plot";plot.dataset.state="empty";
  plot.onclick=()=>{
   if(plot.dataset.state==="empty"){
    if(seedA>0){
@@ -178,7 +232,7 @@ function plant(plot,type,sprout,finalEmoji,onGrow){
  },2000);
 }
 
-/* Inventory update */
+/* Inventory */
 function updateInv(){
  document.getElementById("seedA").textContent=seedA;
  document.getElementById("seedB").textContent=seedB;
@@ -187,19 +241,16 @@ function updateInv(){
 }
 updateInv();
 
-/* NPC click = open stall logic (simple messages + effects) */
+/* NPC interactions */
 function npcTalk(msg){alert(msg);}
 
-/* Seed NPC: gives / sells seeds depending on world */
 npcSeed.onclick=()=>{
- if(curWorld==="cute"){seedA++;npcTalk("Cute Seller: Here, have a flower seed!");}
- else if(curWorld==="magical"){seedA++;npcTalk("Mage: A potion seed for your garden.");}
- else if(curWorld==="cosmic"){seedA++;npcTalk("Star Being: A star seed to light your soil.");}
- else if(curWorld==="pixel"){seedA++;npcTalk("Pixel Merchant: One pixel seed, use it well.");}
- updateInv();
+ seedA++;updateInv();
+ if(curWorld==="cute")npcTalk("Cute Seller: A flower seed for your cozy garden!");
+ else if(curWorld==="magical")npcTalk("Mage: A potion seed, may it bubble with power.");
+ else if(curWorld==="cosmic")npcTalk("Star Being: A star seed to light your soil.");
+ else npcTalk("Pixel Merchant: One pixel seed, straight from the cartridge.");
 };
-
-/* Decor NPC: gives decor, themed */
 npcDecor.onclick=()=>{
  decor++;updateInv();
  if(curWorld==="cute")npcTalk("Decorator: Cute decor makes everyone smile.");
@@ -207,16 +258,22 @@ npcDecor.onclick=()=>{
  else if(curWorld==="cosmic")npcTalk("Cosmic Artisan: A shard of the cosmos for you.");
  else npcTalk("Retro Builder: Classic decor, low‑res but high charm.");
 };
-
-/* Craft NPC: convert glow into better seedsB */
 npcCraft.onclick=()=>{
- if(glow>=3){glow-=3;seedB++;updateInv();npcTalk("Crafted: You turned glow into a special seed!");}
+ if(glow>=3){glow-=3;seedB++;updateInv();npcTalk("Crafted: Glow turned into a special seed!");}
  else npcTalk("You need 3 Glow to craft a special seed.");
 };
-
-/* Clicking stalls themselves also works (shortcut) */
 seedStall.onclick=()=>npcSeed.onclick();
 decorStall.onclick=()=>npcDecor.onclick();
 craftStall.onclick=()=>npcCraft.onclick();
+
+/* Creatures wander slightly */
+function wander(id){
+ let c=document.getElementById(id);
+ let cx=parseInt(c.style.left),cy=parseInt(c.style.top);
+ cx+=Math.random()*10-5;cy+=Math.random()*10-5;
+ c.style.left=Math.max(200,Math.min(2200,cx))+"px";
+ c.style.top=Math.max(200,Math.min(2200,cy))+"px";
+}
+setInterval(()=>{wander("cre1");wander("cre2");},220);
 </script>
 </body></html>
