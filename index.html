@@ -1,52 +1,222 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-/* CHUNK 1 GOES HERE */
-*{margin:0;padding:0;box-sizing:border-box}body,html{width:100%;height:100%;overflow:hidden;font-family:sans-serif}#world{position:relative;width:2000px;height:2000px;transform-origin:0 0;transition:background .4s}#player{position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 0 6px #0004;z-index:10;transition:.15s}#plaza{position:absolute;left:900px;top:900px;width:300px;height:300px;border-radius:40%;background:#fff2;backdrop-filter:blur(3px);box-shadow:0 0 20px #0003;z-index:5}.stall{position:absolute;width:90px;height:90px;border-radius:20px;background:#fff;box-shadow:0 0 10px #0003}.stall.cute{background:#ffe6f2;border:3px solid #ffb3d9}.stall.magical{background:#e6e0ff;border:3px solid #b8a6ff}.stall.cosmic{background:#0d0f33;border:3px solid #4d4dff}.stall.pixel{background:#d0ffd0;border:3px solid #00aa00;image-rendering:pixelated}.path{position:absolute;border-radius:50px;background:#fff8;box-shadow:0 0 10px #0002}.path.pixel{border-radius:0;background:#ccc;image-rendering:pixelated}#gardenArea{position:absolute;width:420px;height:420px;left:300px;top:300px;background:#fff1;border-radius:45% 55% 50% 60%/60% 50% 55% 45%;box-shadow:0 0 20px #0003}.cuteWorld{background:#dfffe0}.magicalWorld{background:#f0e6ff}.cosmicWorld{background:#0a0d26}.pixelWorld{background:#c8ffc8;image-rendering:pixelated}
-</style>
-</head>
-<body>
-<!-- CHUNK 2 GOES HERE -->
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GlowGarden Final</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:sans-serif}
+#world{position:relative;width:2400px;height:2400px;transform-origin:0 0;transition:background .4s}
+#player{position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 0 6px #0004;z-index:10}
+.cuteWorld{background:#dfffe0}
+.magicalWorld{background:#f0e6ff}
+.cosmicWorld{background:#050818}
+.pixelWorld{background:#c8ffc8;image-rendering:pixelated}
+#garden{position:absolute;left:300px;top:300px;width:420px;height:420px;background:#ffffff40;border-radius:20px;backdrop-filter:blur(3px);padding:10px;display:grid;grid-template-columns:repeat(6,1fr);grid-gap:6px}
+.plot{width:100%;height:100%;background:#c2a878;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px}
+#inventory,#tasks,#status{position:fixed;bottom:10px;background:#fff;padding:8px 10px;border-radius:10px;box-shadow:0 0 10px #0003;font-size:12px}
+#inventory{left:10px}#tasks{right:10px}#status{left:50%;transform:translateX(-50%)}
+.stall{position:absolute;width:120px;height:80px;border-radius:10px;box-shadow:0 0 10px #0003;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;color:#222}
+.npc{position:absolute;width:40px;height:40px;border-radius:50%;box-shadow:0 0 6px #0006;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+.cuteStall{background:#ffe4f2;border:2px solid #ff9acb}
+.magicalStall{background:#f4e6ff;border:2px solid #b38cff}
+.cosmicStall{background:#111633;border:2px solid #6ad0ff;color:#e8f6ff}
+.pixelStall{background:#f0f0f0;border:2px solid #555;image-rendering:pixelated}
+.cuteNPC{background:#ffd6e8}
+.magicalNPC{background:#d9c2ff}
+.cosmicNPC{background:#1b2348;color:#f5f9ff}
+.pixelNPC{background:#f5f5f5;border:2px solid #444;image-rendering:pixelated}
+</style></head><body>
+
 <div id="world" class="cuteWorld">
 <div id="player"></div>
 
-<div id="plaza">
-<div class="stall cute" style="left:20px;top:20px"></div>
-<div class="stall magical" style="right:20px;top:20px"></div>
-<div class="stall cosmic" style="left:20px;bottom:20px"></div>
+<div id="garden"></div>
+
+<!-- Stalls (same location in all worlds) -->
+<div class="stall cuteStall" id="seedStall" style="left:1100px;top:900px">Seed Stall</div>
+<div class="stall cuteStall" id="decorStall" style="left:1250px;top:900px">Decor Stall</div>
+<div class="stall cuteStall" id="craftStall" style="left:1400px;top:900px">Craft Stall</div>
+
+<!-- NPCs in front of stalls -->
+<div class="npc cuteNPC" id="npcSeed" style="left:1120px;top:860px">😊</div>
+<div class="npc cuteNPC" id="npcDecor" style="left:1270px;top:860px">🌸</div>
+<div class="npc cuteNPC" id="npcCraft" style="left:1420px;top:860px">🧵</div>
+
 </div>
 
-<div class="stall pixel" style="left:1400px;top:600px"></div>
-<div class="stall cute" style="left:400px;top:1500px"></div>
-
-<div id="gardenArea"></div>
-
-<div class="path" style="left:600px;top:600px;width:300px;height:80px"></div>
-<div class="path" style="left:700px;top:800px;width:80px;height:300px"></div>
-<div class="path pixel" style="left:1200px;top:500px;width:300px;height:80px"></div>
+<div id="inventory">
+SeedsA:<span id="seedA">0</span> |
+SeedsB:<span id="seedB">0</span> |
+Decor:<span id="decorCount">0</span> |
+Glow:<span id="glow">0</span>
 </div>
+
+<div id="tasks">
+Task1: Plant 5 A (<span id="t1">0</span>/5)<br>
+Task2: Plant 3 B (<span id="t2">0</span>/3)
+</div>
+
+<div id="status">
+World:<span id="wName">Cute</span> |
+Time:<span id="timeLabel">Day</span>
+</div>
+
 <script>
-/* CHUNK 3 GOES HERE */
-let w=document.getElementById("world"),p=document.getElementById("player"),px=950,py=950,speed=6,keys={},curWorld="cute";document.onkeydown=e=>keys[e.key]=1;document.onkeyup=e=>keys[e.key]=0;
-function movePlayer(){let dx=0,dy=0;if(keys["ArrowUp"]||keys["w"])dy-=speed;if(keys["ArrowDown"]||keys["s"])dy+=speed;if(keys["ArrowLeft"]||keys["a"])dx-=speed;if(keys["ArrowRight"]||keys["d"])dx+=speed;px+=dx;py+=dy;px=Math.max(0,Math.min(1960,px));py=Math.max(0,Math.min(1960,py));p.style.left=px+"px";p.style.top=py+"px";}
+let w=document.getElementById("world"),p=document.getElementById("player"),
+px=1200,py=1200,speed=6,keys={},curWorld="cute",
+seedA=0,seedB=0,decor=0,glow=0,t1=0,t2=0,timeIsDay=true;
+
+document.onkeydown=e=>keys[e.key]=1;
+document.onkeyup=e=>keys[e.key]=0;
+
+function movePlayer(){
+ let dx=0,dy=0;
+ if(keys["ArrowUp"]||keys["w"])dy-=speed;
+ if(keys["ArrowDown"]||keys["s"])dy+=speed;
+ if(keys["ArrowLeft"]||keys["a"])dx-=speed;
+ if(keys["ArrowRight"]||keys["d"])dx+=speed;
+ px+=dx;py+=dy;
+ px=Math.max(0,Math.min(2360,px));
+ py=Math.max(0,Math.min(2360,py));
+ p.style.left=px+"px";p.style.top=py+"px";
+}
 setInterval(movePlayer,20);
-/* CHUNK 4 GOES HERE */
+
+function applyWorldTheme(){
+ let seedStall=document.getElementById("seedStall"),
+     decorStall=document.getElementById("decorStall"),
+     craftStall=document.getElementById("craftStall"),
+     npcSeed=document.getElementById("npcSeed"),
+     npcDecor=document.getElementById("npcDecor"),
+     npcCraft=document.getElementById("npcCraft");
+ seedStall.className="stall";decorStall.className="stall";craftStall.className="stall";
+ npcSeed.className="npc";npcDecor.className="npc";npcCraft.className="npc";
+ if(curWorld==="cute"){
+  w.className="cuteWorld";
+  seedStall.classList.add("cuteStall");decorStall.classList.add("cuteStall");craftStall.classList.add("cuteStall");
+  npcSeed.classList.add("cuteNPC");npcDecor.classList.add("cuteNPC");npcCraft.classList.add("cuteNPC");
+  npcSeed.textContent="😊";npcDecor.textContent="🌸";npcCraft.textContent="🧵";
+  seedStall.textContent="Flower Seeds";decorStall.textContent="Cute Decor";craftStall.textContent="Simple Craft";
+  document.getElementById("wName").textContent="Cute";
+ }else if(curWorld==="magical"){
+  w.className="magicalWorld";
+  seedStall.classList.add("magicalStall");decorStall.classList.add("magicalStall");craftStall.classList.add("magicalStall");
+  npcSeed.classList.add("magicalNPC");npcDecor.classList.add("magicalNPC");npcCraft.classList.add("magicalNPC");
+  npcSeed.textContent="🧙";npcDecor.textContent="🔮";npcCraft.textContent="📜";
+  seedStall.textContent="Potion Seeds";decorStall.textContent="Arcane Decor";craftStall.textContent="Enchant Craft";
+  document.getElementById("wName").textContent="Magical";
+ }else if(curWorld==="cosmic"){
+  w.className="cosmicWorld";
+  seedStall.classList.add("cosmicStall");decorStall.classList.add("cosmicStall");craftStall.classList.add("cosmicStall");
+  npcSeed.classList.add("cosmicNPC");npcDecor.classList.add("cosmicNPC");npcCraft.classList.add("cosmicNPC");
+  npcSeed.textContent="✨";npcDecor.textContent="🌌";npcCraft.textContent="🪐";
+  seedStall.textContent="Star Seeds";decorStall.textContent="Cosmic Decor";craftStall.textContent="Stellar Craft";
+  document.getElementById("wName").textContent="Cosmic";
+ }else if(curWorld==="pixel"){
+  w.className="pixelWorld";
+  seedStall.classList.add("pixelStall");decorStall.classList.add("pixelStall");craftStall.classList.add("pixelStall");
+  npcSeed.classList.add("pixelNPC");npcDecor.classList.add("pixelNPC");npcCraft.classList.add("pixelNPC");
+  npcSeed.textContent="🧑";npcDecor.textContent="🧱";npcCraft.textContent="🛠";
+  seedStall.textContent="Pixel Seeds";decorStall.textContent="Retro Decor";craftStall.textContent="8‑bit Craft";
+  document.getElementById("wName").textContent="Pixel";
+ }
+}
+applyWorldTheme();
+
 function switchWorld(wd){
-curWorld=wd;
-w.className=wd+"World";
-if(wd==="pixel")speed=4;else speed=6;
+ curWorld=wd;
+ speed=wd==="pixel"?4:6;
+ applyWorldTheme();
 }
 function checkWorldSwitch(){
-if(px<200&&py<200)switchWorld("cute");
-if(px>1700&&py<200)switchWorld("magical");
-if(px<200&&py>1700)switchWorld("cosmic");
-if(px>1700&&py>1700)switchWorld("pixel");
+ if(px<200&&py<200)switchWorld("cute");
+ if(px>2200&&py<200)switchWorld("magical");
+ if(px<200&&py>2200)switchWorld("cosmic");
+ if(px>2200&&py>2200)switchWorld("pixel");
 }
-setInterval(checkWorldSwitch,100);
-/* CHUNK 5 GOES HERE */
-function cam(){let cx=window.innerWidth/2,cy=window.innerHeight/2;let tx=cx-px,ty=cy-py;if(curWorld==="pixel"){tx*=0.7;ty*=0.7;}w.style.transform=`translate(${tx}px,${ty}px)`;}setInterval(cam,20);
+setInterval(checkWorldSwitch,120);
 
+function cam(){
+ let cx=innerWidth/2,cy=innerHeight/2,tx=cx-px,ty=cy-py;
+ if(curWorld==="pixel"){tx*=0.7;ty*=0.7;}
+ w.style.transform=`translate(${tx}px,${ty}px)`;
+}
+setInterval(cam,20);
+
+/* Day / Night toggle */
+setInterval(()=>{
+ timeIsDay=!timeIsDay;
+ document.getElementById("timeLabel").textContent=timeIsDay?"Day":"Night";
+ w.style.filter=timeIsDay?"brightness(1)":"brightness(.5)";
+},9000);
+
+/* Farming: two crop types */
+let garden=document.getElementById("garden");
+for(let i=0;i<36;i++){
+ let plot=document.createElement("div");
+ plot.className="plot";
+ plot.dataset.state="empty";
+ plot.onclick=()=>{
+  if(plot.dataset.state==="empty"){
+   if(seedA>0){
+    seedA--;updateInv();
+    plant(plot,"A","🌱","🌼",()=>{t1++;document.getElementById("t1").textContent=t1;});
+   }else if(seedB>0){
+    seedB--;updateInv();
+    plant(plot,"B","🌿","🍓",()=>{t2++;document.getElementById("t2").textContent=t2;});
+   }
+  }else if(plot.dataset.state==="grownA"||plot.dataset.state==="grownB"){
+   plot.dataset.state="empty";plot.textContent="";
+   glow++;updateInv();
+  }
+ };
+ garden.appendChild(plot);
+}
+function plant(plot,type,sprout,finalEmoji,onGrow){
+ plot.dataset.state="growing"+type;
+ plot.textContent=sprout;
+ setTimeout(()=>{
+  plot.dataset.state="grown"+type;
+  plot.textContent=finalEmoji;
+  onGrow();
+ },2000);
+}
+
+/* Inventory update */
+function updateInv(){
+ document.getElementById("seedA").textContent=seedA;
+ document.getElementById("seedB").textContent=seedB;
+ document.getElementById("decorCount").textContent=decor;
+ document.getElementById("glow").textContent=glow;
+}
+updateInv();
+
+/* NPC click = open stall logic (simple messages + effects) */
+function npcTalk(msg){alert(msg);}
+
+/* Seed NPC: gives / sells seeds depending on world */
+npcSeed.onclick=()=>{
+ if(curWorld==="cute"){seedA++;npcTalk("Cute Seller: Here, have a flower seed!");}
+ else if(curWorld==="magical"){seedA++;npcTalk("Mage: A potion seed for your garden.");}
+ else if(curWorld==="cosmic"){seedA++;npcTalk("Star Being: A star seed to light your soil.");}
+ else if(curWorld==="pixel"){seedA++;npcTalk("Pixel Merchant: One pixel seed, use it well.");}
+ updateInv();
+};
+
+/* Decor NPC: gives decor, themed */
+npcDecor.onclick=()=>{
+ decor++;updateInv();
+ if(curWorld==="cute")npcTalk("Decorator: Cute decor makes everyone smile.");
+ else if(curWorld==="magical")npcTalk("Enchanter: Place this where magic feels strong.");
+ else if(curWorld==="cosmic")npcTalk("Cosmic Artisan: A shard of the cosmos for you.");
+ else npcTalk("Retro Builder: Classic decor, low‑res but high charm.");
+};
+
+/* Craft NPC: convert glow into better seedsB */
+npcCraft.onclick=()=>{
+ if(glow>=3){glow-=3;seedB++;updateInv();npcTalk("Crafted: You turned glow into a special seed!");}
+ else npcTalk("You need 3 Glow to craft a special seed.");
+};
+
+/* Clicking stalls themselves also works (shortcut) */
+seedStall.onclick=()=>npcSeed.onclick();
+decorStall.onclick=()=>npcDecor.onclick();
+craftStall.onclick=()=>npcCraft.onclick();
 </script>
-</body>
-</html>
+</body></html>
